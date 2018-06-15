@@ -394,7 +394,7 @@ namespace Smart.API.Adapter.Biz
             //请求JieLink车场数据，parkId使用不到
             string parkId = CommonSettings.ParkLotCode; ;
             InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS);
-            var res = requestApi.PostRaw<ParkPlaceRes>("parking/place", parkId);
+            var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", parkId);
             if (!res.successed)
             {
                 LogHelper.Error("请求JieLink出错" + res.code); 

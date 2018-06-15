@@ -162,7 +162,7 @@ namespace Smart.API.Adapter.Biz
                 BaseJdRes resJd = result.Content.ReadAsStringAsync().Result.FromJson<BaseJdRes>();
                 LogHelper.Info("PostResponse:modifyParkLotTotalCount" + result.Content.ReadAsStringAsync().Result);//记录日志
                 return resJd;
-            }            
+            }
 
             //InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
             //ParkCountReq req = new ParkCountReq();
@@ -382,9 +382,14 @@ namespace Smart.API.Adapter.Biz
                         apiBaseResult.code = "98";// 约定jielink+ api code="98" ，不开闸，但补推记录
                         apiBaseResult.msg = apiBaseResult.msg + ",非法车辆不开闸，补推记录";
                         LogHelper.Info(apiBaseResult.msg + ",非法车辆不开闸，补推记录");
+                        if (inRecognitionRecord.reTrySend == "1")
+                        {
+                            apiBaseResult.code = "99";// 约定jielink+ api code="98" ，不开闸，但补推记录
+                        }
                     }
                     else
                     {
+
                         //白名单，推送记录失败，开闸，补推记录。
                         apiBaseResult.code = "99";// 约定jielink+ api code="99" ，开闸，补推记录
                         apiBaseResult.msg = apiBaseResult.msg + ",白名单开闸，补推记录";
@@ -400,8 +405,15 @@ namespace Smart.API.Adapter.Biz
                     }
                     else
                     {
-                        apiBaseResult.code = "1";
-                        apiBaseResult.msg = "非法车辆";
+                        if (inRecognitionRecord.reTrySend == "1")
+                        {
+                            apiBaseResult.code = "0";
+                        }
+                        else
+                        {
+                            apiBaseResult.code = "1";
+                            apiBaseResult.msg = "非法车辆";
+                        }
                     }
                 }
 
@@ -482,7 +494,7 @@ namespace Smart.API.Adapter.Biz
                     }
                 }
 
-                if (!bReTry)
+                if (!bReTry && inRecognitionRecord.reTrySend == "1")
                 {
                     JDRePostUpdatePostTime(businessType, sReType);
                     apiBaseResult.msg = "等待第三方重试的时间间隔";
@@ -586,7 +598,7 @@ namespace Smart.API.Adapter.Biz
                         sReType = dicReConnectInfo[(int)businessType].ReType;
                     }
                 }
-                if (!bReTry)
+                if (!bReTry && inCrossRecord.reTrySend == "1")
                 {
                     JDRePostUpdatePostTime(businessType, sReType);
                     apiBaseResult.code = "99";//99代表数据需要重传 ,jielink+中心会发起重试，频率是每5秒重试一次。
@@ -694,7 +706,7 @@ namespace Smart.API.Adapter.Biz
                         sReType = dicReConnectInfo[(int)businessType].ReType;
                     }
                 }
-                if (!bReTry)
+                if (!bReTry && outRecognitionRecord.reTrySend == "1")
                 {
                     JDRePostUpdatePostTime(businessType, sReType);
                     apiBaseResult.msg = "等待第三方重试的时间间隔";
@@ -704,7 +716,7 @@ namespace Smart.API.Adapter.Biz
                 ApiResult<ResponseOutRecognition> apiResult = httpApi.PostUrl<ResponseOutRecognition>("external/createVehicleLogDetail", reqVehicleLog);
                 if (!apiResult.successed)
                 {
-                    apiBaseResult.code = "0";//请求失败后自动出场
+                    apiBaseResult.code = "99";//请求失败后自动出场
                     apiBaseResult.msg = "请求第三方失败，" + apiResult.message;
                     JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
                 }
@@ -827,10 +839,11 @@ namespace Smart.API.Adapter.Biz
                         sReType = dicReConnectInfo[(int)businessType].ReType;
                     }
                 }
-                if (!bReTry)
+                if (!bReTry && outCrossRecord.reTrySend == "1")
                 {
                     JDRePostUpdatePostTime(businessType, sReType);
                     apiBaseResult.msg = "等待第三方重试的时间间隔";
+                    System.Threading.Thread.Sleep(100);
                     return apiBaseResult;
                 }
                 //TODO:出场成功，先查询reasonCode和reason ，进行赋值，并将JD账单记录进行归档,
@@ -870,9 +883,6 @@ namespace Smart.API.Adapter.Biz
                             {
                                 dicReConnectInfo.Remove((int)businessType);
                             }
-
-
-
                         }
                         else if (apiResult.data.returnCode == "fail")
                         {
@@ -897,7 +907,7 @@ namespace Smart.API.Adapter.Biz
                 {
                     dicPayCheckCount.Remove(reqVehicleLog.logNo);
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -905,7 +915,7 @@ namespace Smart.API.Adapter.Biz
                 LogHelper.Error("请求第三方出场过闸错误:", ex);
                 JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
             }
-           
+
             //更新剩余停车位
             HeartService.GetInstance().UpdateParkRemainCount();
 
@@ -988,7 +998,7 @@ namespace Smart.API.Adapter.Biz
                 InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
                 ApiResult<ResponseJDQueryPay> apiResult = new ApiResult<ResponseJDQueryPay>();
                 JDTimer jdTimer = CommonSettings.JDTimerInfo(enumJDBusinessType.PayCheck);
- 
+
                 try
                 {
                     apiResult = httpApi.PostUrl<ResponseJDQueryPay>("external/queryPay", queryPay);
@@ -1149,7 +1159,7 @@ namespace Smart.API.Adapter.Biz
 
                 if (bFlagUpdateBill)
                 {
-                    if (model != null )
+                    if (model != null)
                     {
                         try
                         {
@@ -1159,7 +1169,7 @@ namespace Smart.API.Adapter.Biz
                         {
                             LogHelper.Error("请求第三方支付反查更JDBill数据库错误:", ex);
                         }
-                      
+
                     }
                     //清掉缓存
                     if (dicPayCheckCount.ContainsKey(sLogNo))
@@ -1286,6 +1296,14 @@ namespace Smart.API.Adapter.Biz
                     dicReConnectInfo[(int)type].IsReTry = false;
                 }
             }
+        }
+
+        /// <summary>
+        /// 清楚缓存
+        /// </summary>
+        public void ClearReTryCache()
+        {
+            dicReConnectInfo.Clear();
         }
     }
 }

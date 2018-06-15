@@ -103,5 +103,18 @@ namespace Smart.API.Adapter.Api.Controllers.V1
             APIResultBase result = new JDParkBiz().PayCheck(requestdata);
             return Request.CreateResponse(result);
         }
+
+
+        /// <summary>
+        /// 心跳调用，清除所有断线缓存
+        /// </summary>
+        /// <param name="LEquipmentStatus"></param>
+        /// <returns></returns>
+        [HttpPost, WriteLog, ActionName("heart")]
+        public HttpResponseMessage heart()
+        {
+            new JDParkBiz().ClearReTryCache();
+            return Request.CreateOKResponse();
+        }
     }
 }
