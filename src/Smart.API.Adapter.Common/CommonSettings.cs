@@ -21,6 +21,24 @@ namespace Smart.API.Adapter.Common
                 return cfgAppName;
             }
         }
+
+        /// <summary>
+        /// api url
+        /// </summary>
+        public static string RootUrl
+        {
+            get
+            {
+                string cfgRootUrl = ConfigurationManager.AppSettings["RootUrl"];
+                if (string.IsNullOrWhiteSpace(cfgRootUrl))
+                {
+                    cfgRootUrl = "http://127.0.0.1:9901/api/";
+                }
+                return cfgRootUrl.TrimEnd('/') + "/";
+            }
+        }
+
+
         /// <summary>
         /// 获取是否开发调试模式。
         /// </summary>
@@ -197,7 +215,7 @@ namespace Smart.API.Adapter.Common
             {
                 if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["BaseAddressJd"]))
                 {
-                    return ConfigurationManager.AppSettings["BaseAddressJd"].TrimEnd('/')+"/";
+                    return ConfigurationManager.AppSettings["BaseAddressJd"].TrimEnd('/') + "/";
                 }
                 return "http://test.spl.jd.com/external/";
             }

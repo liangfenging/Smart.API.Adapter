@@ -1,4 +1,5 @@
 ﻿using Smart.API.Adapter.Common;
+using Smart.API.Adapter.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +107,8 @@ namespace Smart.API.Adapter.Biz
                 }
                 //timerHeart.Change(parkBiz.HeartInterval, Timeout.Infinite);
             }
+
+
             //5次不行则发邮件通知 ,在没有任何反馈时            
             timerHeart.Change(parkBiz.HeartInterval, Timeout.Infinite);
         }

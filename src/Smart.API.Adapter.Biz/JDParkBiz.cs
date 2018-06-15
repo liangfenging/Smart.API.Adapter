@@ -1301,9 +1301,13 @@ namespace Smart.API.Adapter.Biz
         /// <summary>
         /// 清楚缓存
         /// </summary>
-        public void ClearReTryCache()
+        public void ClearReTryCache(ApiGetHeart requestdata)
         {
-            dicReConnectInfo.Clear();
+            if (requestdata.ClearCache)
+            {
+                dicReConnectInfo.Clear();
+            }
+            ParkBiz.overFlowCount = requestdata.OverFlowCount;
         }
     }
 }

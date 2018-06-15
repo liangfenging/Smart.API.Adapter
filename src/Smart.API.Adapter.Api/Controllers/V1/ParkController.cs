@@ -111,9 +111,9 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         /// <param name="LEquipmentStatus"></param>
         /// <returns></returns>
         [HttpPost, WriteLog, ActionName("heart")]
-        public HttpResponseMessage heart()
+        public HttpResponseMessage heart(ApiGetHeart requestdata)
         {
-            new JDParkBiz().ClearReTryCache();
+            new JDParkBiz().ClearReTryCache(requestdata);
             return Request.CreateOKResponse();
         }
     }

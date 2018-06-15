@@ -15,8 +15,9 @@ namespace Smart.API.Adapter.Biz
 {
     public class ParkBiz
     {
-        public  static string version = "1";
-        public  static int overFlowCount = 10;
+        public static string version = "1";
+        public static int overFlowCount = 10;
+        private static bool isConnect = false;
         private DataBase dataBase;
         private DataBase dataBaseDic;
         private string xmlAddr;
@@ -26,7 +27,7 @@ namespace Smart.API.Adapter.Biz
         {
             get
             {
-                return  CommonSettings.HeartInterval;
+                return CommonSettings.HeartInterval;
             }
         }
         public ParkBiz()
@@ -35,7 +36,7 @@ namespace Smart.API.Adapter.Biz
             dataBase = new DataBase(DataBase.DbName.SmartAPIAdapterCore, "ParkWhiteList", "VehicleNo", false);
             dataBaseDic = new DataBase(DataBase.DbName.SmartAPIAdapterCore, "ParkDic", "KeyStr", false);
             jdParkBiz = new JDParkBiz();
-            InitVersion(); 
+            InitVersion();
         }
 
         private void InitVersion()
@@ -64,12 +65,12 @@ namespace Smart.API.Adapter.Biz
         /// <summary>
         /// 定时执行心跳任务
         /// </summary>
-        public  bool HeartCheck()
+        public bool HeartCheck()
         {
             try
             {
                 HeartVersion heartJd = jdParkBiz.HeartBeatCheckJd();
-                
+
                 if (heartJd.returnCode == "fail")
                 {
                     //客户端未验证
@@ -79,9 +80,9 @@ namespace Smart.API.Adapter.Biz
                         Console.WriteLine(message);
                     }
                     LogHelper.Error(message);
-                    return true;
+                    isConnect = false;
                 }
-                if (heartJd.returnCode == "exception")
+                else if (heartJd.returnCode == "exception")
                 {
                     //服务端异常
                     string message = string.Format("{0}:心跳检测响应exception:{1}", DateTime.Now.ToString(), heartJd.description);
@@ -90,22 +91,45 @@ namespace Smart.API.Adapter.Biz
                         Console.WriteLine(message);
                     }
                     LogHelper.Error(message);
-                    return true;
+                    isConnect = false;
                 }
-                if (heartJd.Version != ParkBiz.version)
-                {                    
-                    //版本号不一致需要同步白名单,获取白名单数据成功后，更新版本xml
-                    if (UpdateWhiteList(ParkBiz.version))
+                else
+                {
+                    if (heartJd.Version != ParkBiz.version)
                     {
-                        ParkBiz.version = heartJd.Version;
-                        ParkBiz.overFlowCount = heartJd.OverFlowCount;
-                        UpdateHeartVersion(heartJd);
-                    } 
+                        //版本号不一致需要同步白名单,获取白名单数据成功后，更新版本xml
+                        if (UpdateWhiteList(ParkBiz.version))
+                        {
+                            ParkBiz.version = heartJd.Version;
+                            ParkBiz.overFlowCount = heartJd.OverFlowCount;
+                            UpdateHeartVersion(heartJd);
+                        }
+                    }
+                    try
+                    {
+                        //通知api 心跳和满位可进数
+                        ApiGetHeart heart = new ApiGetHeart();
+                        heart.OverFlowCount = ParkBiz.overFlowCount;
+                        if (isConnect == false)
+                        {
+                            //心跳已经重新连接，通知API需要清除缓存，推送数据。
+                            heart.ClearCache = true;
+                        }
+                        InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.RootUrl);
+                        httpApi.PostRaw("Park/heart", heart);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Error("请求api心跳错误" + ex);
+                    }
+                    isConnect = true;
                 }
-                return true;
+
+                return isConnect;
             }
             catch (Exception ex)
             {
+                isConnect = false;
                 string message = string.Format("{0}:心跳检测出错:{1}", DateTime.Now.ToString(), ex.Message);
                 if (CommonSettings.IsDev)
                 {
@@ -146,7 +170,7 @@ namespace Smart.API.Adapter.Biz
                         Console.WriteLine(message);
                     }
                     LogHelper.Error(message);
-                    return false ;
+                    return false;
                 }
                 //更新到数据库
                 try
@@ -157,7 +181,7 @@ namespace Smart.API.Adapter.Biz
                         ve.UpdateTime = DateTime.Now;
                         VehicleInfoDb vehicleDb = dataBase.FindByKey<VehicleInfoDb>(v.vehicleNo);
 
-                        if (vehicleDb!=null)
+                        if (vehicleDb != null)
                         {
                             ve.CreateTime = vehicleDb.CreateTime;
                             dataBase.Update<VehicleInfoDb>(ve, v.vehicleNo);
@@ -167,7 +191,7 @@ namespace Smart.API.Adapter.Biz
                             ve.CreateTime = DateTime.Now;
                             dataBase.Insert<VehicleInfoDb>(ve);
                         }
-                    }         
+                    }
                     //白名单已经更新，需要重载白名单数据缓存
                     JDCommonSettings.ReLoadWhiteList();
                     return true;
@@ -181,9 +205,9 @@ namespace Smart.API.Adapter.Biz
                     }
                     LogHelper.Error(message);
                     throw ex;
-                } 
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string message = string.Format("{0}:获取京东白名单出错:{1}", DateTime.Now.ToString(), ex.Message);
                 if (CommonSettings.IsDev)
@@ -192,7 +216,7 @@ namespace Smart.API.Adapter.Biz
                 }
                 LogHelper.Error(message);
                 throw ex;
-            } 
+            }
         }
 
 
@@ -214,7 +238,7 @@ namespace Smart.API.Adapter.Biz
 
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string message = string.Format("{0}:版本更新出错:{1}", DateTime.Now.ToString(), ex.Message);
                 if (CommonSettings.IsDev)
@@ -389,7 +413,7 @@ namespace Smart.API.Adapter.Biz
             }
         }
 
-        public  ParkPlaceRes GetParkPlaceCount()
+        public ParkPlaceRes GetParkPlaceCount()
         {
             //请求JieLink车场数据，parkId使用不到
             string parkId = CommonSettings.ParkLotCode; ;
@@ -397,12 +421,12 @@ namespace Smart.API.Adapter.Biz
             var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", parkId);
             if (!res.successed)
             {
-                LogHelper.Error("请求JieLink出错" + res.code); 
+                LogHelper.Error("请求JieLink出错" + res.code);
             }
-            return res.data; 
+            return res.data;
         }
 
-        public  bool UpdateEquipmentStatus()
+        public bool UpdateEquipmentStatus()
         {
             try
             {
@@ -466,7 +490,7 @@ namespace Smart.API.Adapter.Biz
 
 
 
-   
+
 
 
 

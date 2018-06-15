@@ -15,4 +15,13 @@ namespace Smart.API.Adapter.Models
 
         public int OverFlowCount { get; set; }
     }
+
+    public class ApiGetHeart : HeartVersion
+    {
+        public bool ClearCache
+        {
+            get;
+            set;
+        }
+    }
 }
