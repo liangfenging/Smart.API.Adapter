@@ -1325,14 +1325,22 @@ namespace Smart.API.Adapter.Biz
         }
 
         /// <summary>
-        /// 清楚缓存
+        /// 清除缓存
         /// </summary>
         public void ClearReTryCache(ApiGetHeart requestdata)
         {
+            //清除所有重试记录缓存，可以立即重试记录
             if (requestdata.ClearCache)
             {
                 dicReConnectInfo.Clear();
             }
+
+            //白名单重新更新
+            if (requestdata.ClearWhiteList)
+            {
+                JDCommonSettings.ReLoadWhiteList();//重新加载白名单缓存
+            }
+
             ParkBiz.overFlowCount = requestdata.OverFlowCount;
         }
 

@@ -23,5 +23,11 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
+
+        public bool ClearWhiteList
+        {
+            get;
+            set;
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace Smart.API.Adapter.Common.JD
         public static void ReLoadWhiteList()
         {
             _ParkWhiteList = null;
+            _ParkWhiteList = new ParkWhiteListBLL().GetParkWhiteList();
         }
 
 

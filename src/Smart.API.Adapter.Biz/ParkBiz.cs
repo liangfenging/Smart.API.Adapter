@@ -95,6 +95,7 @@ namespace Smart.API.Adapter.Biz
                 }
                 else
                 {
+                    bool bClearWhiteList = false;//判断白名单是否变更
                     if (heartJd.Version != ParkBiz.version)
                     {
                         //版本号不一致需要同步白名单,获取白名单数据成功后，更新版本xml
@@ -103,12 +104,14 @@ namespace Smart.API.Adapter.Biz
                             ParkBiz.version = heartJd.Version;
                             ParkBiz.overFlowCount = heartJd.OverFlowCount;
                             UpdateHeartVersion(heartJd);
+                            bClearWhiteList = true;//白名单有变更，需要重新更新白名单列表
                         }
                     }
                     try
                     {
                         //通知api 心跳和满位可进数
                         ApiGetHeart heart = new ApiGetHeart();
+                        heart.ClearWhiteList = bClearWhiteList;
                         heart.OverFlowCount = ParkBiz.overFlowCount;
                         if (isConnect == false)
                         {
@@ -191,9 +194,7 @@ namespace Smart.API.Adapter.Biz
                             ve.CreateTime = DateTime.Now;
                             dataBase.Insert<VehicleInfoDb>(ve);
                         }
-                    }
-                    //白名单已经更新，需要重载白名单数据缓存
-                    JDCommonSettings.ReLoadWhiteList();
+                    }                   
                     return true;
                 }
                 catch (Exception ex)
