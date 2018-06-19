@@ -459,7 +459,7 @@ namespace Smart.API.Adapter.Biz
                 RequestVehicleLog reqVehicleLog = new RequestVehicleLog();
                 reqVehicleLog.logNo = inRecognitionRecord.inRecordId;
                 reqVehicleLog.actionDescId = "100";
-                reqVehicleLog.vehicleNo = inRecognitionRecord.plateNumber;
+                reqVehicleLog.vehicleNo = ConvJdPlateNo(inRecognitionRecord.plateNumber);
                 reqVehicleLog.actionTime = inRecognitionRecord.recognitionTime;
                 reqVehicleLog.actionPositionCode = inRecognitionRecord.inDeviceId;
                 reqVehicleLog.actionPosition = inRecognitionRecord.inDeviceName;
@@ -577,7 +577,7 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.reason = inCrossRecord.remark;
                 }
 
-                reqVehicleLog.vehicleNo = inCrossRecord.plateNumber;
+                reqVehicleLog.vehicleNo = ConvJdPlateNo(inCrossRecord.plateNumber);
                 reqVehicleLog.actionTime = inCrossRecord.inTime;
                 reqVehicleLog.actionPositionCode = inCrossRecord.InDeviceId;
                 reqVehicleLog.actionPosition = inCrossRecord.inDeviceName;
@@ -672,7 +672,7 @@ namespace Smart.API.Adapter.Biz
                 reqVehicleLog.logNo = string.IsNullOrWhiteSpace(outRecognitionRecord.inRecordId) ? outRecognitionRecord.outRecordId : outRecognitionRecord.inRecordId;
                 reqVehicleLog.actionDescId = "101";
                 reqVehicleLog.entryTime = outRecognitionRecord.inTime;
-                reqVehicleLog.vehicleNo = outRecognitionRecord.plateNumber;
+                reqVehicleLog.vehicleNo = ConvJdPlateNo(outRecognitionRecord.plateNumber);
                 reqVehicleLog.actionTime = outRecognitionRecord.recognitionTime;
                 reqVehicleLog.actionPositionCode = outRecognitionRecord.outDeviceId;
                 reqVehicleLog.actionPosition = outRecognitionRecord.outDeviceName;
@@ -816,7 +816,7 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.reason = outCrossRecord.remark;
                 }
                 reqVehicleLog.entryTime = outCrossRecord.inTime;
-                reqVehicleLog.vehicleNo = outCrossRecord.plateNumber;
+                reqVehicleLog.vehicleNo = ConvJdPlateNo(outCrossRecord.plateNumber);
                 reqVehicleLog.actionTime = outCrossRecord.outTime;
                 reqVehicleLog.actionPositionCode = outCrossRecord.outDeviceId;
                 reqVehicleLog.actionPosition = outCrossRecord.outDeviceName;
@@ -1308,6 +1308,15 @@ namespace Smart.API.Adapter.Biz
                 dicReConnectInfo.Clear();
             }
             ParkBiz.overFlowCount = requestdata.OverFlowCount;
+        }
+
+        private string ConvJdPlateNo(string plateNumber)
+        {
+            if (string.IsNullOrEmpty(plateNumber) || plateNumber == "未识别")
+            {
+                return "000000";
+            }
+            return plateNumber; 
         }
     }
 }
