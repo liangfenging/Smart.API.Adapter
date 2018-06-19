@@ -113,7 +113,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("heart")]
         public HttpResponseMessage heart(ApiGetHeart requestdata)
         {
-            new JDParkBiz().ClearReTryCache(requestdata);
+            //new JDParkBiz().ClearReTryCache(requestdata);
             return Request.CreateOKResponse();
         }
     }

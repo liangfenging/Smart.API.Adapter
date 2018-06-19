@@ -463,18 +463,18 @@ namespace Smart.API.Adapter.Biz
                 reqVehicleLog.actionTime = inRecognitionRecord.recognitionTime;
                 reqVehicleLog.actionPositionCode = inRecognitionRecord.inDeviceId;
                 reqVehicleLog.actionPosition = inRecognitionRecord.inDeviceName;
-                string fileName = "";
-                reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inRecognitionRecord.inImage, out fileName);
-                reqVehicleLog.photoName = fileName;
+                //string fileName = "";
+                //reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inRecognitionRecord.inImage, out fileName);
+                //reqVehicleLog.photoName = fileName;
 
-                int iCount = 0;
-                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
-                {
-                    iCount++;
-                    reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inRecognitionRecord.inImage, out fileName);
-                    reqVehicleLog.photoName = fileName;
-                    System.Threading.Thread.Sleep(100);
-                }
+                //int iCount = 0;
+                //while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
+                //{
+                //    iCount++;
+                //    reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inRecognitionRecord.inImage, out fileName);
+                //    reqVehicleLog.photoName = fileName;
+                //    System.Threading.Thread.Sleep(100);
+                //}
 
                 reqVehicleLog.resend = "1";
                 if (inRecognitionRecord.reTrySend == "1")
@@ -575,6 +575,19 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.actionDescId = "2";
                     reqVehicleLog.reasonCode = inCrossRecord.parkEventType.ToUpper();
                     reqVehicleLog.reason = inCrossRecord.remark;
+                }
+
+                string fileName = "";
+                reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inCrossRecord.inImage, out fileName);
+                reqVehicleLog.photoName = fileName;
+
+                int iCount = 0;
+                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
+                {
+                    iCount++;
+                    reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inCrossRecord.inImage, out fileName);
+                    reqVehicleLog.photoName = fileName;
+                    System.Threading.Thread.Sleep(100);
                 }
 
                 reqVehicleLog.vehicleNo = ConvJdPlateNo(inCrossRecord.plateNumber);
@@ -682,17 +695,17 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.resend = "0";//补发的记录
                 }
 
-                string fileName = "";
-                reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outRecognitionRecord.outImage, out fileName);
-                reqVehicleLog.photoName = fileName;
-                int iCount = 0;
-                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
-                {
-                    iCount++;
-                    reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outRecognitionRecord.outImage, out fileName);
-                    reqVehicleLog.photoName = fileName;
-                    System.Threading.Thread.Sleep(100);
-                }
+                //string fileName = "";
+                //reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outRecognitionRecord.outImage, out fileName);
+                //reqVehicleLog.photoName = fileName;
+                //int iCount = 0;
+                //while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
+                //{
+                //    iCount++;
+                //    reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outRecognitionRecord.outImage, out fileName);
+                //    reqVehicleLog.photoName = fileName;
+                //    System.Threading.Thread.Sleep(100);
+                //}
 
                 bool bReTry = true;
                 JDTimer jdTimer = CommonSettings.JDTimerInfo(businessType);
@@ -820,6 +833,19 @@ namespace Smart.API.Adapter.Biz
                 reqVehicleLog.actionTime = outCrossRecord.outTime;
                 reqVehicleLog.actionPositionCode = outCrossRecord.outDeviceId;
                 reqVehicleLog.actionPosition = outCrossRecord.outDeviceName;
+
+                string fileName = "";
+                reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outCrossRecord.outImage, out fileName);
+                reqVehicleLog.photoName = fileName;
+                int iCount = 0;
+                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
+                {
+                    iCount++;
+                    reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outCrossRecord.outImage, out fileName);
+                    reqVehicleLog.photoName = fileName;
+                    System.Threading.Thread.Sleep(100);
+                }
+
                 reqVehicleLog.resend = "1";
 
                 if (outCrossRecord.reTrySend == "1")
