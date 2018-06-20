@@ -1,4 +1,5 @@
 ﻿using Smart.API.Adapter.Common.Mail;
+using Smart.API.Adapter.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,7 +30,7 @@ namespace Smart.API.Adapter.Common
         /// 发送邮件
         /// </summary>
         /// <param name="isAsync">是否异步发送</param>
-        public void SendMail(bool isAsync = true)
+        public void SendMail(string eventType,bool isAsync = true)
         {
             try
             {
@@ -52,12 +53,12 @@ namespace Smart.API.Adapter.Common
                 }
                 if (string.IsNullOrWhiteSpace(Subject))
                 {
-                    Subject = "这是个标题";
+                    Subject = CommonSettings.EmailTitle + "[" + eventType.ToString() + "]";
                 }
                 mail.Subject = Subject;
                 if (string.IsNullOrWhiteSpace(Body))
                 {
-                    Body = "这是邮件内容";
+                    Body = CommonSettings.EmailBody;
                 }
 
                 // Guid.NewGuid() 防止重复内容，被SMTP服务器拒绝接收邮件

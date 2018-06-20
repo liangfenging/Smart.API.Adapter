@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Common;
 using Microsoft.Practices.EnterpriseLibrary.Data;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -110,12 +111,12 @@ namespace Smart.API.Adapter.DataAccess {
 		public virtual bool DeleteByKey(string Key) {
 			string sqlcmd = string.Format("DELETE FROM {0} WHERE " + PrimaryKey + " = @PrimaryKey ", tableName);
 			List<DbParameter> listParam = new List<DbParameter>() { 
-				new SqlParameter() { DbType = DbType.String, ParameterName = "@PrimaryKey", Value = Key }};
+				new MySqlParameter() { DbType = DbType.String, ParameterName = "@PrimaryKey", Value = Key }};
 			return ExecuteNoQueryBySql(sqlcmd, listParam) > 0;
 		}
 
 		public virtual int GetMaxID() {
-			string sqlcmd = string.Format("select max({0}) with(nolock) from {1} ", PrimaryKey, tableName);
+			string sqlcmd = string.Format("select max({0})  from {1} ", PrimaryKey, tableName);
 			object obj = null;
 			using(DbCommand command = db.GetSqlStringCommand(sqlcmd)) {
 				obj = db.ExecuteScalar(command);
@@ -124,25 +125,25 @@ namespace Smart.API.Adapter.DataAccess {
 		}
 
 		public virtual ICollection<TResult> FindAll<TResult>() where TResult : new() {
-			string sqlcmd = string.Format("SELECT * FROM {0} with(nolock) ", tableName);
+			string sqlcmd = string.Format("SELECT * FROM {0}  ", tableName);
 			return GetEnityListBySqlString<TResult>(sqlcmd, null);
 		}
 
 		public virtual TResult FindByKey<TResult>(string Key) where TResult : new() {
-			string sqlcmd = string.Format("SELECT * FROM {0} with(nolock) WHERE " + PrimaryKey + " = @PrimaryKey ", tableName);
+			string sqlcmd = string.Format("SELECT * FROM {0}  WHERE " + PrimaryKey + " = @PrimaryKey ", tableName);
 
 			List<DbParameter> listParam = new List<DbParameter>() { 
 
-				new SqlParameter() { DbType = DbType.String, ParameterName = "@PrimaryKey", Value = Key }};
+				new MySqlParameter() { DbType = DbType.String, ParameterName = "@PrimaryKey", Value = Key }};
 			return GetEnityBySqlString<TResult>(sqlcmd, listParam);
 		}
 
         public virtual bool IsExist(string Key)
         {
-            string sqlcmd = string.Format("SELECT * FROM {0} with(nolock) WHERE " + PrimaryKey + " = @PrimaryKey ", tableName);
+            string sqlcmd = string.Format("SELECT * FROM {0}  WHERE " + PrimaryKey + " = @PrimaryKey ", tableName);
 
             List<DbParameter> listParam = new List<DbParameter>() { 
-				new SqlParameter() { DbType = DbType.String, ParameterName = "@PrimaryKey", Value = Key }};
+				new MySqlParameter() { DbType = DbType.String, ParameterName = "@PrimaryKey", Value = Key }};
             var res = ExecuteScalarBySql(sqlcmd, listParam);
             if (res == null)
             {
@@ -175,7 +176,7 @@ namespace Smart.API.Adapter.DataAccess {
 				while(eKeys.MoveNext()) {
 					string field = eKeys.Current.ToString();
 					if(primaryKey != field || !isAutoincrement) {
-						fields += ("[" + field + "],");
+						fields += (field + ",");
 						vals += string.Format("@{0},", field);
 						object val = recordField[eKeys.Current.ToString()];
 						param[i] = new SqlParameter("@" + field, val);
@@ -184,7 +185,7 @@ namespace Smart.API.Adapter.DataAccess {
 					}
 					else {
 						if(!isAutoincrement) {
-							fields += ("[" + field + "],");
+							fields += (field + ",");
 							vals += string.Format("@{0},", field);
 							object val = recordField[eKeys.Current.ToString()];
 							param[i] = new SqlParameter("@" + field, val);
@@ -220,7 +221,7 @@ namespace Smart.API.Adapter.DataAccess {
 			}
 			if(isAutoincrement)
 				recordField.Remove(primaryKey);
-			SqlParameter[] param = new SqlParameter[recordField.Count];
+            MySqlParameter[] param = new MySqlParameter[recordField.Count];
 
 			if(recordField.Count > 0)  //除主键外不为空则插入
             {
@@ -230,19 +231,19 @@ namespace Smart.API.Adapter.DataAccess {
 				while(eKeys.MoveNext()) {
 					string field = eKeys.Current.ToString();
 					if(primaryKey != field) {
-						fields += ("[" + field + "],");
+						fields += (field + ",");
 						vals += string.Format("@{0},", field);
 						object val = recordField[eKeys.Current.ToString()];
-						param[i] = new SqlParameter("@" + field, val);
+                        param[i] = new MySqlParameter("@" + field, val);
 
 						i++;
 					}
 					else {
 						if(!isAutoincrement) {
-							fields += ("[" + field + "],");
+							fields += (field + ",");
 							vals += string.Format("@{0},", field);
 							object val = recordField[eKeys.Current.ToString()];
-							param[i] = new SqlParameter("@" + field, val);
+                            param[i] = new MySqlParameter("@" + field, val);
 
 							i++;
 						}
@@ -276,7 +277,7 @@ namespace Smart.API.Adapter.DataAccess {
 				return false;
 			}
 			recordField.Remove(primaryKey);
-			SqlParameter[] param = new SqlParameter[recordField.Count + 1];
+            MySqlParameter[] param = new MySqlParameter[recordField.Count + 1];
 			int i = 0;
 
 			bool result = false;
@@ -287,14 +288,14 @@ namespace Smart.API.Adapter.DataAccess {
 					field = eKeys.Current.ToString();
 					if(primaryKey != field) {
 						val = recordField[eKeys.Current.ToString()];
-						setValue += string.Format("{0} = @{1},", ("[" + field + "]"), field);
-						param[i] = new SqlParameter(string.Format("@{0}", field), val);
+						setValue += string.Format("{0} = @{1},", (field), field);
+                        param[i] = new MySqlParameter(string.Format("@{0}", field), val);
 
 						i++;
 					}
 				}
 				string sql = string.Format("UPDATE {0} SET {1} WHERE {2} = @primaryKey ", targetTable, setValue.Substring(0, setValue.Length - 1), primaryKey);
-				param[recordField.Count] = new SqlParameter("@primaryKey", id);
+                param[recordField.Count] = new MySqlParameter("@primaryKey", id);
 				DbCommand command = db.GetSqlStringCommand(sql);
 				command.Parameters.AddRange(param);
 
@@ -420,14 +421,16 @@ namespace Smart.API.Adapter.DataAccess {
 
 			return new DataTable();
 		}
-		public SqlCommand GetSqlCommand(SqlConnection connection, SqlTransaction sqlTran, string CommandText, List<SqlParameter> ParameterList) {
-			SqlCommand command = new SqlCommand();
+        public MySqlCommand GetSqlCommand(MySqlConnection connection, MySqlTransaction sqlTran, string CommandText, List<MySqlParameter> ParameterList)
+        {
+            MySqlCommand command = new MySqlCommand();
 			command.Connection = connection;
 			command.CommandText = CommandText;
 			command.Transaction = sqlTran;
 			command.Parameters.Clear();
 			if(ParameterList != null && ParameterList.Count > 0) {
-				foreach(SqlParameter sqlpar in ParameterList) {
+                foreach (MySqlParameter sqlpar in ParameterList)
+                {
 					command.Parameters.Add(sqlpar);
 				}
 

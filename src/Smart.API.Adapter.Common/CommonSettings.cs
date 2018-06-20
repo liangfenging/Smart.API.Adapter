@@ -361,5 +361,38 @@ namespace Smart.API.Adapter.Common
                 return iThirdChargingIsOpenGate;
             }
         }
+
+
+
+        /// <summary>
+        /// 邮件标题
+        /// </summary>
+        public static string EmailTitle
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["EmailTitle"]))
+                {
+                    return ConfigurationManager.AppSettings["EmailTitle"];
+                }
+                return "EmailTitle";
+            }
+        }
+
+
+        /// <summary>
+        /// 邮件内容
+        /// </summary>
+        public static string EmailBody
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["EmailBody"]))
+                {
+                    return ConfigurationManager.AppSettings["EmailBody"];
+                }
+                return "EmailBody";
+            }
+        }
     }
 }

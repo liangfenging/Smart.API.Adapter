@@ -187,11 +187,13 @@ namespace Smart.API.Adapter.Biz
                         if (vehicleDb != null)
                         {
                             ve.CreateTime = vehicleDb.CreateTime;
+                            ve.UpdateTime = DateTime.Now;
                             dataBase.Update<VehicleInfoDb>(ve, v.vehicleNo);
                         }
                         else
                         {
                             ve.CreateTime = DateTime.Now;
+                            ve.UpdateTime = DateTime.Now;
                             dataBase.Insert<VehicleInfoDb>(ve);
                         }
                     }                   

@@ -368,11 +368,19 @@ namespace Smart.API.Adapter.Biz
             {
                 ICollection<VehicleInfo> VehicleInfoCollection = JDCommonSettings.ParkWhiteList;
                 bool bIsWhiteList = true;
-                var query = VehicleInfoCollection.Where(p => p.vehicleNo == inRecognitionRecord.plateNumber).FirstOrDefault();
-                if (query == null)
+                if (VehicleInfoCollection != null)
+                {
+                    var query = VehicleInfoCollection.Where(p => p.vehicleNo == inRecognitionRecord.plateNumber).FirstOrDefault();
+                    if (query == null)
+                    {
+                        bIsWhiteList = false;
+                    }
+                }
+                else
                 {
                     bIsWhiteList = false;
                 }
+               
                 apiBaseResult = PostInRecognition(inRecognitionRecord, businessType);
                 if (apiBaseResult.code != "0")//请求第三方接口失败
                 {
@@ -1267,7 +1275,7 @@ namespace Smart.API.Adapter.Biz
                     {
                         //发送邮件
                         SendMailHelper mail = new SendMailHelper();
-                        mail.SendMail();
+                        mail.SendMail(type.ToString());
                     }
                 }
             }

@@ -103,7 +103,7 @@ namespace Smart.API.Adapter.Biz
                     }
                     LogHelper.Error(messageError);
                     faliTimes = 0;
-                    mail.SendMail();
+                    mail.SendMail("心跳检测");
                 }
                 //timerHeart.Change(parkBiz.HeartInterval, Timeout.Infinite);
             }
@@ -258,7 +258,7 @@ namespace Smart.API.Adapter.Biz
                     message = string.Format("{0}:{1}出错超过5次,停止重试", DateTime.Now.ToString(), eventStr);
                     LogHelper.Error(message);
                     tryCount = 0;
-                    mail.SendMail();
+                    mail.SendMail(eventStr);
                 }
                 //如果出错5s后重试
                 timer.Change(parkBiz.HeartInterval, Timeout.Infinite);

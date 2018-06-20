@@ -45,6 +45,7 @@
         /// 支付反查
         /// </summary>
         PayCheck = 6,
+
     }
 
 }

@@ -8,6 +8,9 @@
     <_PublishTargetUrl>E:\京东项目\API</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
+    <File Include="bin/Config/JDParkXML.xml">
+      <publishTime>06/14/2018 15:57:35</publishTime>
+    </File>
     <File Include="bin/Config/Log4net.config">
       <publishTime>06/10/2018 15:17:47</publishTime>
     </File>
@@ -33,25 +36,25 @@
       <publishTime>08/03/2016 09:59:44</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Api.dll">
-      <publishTime>06/13/2018 20:09:13</publishTime>
+      <publishTime>06/20/2018 18:19:43</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Biz.dll">
-      <publishTime>06/13/2018 20:08:40</publishTime>
+      <publishTime>06/20/2018 18:19:41</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.BizCore.dll">
-      <publishTime>06/13/2018 20:08:39</publishTime>
+      <publishTime>06/20/2018 18:19:41</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Common.dll">
-      <publishTime>06/13/2018 20:08:40</publishTime>
+      <publishTime>06/20/2018 18:19:41</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.DataAccess.dll">
-      <publishTime>06/13/2018 20:08:39</publishTime>
+      <publishTime>06/20/2018 18:19:40</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Models.dll">
-      <publishTime>06/13/2018 20:08:38</publishTime>
+      <publishTime>06/20/2018 17:08:26</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Web.dll">
-      <publishTime>06/13/2018 20:08:40</publishTime>
+      <publishTime>06/20/2018 18:19:42</publishTime>
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
       <publishTime>08/03/2016 09:58:06</publishTime>
@@ -72,7 +75,7 @@
       <publishTime>08/03/2016 09:59:38</publishTime>
     </File>
     <File Include="Config/JDParkXML.xml">
-      <publishTime>06/12/2018 17:38:28</publishTime>
+      <publishTime>06/14/2018 15:57:35</publishTime>
     </File>
     <File Include="Config/Log4net.config">
       <publishTime>06/10/2018 15:17:47</publishTime>
@@ -87,7 +90,7 @@
       <publishTime>06/02/2018 13:51:14</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>06/13/2018 20:08:41</publishTime>
+      <publishTime>06/20/2018 18:19:44</publishTime>
     </File>
   </ItemGroup>
 </Project>
