@@ -29,5 +29,16 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
+
+        private int parkTotalCount = -1;
+
+        /// <summary>
+        /// 总车位数
+        /// </summary>
+        public int ParkTotalCount
+        {
+            get { return parkTotalCount; }
+            set { parkTotalCount = value; }
+        }
     }
 }

@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using Smart.API.Adapter.Biz;
 using System.Threading.Tasks;
 using Smart.API.Adapter.Models.Core;
+using Smart.API.Adapter.ThirdApp;
 
 namespace Smart.API.Adapter.Api.Controllers.V1
 {
@@ -19,7 +20,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
     /// </summary>
 
     public class ParkController : ApiControllerBase
-    {    
+    {
         /// <summary>
         /// 同步设备状态，jielink+调用此接口
         /// </summary>
@@ -27,8 +28,8 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost, WriteLog, ActionName("equipmentstatus")]
         public HttpResponseMessage equipmentstatus(List<EquipmentStatus> LEquipmentStatus)
-        {       
-            APIResultBase result = new JDParkBiz().PostEquipmentStatus(LEquipmentStatus);
+        {
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostEquipmentStatus(LEquipmentStatus);
             return Request.CreateResponse(result);
         }
 
@@ -40,7 +41,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("inrecognition")]
         public HttpResponseMessage inrecognition(InRecognitionRecord requestdata)
         {
-            APIResultBase result = new JDParkBiz().CheckWhiteList(requestdata, enumJDBusinessType.InRecognition);
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostInRecognition(requestdata, enumJDBusinessType.InRecognition);
             return Request.CreateResponse(result);
         }
 
@@ -52,7 +53,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("carin")]
         public HttpResponseMessage carin(InCrossRecord requestdata)
         {
-            APIResultBase result = new JDParkBiz().PostCarIn(requestdata, enumJDBusinessType.InCross);
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostCarIn(requestdata, enumJDBusinessType.InCross);
             return Request.CreateResponse(result);
         }
 
@@ -64,7 +65,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("outrecognition")]
         public HttpResponseMessage outrecognition(OutRecognitionRecord requestdata)
         {
-            APIResultBase result = new JDParkBiz().PostOutRecognition(requestdata, enumJDBusinessType.OutRecognition);
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostOutRecognition(requestdata, enumJDBusinessType.OutRecognition);
             return Request.CreateResponse(result);
         }
 
@@ -76,7 +77,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("carout")]
         public HttpResponseMessage carout(OutCrossRecord requestdata)
         {
-            APIResultBase result = new JDParkBiz().PostCarOut(requestdata, enumJDBusinessType.OutCross);
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostCarOut(requestdata, enumJDBusinessType.OutCross);
             return Request.CreateResponse(result);
         }
 
@@ -88,7 +89,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("thirdcharging")]
         public HttpResponseMessage thirdcharging(RequestThirdCharging requestdata)
         {
-            APIResultBase result = new JDParkBiz().ThirdCharging(requestdata);
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).ThirdCharging(requestdata);
             return Request.CreateResponse(result);
         }
 
@@ -100,7 +101,7 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("paycheck")]
         public HttpResponseMessage paycheck(RequestPayCheck requestdata)
         {
-            APIResultBase result = new JDParkBiz().PayCheck(requestdata);
+            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PayCheck(requestdata);
             return Request.CreateResponse(result);
         }
 

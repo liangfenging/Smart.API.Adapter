@@ -155,6 +155,10 @@
       <Project>{61d25332-37c7-48ca-83d6-8731893bf032}</Project>
       <Name>Smart.API.Adapter.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Smart.API.Adapter.ThirdApp\Smart.API.Adapter.ThirdApp.csproj">
+      <Project>{9b2c270c-df75-4b90-a1ad-4d98c0854497}</Project>
+      <Name>Smart.API.Adapter.ThirdApp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Smart.API.Adapter.Web\Smart.API.Adapter.Web.csproj">
       <Project>{5620c2b1-20e3-46fb-9988-f64327016b1b}</Project>
       <Name>Smart.API.Adapter.Web</Name>

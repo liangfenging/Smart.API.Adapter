@@ -207,83 +207,6 @@ namespace Smart.API.Adapter.Common
         }
 
         /// <summary>
-        /// 京东定义的客户端系统编码
-        /// </summary>
-        public static string BaseAddressJd
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["BaseAddressJd"]))
-                {
-                    return ConfigurationManager.AppSettings["BaseAddressJd"].TrimEnd('/') + "/";
-                }
-                return "http://test.spl.jd.com/external/";
-            }
-        }
-
-        /// <summary>
-        /// Vesion xml地址
-        /// </summary>
-        public static string ParkXmlAddress
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["JdParkXml"]))
-                {
-                    return ConfigurationManager.AppSettings["JdParkXml"];
-                }
-                return "/Config/ParkVersion.xml";
-            }
-        }
-
-        /// <summary>
-        /// 京东定义的客户端系统编码
-        /// </summary>
-        public static string SysId
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["SysId"]))
-                {
-                    return ConfigurationManager.AppSettings["SysId"];
-                }
-                return "0";
-            }
-        }
-
-        /// <summary>
-        /// 京东车场Code
-        /// </summary>
-        public static string ParkLotCode
-        {
-            get
-            {
-                string parkLotCode = ConfigurationManager.AppSettings["ParkLotCode"];
-                if (string.IsNullOrWhiteSpace(parkLotCode))
-                {
-                    parkLotCode = "1";
-                }
-                return parkLotCode;
-            }
-        }
-
-        /// <summary>
-        /// 访问京东接口Token
-        /// </summary>
-        public static string Token
-        {
-            get
-            {
-                string token = ConfigurationManager.AppSettings["Token"];
-                if (string.IsNullOrWhiteSpace(token))
-                {
-                    token = "1";
-                }
-                return token;
-            }
-        }
-
-        /// <summary>
         /// 请求第三方超时时间，默认5秒
         /// </summary>
         public static int PostTimeOut
@@ -301,36 +224,7 @@ namespace Smart.API.Adapter.Common
             }
         }
 
-        private static JDParkConfig _JDParkConfig;
-        public static JDParkConfig JDParkConfigInfo
-        {
-            get
-            {
-                if (_JDParkConfig == null)
-                {
-                    _JDParkConfig = XMLHelper.FromXMLToObject<JDParkConfig>(AppDomain.CurrentDomain.BaseDirectory + "\\Config\\JDParkXML.xml");
-                }
-                return _JDParkConfig;
-            }
-        }
 
-        /// <summary>
-        /// JD配置参数
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static JDTimer JDTimerInfo(enumJDBusinessType type)
-        {
-            JDParkConfig jdConfig = JDParkConfigInfo;
-            if (jdConfig != null && jdConfig.LJDTime != null
-                && jdConfig.LJDTime.Count > 0)
-            {
-                //通过xml配置文件获取 Timer配置
-                return jdConfig.LJDTime[(int)type - 1];
-
-            }
-            return null;
-        }
 
         /// <summary>
         /// 请求第三方计费错误，默认返回码
@@ -392,6 +286,22 @@ namespace Smart.API.Adapter.Common
                     return ConfigurationManager.AppSettings["EmailBody"];
                 }
                 return "EmailBody";
+            }
+        }
+
+
+        /// <summary>
+        /// 接入的第三方程序
+        /// 1：京东车场
+        /// </summary>
+        public static int ThirdApp
+        {
+            get
+            {
+                string ThirdApp = ConfigurationManager.AppSettings["ThirdApp"];
+                int iThirdApp = 0;
+                int.TryParse(ThirdApp, out iThirdApp);
+                return iThirdApp;
             }
         }
     }

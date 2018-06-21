@@ -48,6 +48,7 @@ namespace Smart.API.Adapter.Models.Core
 
         /// <summary>
         /// 支付二维码链接
+        /// 该属性仅京东停车场使用
         /// </summary>
         public string payQrcodeLink
         {

@@ -38,12 +38,12 @@ namespace Smart.API.Adapter.Biz
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = DefaultTimeOut;
-                client.BaseAddress = new Uri(CommonSettings.BaseAddressJd);
+                client.BaseAddress = new Uri(JDCommonSettings.BaseAddressJd);
                 var content = new FormUrlEncodedContent(new Dictionary<string, string>()
                 {
-                    {"sysId", CommonSettings.SysId},  
-                    {"parkLotCode", CommonSettings.ParkLotCode}  ,
-                    {"token", CommonSettings.Token}                 
+                    {"sysId", JDCommonSettings.SysId},  
+                    {"parkLotCode", JDCommonSettings.ParkLotCode}  ,
+                    {"token", JDCommonSettings.Token}                 
                 });
                 var result = client.PostAsync("external/heartbeatCheck", content).Result;
                 HeartVersion heartJd = result.Content.ReadAsStringAsync().Result.FromJson<HeartVersion>();
@@ -53,13 +53,13 @@ namespace Smart.API.Adapter.Biz
         }
         public HeartVersion HeartBeatCheckJd2()
         {
-            InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+            InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
 
             HeartReq req = new HeartReq()
             {
-                sysId = CommonSettings.SysId,
-                parkLotCode = CommonSettings.ParkLotCode,
-                token = CommonSettings.Token
+                sysId = JDCommonSettings.SysId,
+                parkLotCode = JDCommonSettings.ParkLotCode,
+                token = JDCommonSettings.Token
             };
 
             ApiResult<HeartVersion> result = requestApi.PostRaw<HeartVersion>("external/heartbeatCheck", req);
@@ -80,12 +80,12 @@ namespace Smart.API.Adapter.Biz
             using (HttpClient client = new HttpClient())
             {
                 client.Timeout = DefaultTimeOut;
-                client.BaseAddress = new Uri(CommonSettings.BaseAddressJd);
+                client.BaseAddress = new Uri(JDCommonSettings.BaseAddressJd);
                 var content = new FormUrlEncodedContent(new Dictionary<string, string>()
                 {
-                    {"parkLotCode", CommonSettings.ParkLotCode},  
+                    {"parkLotCode", JDCommonSettings.ParkLotCode},  
                     {"version", version}  ,
-                    {"token", CommonSettings.Token}                 
+                    {"token", JDCommonSettings.Token}                 
                 });
                 var result = client.PostAsync("external/queryVehicleLegality", content).Result;
 
@@ -101,7 +101,7 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public VehicleLegality QueryVehicleLegalityJd2(string version)
         {
-            InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+            InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
             WhiteListReq req = new WhiteListReq();
             req.version = version;
             ApiResult<VehicleLegality> result = requestApi.PostRaw<VehicleLegality>("external/queryVehicleLegality", req);
@@ -130,11 +130,11 @@ namespace Smart.API.Adapter.Biz
                 client.Timeout = DefaultTimeOut;
                 LogHelper.Info("PostRequest:modifyParkLotRemainCount" + remainCountReq.ToJson());//记录日志
 
-                client.BaseAddress = new Uri(CommonSettings.BaseAddressJd);
+                client.BaseAddress = new Uri(JDCommonSettings.BaseAddressJd);
                 var content = new FormUrlEncodedContent(new Dictionary<string, string>()
                 {
                     {"param", remainCountReq.ToJson()},  
-                    {"token", CommonSettings.Token}                 
+                    {"token", JDCommonSettings.Token}                 
                 });
                 var result = await client.PostAsync("external/modifyParkLotRemainCount", content);
 
@@ -151,11 +151,11 @@ namespace Smart.API.Adapter.Biz
                 client.Timeout = DefaultTimeOut;
                 LogHelper.Info("PostRequest:modifyParkLotTotalCount" + totalCountReq.ToJson());//记录日志
 
-                client.BaseAddress = new Uri(CommonSettings.BaseAddressJd);
+                client.BaseAddress = new Uri(JDCommonSettings.BaseAddressJd);
                 var content = new FormUrlEncodedContent(new Dictionary<string, string>()
                 {
                     {"param", totalCountReq.ToJson()},  
-                    {"token", CommonSettings.Token}                 
+                    {"token", JDCommonSettings.Token}                 
                 });
                 var result = await client.PostAsync("external/modifyParkLotTotalCount", content);
 
@@ -183,14 +183,14 @@ namespace Smart.API.Adapter.Biz
         public APIResultBase PostEquipmentStatus(List<EquipmentStatus> LEquipmentStatus)
         {
             APIResultBase apiBaseResult = new APIResultBase();
-            InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+            InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
             RequestEquipmentInfo requestEquipmentInfo = new RequestEquipmentInfo();
 
             try
             {
                 bool bReTry = true;
                 string sReType = "unavailable";
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(enumJDBusinessType.EquipmentStatus);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(enumJDBusinessType.EquipmentStatus);
                 if (dicReConnectInfo.ContainsKey((int)enumJDBusinessType.EquipmentStatus))
                 {
                     bReTry = dicReConnectInfo[(int)enumJDBusinessType.EquipmentStatus].IsReTry;
@@ -459,11 +459,11 @@ namespace Smart.API.Adapter.Biz
         public APIResultBase PostInRecognition(InRecognitionRecord inRecognitionRecord, enumJDBusinessType businessType)
         {
             APIResultBase apiBaseResult = new APIResultBase();
-            apiBaseResult.code = "99";//99代表数据需要重传 ,发请重试，频率是每5秒重试一次。
+            apiBaseResult.code = "99";//99代表数据需要重传 ,发请重试，频率是每20秒重试一次。
             apiBaseResult.msg = "";
             try
             {
-                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 RequestVehicleLog reqVehicleLog = new RequestVehicleLog();
                 reqVehicleLog.logNo = inRecognitionRecord.inRecordId;
                 reqVehicleLog.actionDescId = "100";
@@ -490,7 +490,7 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.resend = "0";//补发的记录
                 }
                 bool bReTry = true;
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(businessType);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
                 string sReType = "unavailable";
                 if (dicReConnectInfo.ContainsKey((int)businessType))
                 {
@@ -568,7 +568,7 @@ namespace Smart.API.Adapter.Biz
             apiBaseResult.msg = "";
             try
             {
-                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 RequestVehicleLog reqVehicleLog = new RequestVehicleLog();
                 reqVehicleLog.logNo = inCrossRecord.inRecordId;
                 reqVehicleLog.actionDescId = "1";//自动抬杆进入停车场
@@ -608,7 +608,7 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.resend = "0";//补发的记录
                 }
                 bool bReTry = true;
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(businessType);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
                 string sReType = "unavailable";
                 if (dicReConnectInfo.ContainsKey((int)businessType))
                 {
@@ -684,11 +684,11 @@ namespace Smart.API.Adapter.Biz
         public APIResultBase PostOutRecognition(OutRecognitionRecord outRecognitionRecord, enumJDBusinessType businessType)
         {
             APIResultBase apiBaseResult = new APIResultBase();
-            apiBaseResult.code = "99";//99代表数据需要重传 ,jielink+中心发请重试，频率是每5秒重试一次。
+            apiBaseResult.code = "99";//99代表数据需要重传 ,jielink+中心发请重试，频率是每20秒重试一次。
             apiBaseResult.msg = "";
             try
             {
-                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 RequestVehicleLog reqVehicleLog = new RequestVehicleLog();
                 reqVehicleLog.logNo = string.IsNullOrWhiteSpace(outRecognitionRecord.inRecordId) ? outRecognitionRecord.outRecordId : outRecognitionRecord.inRecordId;
                 reqVehicleLog.actionDescId = "101";
@@ -716,7 +716,7 @@ namespace Smart.API.Adapter.Biz
                 //}
 
                 bool bReTry = true;
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(businessType);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
                 string sReType = "unavailable";
                 if (dicReConnectInfo.ContainsKey((int)businessType))
                 {
@@ -820,7 +820,7 @@ namespace Smart.API.Adapter.Biz
             apiBaseResult.msg = "";
             try
             {
-                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 RequestVehicleLog reqVehicleLog = new RequestVehicleLog();
                 reqVehicleLog.logNo = string.IsNullOrWhiteSpace(outCrossRecord.inRecordId) ? outCrossRecord.outRecordId : outCrossRecord.inRecordId;
                 reqVehicleLog.reasonCode = "";
@@ -862,7 +862,7 @@ namespace Smart.API.Adapter.Biz
                 }
 
                 bool bReTry = true;
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(businessType);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
                 string sReType = "unavailable";
                 if (dicReConnectInfo.ContainsKey((int)businessType))
                 {
@@ -877,7 +877,6 @@ namespace Smart.API.Adapter.Biz
                 {
                     JDRePostUpdatePostTime(businessType, sReType);
                     apiBaseResult.msg = "等待第三方重试的时间间隔";
-                    System.Threading.Thread.Sleep(100);
                     return apiBaseResult;
                 }
                 //TODO:出场成功，先查询reasonCode和reason ，进行赋值，并将JD账单记录进行归档,
@@ -1029,9 +1028,9 @@ namespace Smart.API.Adapter.Biz
                 {
                     queryPay.payType = model.ResultCode;
                 }
-                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJd);
+                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 ApiResult<ResponseJDQueryPay> apiResult = new ApiResult<ResponseJDQueryPay>();
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(enumJDBusinessType.PayCheck);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(enumJDBusinessType.PayCheck);
 
                 try
                 {
@@ -1238,7 +1237,7 @@ namespace Smart.API.Adapter.Biz
             {
                 int ReConnectCount = 5;
                 bool bSendEmail = false;
-                JDTimer jdTimer = CommonSettings.JDTimerInfo(type);
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(type);
 
                 //通过xml配置文件获取重试的次数
                 ReConnectCount = jdTimer.ReConnectCount;
@@ -1293,7 +1292,7 @@ namespace Smart.API.Adapter.Biz
         /// <param name="failType"></param>
         private void JDRePostUpdatePostTime(enumJDBusinessType type, string failType)
         {
-            JDTimer jdTimer = CommonSettings.JDTimerInfo(type);
+            JDTimer jdTimer = JDCommonSettings.JDTimerInfo(type);
             if (failType == "fail")
             {
                 if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.FailTimeSpan)
@@ -1347,6 +1346,11 @@ namespace Smart.API.Adapter.Biz
             if (requestdata.ClearWhiteList)
             {
                 JDCommonSettings.ReLoadWhiteList();//重新加载白名单缓存
+            }
+
+            if (requestdata.ParkTotalCount > -1)
+            {
+                JDCommonSettings.ParkTotalCount = requestdata.ParkTotalCount;
             }
 
             ParkBiz.overFlowCount = requestdata.OverFlowCount;

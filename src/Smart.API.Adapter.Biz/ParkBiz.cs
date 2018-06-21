@@ -196,7 +196,7 @@ namespace Smart.API.Adapter.Biz
                             ve.UpdateTime = DateTime.Now;
                             dataBase.Insert<VehicleInfoDb>(ve);
                         }
-                    }                   
+                    }
                     return true;
                 }
                 catch (Exception ex)
@@ -273,7 +273,7 @@ namespace Smart.API.Adapter.Biz
 
                     //转换为京东车位数据
                     totalReq = new TotalCountReq();
-                    totalReq.parkLotCode = CommonSettings.ParkLotCode;
+                    totalReq.parkLotCode = JDCommonSettings.ParkLotCode;
                     totalReq.totalCount = parkPlaceRes.data.parkCount.ToString();
                     totalReq.data = new List<TotalInfo>();
 
@@ -282,7 +282,28 @@ namespace Smart.API.Adapter.Biz
                         totalReq.data.Add(new TotalInfo() { regionCode = x.areaNo, count = x.areaParkCount.ToString() });
                     });
 
-                    JDCommonSettings.ParkTotalCount = parkPlaceRes.data.parkCount;
+                    try
+                    {
+                        //总车位数，发生变化，通知api
+                        if (JDCommonSettings.ParkTotalCount != parkPlaceRes.data.parkCount)
+                        {
+                            //通知api 总车位数
+                            ApiGetHeart heart = new ApiGetHeart();
+                            heart.ClearWhiteList = false;
+                            heart.OverFlowCount = ParkBiz.overFlowCount;
+                            heart.ClearCache = false;
+                            heart.ParkTotalCount = parkPlaceRes.data.parkCount;
+                            InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(CommonSettings.RootUrl);
+                            httpApi.PostRaw("Park/heart", heart);
+                        }
+
+                        JDCommonSettings.ParkTotalCount = parkPlaceRes.data.parkCount;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Error("总车位数通知API时错误,",ex);
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -365,7 +386,7 @@ namespace Smart.API.Adapter.Biz
 
                     //转换为京东车位数据
                     totalReq = new RemainCountReq();
-                    totalReq.parkLotCode = CommonSettings.ParkLotCode;
+                    totalReq.parkLotCode = JDCommonSettings.ParkLotCode;
                     totalReq.remainTotalCount = parkPlaceRes.data.parkRemainCount.ToString();
                     totalReq.data = new List<RemainInfo>();
                     parkPlaceRes.data.areaParkList.ForEach(x =>
@@ -419,7 +440,7 @@ namespace Smart.API.Adapter.Biz
         public ParkPlaceRes GetParkPlaceCount()
         {
             //请求JieLink车场数据，parkId使用不到
-            string parkId = CommonSettings.ParkLotCode; ;
+            string parkId = JDCommonSettings.ParkLotCode; ;
             InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS);
             var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", parkId);
             if (!res.successed)
