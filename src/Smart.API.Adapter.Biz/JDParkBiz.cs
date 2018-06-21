@@ -600,7 +600,7 @@ namespace Smart.API.Adapter.Biz
 
                 reqVehicleLog.vehicleNo = ConvJdPlateNo(inCrossRecord.plateNumber);
                 reqVehicleLog.actionTime = inCrossRecord.inTime;
-                reqVehicleLog.actionPositionCode = inCrossRecord.InDeviceId;
+                reqVehicleLog.actionPositionCode = inCrossRecord.inDeviceId;
                 reqVehicleLog.actionPosition = inCrossRecord.inDeviceName;
                 reqVehicleLog.resend = "1";
                 if (inCrossRecord.reTrySend == "1")
