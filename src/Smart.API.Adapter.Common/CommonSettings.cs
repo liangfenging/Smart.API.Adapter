@@ -97,6 +97,23 @@ namespace Smart.API.Adapter.Common
             }
         }
 
+
+        /// <summary>
+        /// 邮件启用开关
+        /// </summary>
+        public static bool EmailEnable
+        {
+            get
+            {
+                bool emailEnable = false;
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["EmailEnable"]))
+                {
+                    bool.TryParse(ConfigurationManager.AppSettings["EmailEnable"], out emailEnable);
+                }
+                return emailEnable;
+            }
+        }
+
         /// <summary>
         /// 邮件地址
         /// </summary>
@@ -301,6 +318,12 @@ namespace Smart.API.Adapter.Common
                 string ThirdApp = ConfigurationManager.AppSettings["ThirdApp"];
                 int iThirdApp = 0;
                 int.TryParse(ThirdApp, out iThirdApp);
+
+                if (iThirdApp <=0)
+                {
+                    iThirdApp = 1;
+                }
+
                 return iThirdApp;
             }
         }

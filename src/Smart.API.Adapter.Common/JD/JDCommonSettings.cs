@@ -172,21 +172,6 @@ namespace Smart.API.Adapter.Common.JD
         }
 
         /// <summary>
-        /// Vesion xml地址
-        /// </summary>
-        public static string ParkXmlAddress
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["JdParkXml"]))
-                {
-                    return ConfigurationManager.AppSettings["JdParkXml"];
-                }
-                return "/Config/ParkVersion.xml";
-            }
-        }
-
-        /// <summary>
         /// 京东定义的客户端系统编码
         /// </summary>
         public static string SysId

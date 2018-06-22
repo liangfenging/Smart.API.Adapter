@@ -34,6 +34,12 @@ namespace Smart.API.Adapter.Common
         {
             try
             {
+                if (!CommonSettings.EmailEnable)//未开启邮件功能
+                {
+                    return;
+                }
+
+
                 MailHelper mail = new MailHelper(isAsync);
                 mail.From = CommonSettings.EmailUserName;
 
