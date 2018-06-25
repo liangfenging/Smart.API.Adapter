@@ -48,12 +48,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\Infrastructure.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Infrastructure.Logging">
-      <HintPath>..\..\lib\Infrastructure.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Infrastructure.Logging.Entity">
-      <HintPath>..\..\lib\Infrastructure.Logging.Entity.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -123,6 +117,10 @@
     <ProjectReference Include="..\Smart.API.Adapter.Common\Smart.API.Adapter.Common.csproj">
       <Project>{3c2de953-e82e-42b4-b093-91e30ad2fb28}</Project>
       <Name>Smart.API.Adapter.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Smart.API.Adapter.Models\Smart.API.Adapter.Models.csproj">
+      <Project>{61d25332-37c7-48ca-83d6-8731893bf032}</Project>
+      <Name>Smart.API.Adapter.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

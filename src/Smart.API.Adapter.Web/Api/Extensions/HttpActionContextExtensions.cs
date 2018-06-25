@@ -1,6 +1,5 @@
-﻿using Infrastructure.Logging;
-using Infrastructure.Logging.Entity;
-using Smart.API.Adapter.Common;
+﻿using Smart.API.Adapter.Common;
+using Smart.API.Adapter.Models;
 using System;
 using System.ComponentModel;
 using System.Globalization;

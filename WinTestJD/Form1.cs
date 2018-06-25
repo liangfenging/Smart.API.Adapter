@@ -1,4 +1,5 @@
-﻿using Smart.API.Adapter.Biz;
+﻿using Smart.API.Adapter.ActiveMQ;
+using Smart.API.Adapter.Biz;
 using Smart.API.Adapter.Common;
 using Smart.API.Adapter.Models;
 using Smart.API.Adapter.Models.Core;
@@ -209,6 +210,34 @@ namespace WinTestJD
             APIResultBase result = new JDParkBiz().ThirdCharging(thirdCharing);
             richText_Msg.Text = thirdCharing.ToJson() + "\r\n" + richText_Msg.Text;
             richText_Msg.Text = result.ToJson() + "\r\n" + richText_Msg.Text;
+        }
+
+        private void btn_SendMQ_Click(object sender, EventArgs e)
+        {
+            ActiveMQSender.SendMQMessage(txt_MQMsg.Text);
+        }
+
+        private void btn_ReciveMQ_Click(object sender, EventArgs e)
+        {
+            ActiveMQReciver reciver = new ActiveMQReciver();
+            reciver.StartReciveMsg();
+            reciver.OnActiveMQReciveMsg +=reciver_OnActiveMQReciveMsg;
+        }
+
+        private void reciver_OnActiveMQReciveMsg(string message)
+        {
+            Action action = delegate()
+            {
+                this.richText_ReciveMQ.Text = string.Format("{0}\r\n", message) + this.richText_ReciveMQ.Text;
+            };
+            if (!this.InvokeRequired)
+            {
+                action.Invoke();
+            }
+            else
+            {
+                this.BeginInvoke(action);
+            }
         }
 
 

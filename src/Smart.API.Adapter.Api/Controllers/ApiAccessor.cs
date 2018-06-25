@@ -65,8 +65,6 @@ namespace Smart.API.Adapter.Api.Controllers {
 				return result;
 			}
 
-			Infrastructure.Logging.TextLogger.WriteLog("Smart.API.Adapter.Api", "Smart.API.Adapter.Api plainText:" + plainText + "  serverSign:" + serverSign + " sign:" + sign);
-
 			if(!String.Equals(serverSign, sign,
 				StringComparison.CurrentCultureIgnoreCase)) {
 				result.Code = "ILLEGAL_SIGN";

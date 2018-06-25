@@ -47,12 +47,6 @@
     <Reference Include="Infrastructure.Common">
       <HintPath>..\..\lib\Infrastructure.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Infrastructure.Logging">
-      <HintPath>..\..\lib\Infrastructure.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Infrastructure.Logging.Entity">
-      <HintPath>..\..\lib\Infrastructure.Logging.Entity.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\lib\log4net.dll</HintPath>
     </Reference>

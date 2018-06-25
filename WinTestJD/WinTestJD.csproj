@@ -93,6 +93,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\src\Smart.API.Adapter.ActiveMQ\Smart.API.Adapter.ActiveMQ.csproj">
+      <Project>{1c633ea5-8cbb-47cd-aa4e-c75575398747}</Project>
+      <Name>Smart.API.Adapter.ActiveMQ</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\Smart.API.Adapter.Biz\Smart.API.Adapter.Biz.csproj">
       <Project>{67b670a1-52fb-4f76-8cfe-88793e7bd600}</Project>
       <Name>Smart.API.Adapter.Biz</Name>

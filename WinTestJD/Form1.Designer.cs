@@ -35,25 +35,31 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.btn_InRecognition = new System.Windows.Forms.Button();
-            this.btn_InCross = new System.Windows.Forms.Button();
-            this.btn_OutRecognition = new System.Windows.Forms.Button();
-            this.btn_OutCross = new System.Windows.Forms.Button();
-            this.btn_PayCheck = new System.Windows.Forms.Button();
-            this.btn_ThirdCharging = new System.Windows.Forms.Button();
-            this.txt_plateNumber = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.richText_Msg = new System.Windows.Forms.RichTextBox();
-            this.txt_LogNo = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.btn_WhiteList = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txt_LogNo = new System.Windows.Forms.TextBox();
+            this.richText_Msg = new System.Windows.Forms.RichTextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.txt_EventType = new System.Windows.Forms.TextBox();
             this.txt_Remark = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.txt_plateNumber = new System.Windows.Forms.TextBox();
+            this.btn_ThirdCharging = new System.Windows.Forms.Button();
+            this.btn_PayCheck = new System.Windows.Forms.Button();
+            this.btn_OutCross = new System.Windows.Forms.Button();
+            this.btn_OutRecognition = new System.Windows.Forms.Button();
+            this.btn_InCross = new System.Windows.Forms.Button();
+            this.btn_WhiteList = new System.Windows.Forms.Button();
+            this.btn_InRecognition = new System.Windows.Forms.Button();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btn_SendMQ = new System.Windows.Forms.Button();
+            this.txt_MQMsg = new System.Windows.Forms.TextBox();
+            this.btn_ReciveMQ = new System.Windows.Forms.Button();
+            this.richText_ReciveMQ = new System.Windows.Forms.RichTextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -100,6 +106,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Location = new System.Drawing.Point(6, 6);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -115,7 +122,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(689, 411);
+            this.tabPage1.Size = new System.Drawing.Size(783, 473);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "基础业务";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -146,97 +153,14 @@
             this.tabPage2.Text = "车场业务";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // btn_InRecognition
+            // label3
             // 
-            this.btn_InRecognition.Location = new System.Drawing.Point(124, 6);
-            this.btn_InRecognition.Name = "btn_InRecognition";
-            this.btn_InRecognition.Size = new System.Drawing.Size(72, 27);
-            this.btn_InRecognition.TabIndex = 0;
-            this.btn_InRecognition.Text = "到达入口";
-            this.btn_InRecognition.UseVisualStyleBackColor = true;
-            this.btn_InRecognition.Click += new System.EventHandler(this.btn_InRecognition_Click);
-            // 
-            // btn_InCross
-            // 
-            this.btn_InCross.Location = new System.Drawing.Point(212, 6);
-            this.btn_InCross.Name = "btn_InCross";
-            this.btn_InCross.Size = new System.Drawing.Size(94, 30);
-            this.btn_InCross.TabIndex = 0;
-            this.btn_InCross.Text = "进入停车场";
-            this.btn_InCross.UseVisualStyleBackColor = true;
-            this.btn_InCross.Click += new System.EventHandler(this.btn_InCross_Click);
-            // 
-            // btn_OutRecognition
-            // 
-            this.btn_OutRecognition.Location = new System.Drawing.Point(321, 8);
-            this.btn_OutRecognition.Name = "btn_OutRecognition";
-            this.btn_OutRecognition.Size = new System.Drawing.Size(92, 28);
-            this.btn_OutRecognition.TabIndex = 0;
-            this.btn_OutRecognition.Text = "到达出口";
-            this.btn_OutRecognition.UseVisualStyleBackColor = true;
-            this.btn_OutRecognition.Click += new System.EventHandler(this.btn_OutRecognition_Click);
-            // 
-            // btn_OutCross
-            // 
-            this.btn_OutCross.Location = new System.Drawing.Point(436, 8);
-            this.btn_OutCross.Name = "btn_OutCross";
-            this.btn_OutCross.Size = new System.Drawing.Size(87, 26);
-            this.btn_OutCross.TabIndex = 0;
-            this.btn_OutCross.Text = "离开停车场";
-            this.btn_OutCross.UseVisualStyleBackColor = true;
-            this.btn_OutCross.Click += new System.EventHandler(this.btn_OutCross_Click);
-            // 
-            // btn_PayCheck
-            // 
-            this.btn_PayCheck.Location = new System.Drawing.Point(548, 9);
-            this.btn_PayCheck.Name = "btn_PayCheck";
-            this.btn_PayCheck.Size = new System.Drawing.Size(87, 27);
-            this.btn_PayCheck.TabIndex = 0;
-            this.btn_PayCheck.Text = "查询支付结果";
-            this.btn_PayCheck.UseVisualStyleBackColor = true;
-            this.btn_PayCheck.Click += new System.EventHandler(this.btn_PayCheck_Click);
-            // 
-            // btn_ThirdCharging
-            // 
-            this.btn_ThirdCharging.Location = new System.Drawing.Point(663, 9);
-            this.btn_ThirdCharging.Name = "btn_ThirdCharging";
-            this.btn_ThirdCharging.Size = new System.Drawing.Size(99, 28);
-            this.btn_ThirdCharging.TabIndex = 0;
-            this.btn_ThirdCharging.Text = "请求第三方计费";
-            this.btn_ThirdCharging.UseVisualStyleBackColor = true;
-            this.btn_ThirdCharging.Click += new System.EventHandler(this.btn_ThirdCharging_Click);
-            // 
-            // txt_plateNumber
-            // 
-            this.txt_plateNumber.Location = new System.Drawing.Point(103, 45);
-            this.txt_plateNumber.Name = "txt_plateNumber";
-            this.txt_plateNumber.Size = new System.Drawing.Size(112, 21);
-            this.txt_plateNumber.TabIndex = 1;
-            this.txt_plateNumber.Text = "粤B512NA";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(46, 54);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "车牌号";
-            // 
-            // richText_Msg
-            // 
-            this.richText_Msg.Location = new System.Drawing.Point(6, 107);
-            this.richText_Msg.Name = "richText_Msg";
-            this.richText_Msg.Size = new System.Drawing.Size(770, 358);
-            this.richText_Msg.TabIndex = 3;
-            this.richText_Msg.Text = "";
-            // 
-            // txt_LogNo
-            // 
-            this.txt_LogNo.Location = new System.Drawing.Point(569, 45);
-            this.txt_LogNo.Name = "txt_LogNo";
-            this.txt_LogNo.Size = new System.Drawing.Size(183, 21);
-            this.txt_LogNo.TabIndex = 4;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(255, 48);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(53, 12);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "事件类型";
             // 
             // label2
             // 
@@ -247,24 +171,38 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "LogNo";
             // 
-            // btn_WhiteList
+            // txt_LogNo
             // 
-            this.btn_WhiteList.Location = new System.Drawing.Point(15, 8);
-            this.btn_WhiteList.Name = "btn_WhiteList";
-            this.btn_WhiteList.Size = new System.Drawing.Size(89, 27);
-            this.btn_WhiteList.TabIndex = 0;
-            this.btn_WhiteList.Text = "白名单检测";
-            this.btn_WhiteList.UseVisualStyleBackColor = true;
-            this.btn_WhiteList.Click += new System.EventHandler(this.btn_WhiteList_Click);
+            this.txt_LogNo.Location = new System.Drawing.Point(569, 45);
+            this.txt_LogNo.Name = "txt_LogNo";
+            this.txt_LogNo.Size = new System.Drawing.Size(183, 21);
+            this.txt_LogNo.TabIndex = 4;
             // 
-            // label3
+            // richText_Msg
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(255, 48);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 12);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "事件类型";
+            this.richText_Msg.Location = new System.Drawing.Point(6, 107);
+            this.richText_Msg.Name = "richText_Msg";
+            this.richText_Msg.Size = new System.Drawing.Size(770, 358);
+            this.richText_Msg.TabIndex = 3;
+            this.richText_Msg.Text = "";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(46, 83);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(53, 12);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "开闸原因";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(46, 54);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "车牌号";
             // 
             // txt_EventType
             // 
@@ -282,14 +220,131 @@
             this.txt_Remark.TabIndex = 1;
             this.txt_Remark.Text = "访客车";
             // 
-            // label4
+            // txt_plateNumber
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(46, 83);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 12);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "开闸原因";
+            this.txt_plateNumber.Location = new System.Drawing.Point(103, 45);
+            this.txt_plateNumber.Name = "txt_plateNumber";
+            this.txt_plateNumber.Size = new System.Drawing.Size(112, 21);
+            this.txt_plateNumber.TabIndex = 1;
+            this.txt_plateNumber.Text = "粤B512NA";
+            // 
+            // btn_ThirdCharging
+            // 
+            this.btn_ThirdCharging.Location = new System.Drawing.Point(663, 9);
+            this.btn_ThirdCharging.Name = "btn_ThirdCharging";
+            this.btn_ThirdCharging.Size = new System.Drawing.Size(99, 28);
+            this.btn_ThirdCharging.TabIndex = 0;
+            this.btn_ThirdCharging.Text = "请求第三方计费";
+            this.btn_ThirdCharging.UseVisualStyleBackColor = true;
+            this.btn_ThirdCharging.Click += new System.EventHandler(this.btn_ThirdCharging_Click);
+            // 
+            // btn_PayCheck
+            // 
+            this.btn_PayCheck.Location = new System.Drawing.Point(548, 9);
+            this.btn_PayCheck.Name = "btn_PayCheck";
+            this.btn_PayCheck.Size = new System.Drawing.Size(87, 27);
+            this.btn_PayCheck.TabIndex = 0;
+            this.btn_PayCheck.Text = "查询支付结果";
+            this.btn_PayCheck.UseVisualStyleBackColor = true;
+            this.btn_PayCheck.Click += new System.EventHandler(this.btn_PayCheck_Click);
+            // 
+            // btn_OutCross
+            // 
+            this.btn_OutCross.Location = new System.Drawing.Point(436, 8);
+            this.btn_OutCross.Name = "btn_OutCross";
+            this.btn_OutCross.Size = new System.Drawing.Size(87, 26);
+            this.btn_OutCross.TabIndex = 0;
+            this.btn_OutCross.Text = "离开停车场";
+            this.btn_OutCross.UseVisualStyleBackColor = true;
+            this.btn_OutCross.Click += new System.EventHandler(this.btn_OutCross_Click);
+            // 
+            // btn_OutRecognition
+            // 
+            this.btn_OutRecognition.Location = new System.Drawing.Point(321, 8);
+            this.btn_OutRecognition.Name = "btn_OutRecognition";
+            this.btn_OutRecognition.Size = new System.Drawing.Size(92, 28);
+            this.btn_OutRecognition.TabIndex = 0;
+            this.btn_OutRecognition.Text = "到达出口";
+            this.btn_OutRecognition.UseVisualStyleBackColor = true;
+            this.btn_OutRecognition.Click += new System.EventHandler(this.btn_OutRecognition_Click);
+            // 
+            // btn_InCross
+            // 
+            this.btn_InCross.Location = new System.Drawing.Point(212, 6);
+            this.btn_InCross.Name = "btn_InCross";
+            this.btn_InCross.Size = new System.Drawing.Size(94, 30);
+            this.btn_InCross.TabIndex = 0;
+            this.btn_InCross.Text = "进入停车场";
+            this.btn_InCross.UseVisualStyleBackColor = true;
+            this.btn_InCross.Click += new System.EventHandler(this.btn_InCross_Click);
+            // 
+            // btn_WhiteList
+            // 
+            this.btn_WhiteList.Location = new System.Drawing.Point(15, 8);
+            this.btn_WhiteList.Name = "btn_WhiteList";
+            this.btn_WhiteList.Size = new System.Drawing.Size(89, 27);
+            this.btn_WhiteList.TabIndex = 0;
+            this.btn_WhiteList.Text = "白名单检测";
+            this.btn_WhiteList.UseVisualStyleBackColor = true;
+            this.btn_WhiteList.Click += new System.EventHandler(this.btn_WhiteList_Click);
+            // 
+            // btn_InRecognition
+            // 
+            this.btn_InRecognition.Location = new System.Drawing.Point(124, 6);
+            this.btn_InRecognition.Name = "btn_InRecognition";
+            this.btn_InRecognition.Size = new System.Drawing.Size(72, 27);
+            this.btn_InRecognition.TabIndex = 0;
+            this.btn_InRecognition.Text = "到达入口";
+            this.btn_InRecognition.UseVisualStyleBackColor = true;
+            this.btn_InRecognition.Click += new System.EventHandler(this.btn_InRecognition_Click);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.richText_ReciveMQ);
+            this.tabPage3.Controls.Add(this.txt_MQMsg);
+            this.tabPage3.Controls.Add(this.btn_ReciveMQ);
+            this.tabPage3.Controls.Add(this.btn_SendMQ);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(783, 473);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "ActiveMQ";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btn_SendMQ
+            // 
+            this.btn_SendMQ.Location = new System.Drawing.Point(187, 33);
+            this.btn_SendMQ.Name = "btn_SendMQ";
+            this.btn_SendMQ.Size = new System.Drawing.Size(75, 23);
+            this.btn_SendMQ.TabIndex = 0;
+            this.btn_SendMQ.Text = "发送消息";
+            this.btn_SendMQ.UseVisualStyleBackColor = true;
+            this.btn_SendMQ.Click += new System.EventHandler(this.btn_SendMQ_Click);
+            // 
+            // txt_MQMsg
+            // 
+            this.txt_MQMsg.Location = new System.Drawing.Point(14, 33);
+            this.txt_MQMsg.Name = "txt_MQMsg";
+            this.txt_MQMsg.Size = new System.Drawing.Size(152, 21);
+            this.txt_MQMsg.TabIndex = 1;
+            // 
+            // btn_ReciveMQ
+            // 
+            this.btn_ReciveMQ.Location = new System.Drawing.Point(371, 33);
+            this.btn_ReciveMQ.Name = "btn_ReciveMQ";
+            this.btn_ReciveMQ.Size = new System.Drawing.Size(114, 23);
+            this.btn_ReciveMQ.TabIndex = 0;
+            this.btn_ReciveMQ.Text = "开启监听消息";
+            this.btn_ReciveMQ.UseVisualStyleBackColor = true;
+            this.btn_ReciveMQ.Click += new System.EventHandler(this.btn_ReciveMQ_Click);
+            // 
+            // richText_ReciveMQ
+            // 
+            this.richText_ReciveMQ.Location = new System.Drawing.Point(4, 75);
+            this.richText_ReciveMQ.Name = "richText_ReciveMQ";
+            this.richText_ReciveMQ.Size = new System.Drawing.Size(776, 395);
+            this.richText_ReciveMQ.TabIndex = 2;
+            this.richText_ReciveMQ.Text = "";
             // 
             // Form1
             // 
@@ -303,6 +358,8 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -332,6 +389,11 @@
         private System.Windows.Forms.TextBox txt_EventType;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txt_Remark;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button btn_SendMQ;
+        private System.Windows.Forms.TextBox txt_MQMsg;
+        private System.Windows.Forms.Button btn_ReciveMQ;
+        private System.Windows.Forms.RichTextBox richText_ReciveMQ;
     }
 }
 
