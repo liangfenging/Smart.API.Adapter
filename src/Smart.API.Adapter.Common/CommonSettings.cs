@@ -327,5 +327,64 @@ namespace Smart.API.Adapter.Common
                 return iThirdApp;
             }
         }
+
+        /// <summary>
+        /// ActiveMQ服务地址
+        /// </summary>
+        public static string ActiveMQUrl
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["ActiveMQUrl"]))
+                {
+                    return ConfigurationManager.AppSettings["ActiveMQUrl"];
+                }
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// ActiveMQ服务密码
+        /// </summary>
+        public static string ActiveMQQueue
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["ActiveMQQueue"]))
+                {
+                    return ConfigurationManager.AppSettings["ActiveMQQueue"];
+                }
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// ActiveMQ服务账户
+        /// </summary>
+        public static string ActiveMQName
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["ActiveMQName"]))
+                {
+                    return ConfigurationManager.AppSettings["ActiveMQName"];
+                }
+                return "";
+            }
+        }
+        /// <summary>
+        /// ActiveMQ服务密码
+        /// </summary>
+        public static string ActiveMQPassword
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["ActiveMQPassword"]))
+                {
+                    return ConfigurationManager.AppSettings["ActiveMQPassword"];
+                }
+                return "";
+            }
+        }
     }
 }
