@@ -52,10 +52,11 @@
             this.btn_WhiteList = new System.Windows.Forms.Button();
             this.btn_InRecognition = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btn_SendMQ = new System.Windows.Forms.Button();
+            this.richText_ReciveMQ = new System.Windows.Forms.RichTextBox();
             this.txt_MQMsg = new System.Windows.Forms.TextBox();
             this.btn_ReciveMQ = new System.Windows.Forms.Button();
-            this.richText_ReciveMQ = new System.Windows.Forms.RichTextBox();
+            this.btn_SendMQ = new System.Windows.Forms.Button();
+            this.btn_StopMQ = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -302,6 +303,7 @@
             // 
             this.tabPage3.Controls.Add(this.richText_ReciveMQ);
             this.tabPage3.Controls.Add(this.txt_MQMsg);
+            this.tabPage3.Controls.Add(this.btn_StopMQ);
             this.tabPage3.Controls.Add(this.btn_ReciveMQ);
             this.tabPage3.Controls.Add(this.btn_SendMQ);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -311,15 +313,13 @@
             this.tabPage3.Text = "ActiveMQ";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // btn_SendMQ
+            // richText_ReciveMQ
             // 
-            this.btn_SendMQ.Location = new System.Drawing.Point(187, 33);
-            this.btn_SendMQ.Name = "btn_SendMQ";
-            this.btn_SendMQ.Size = new System.Drawing.Size(75, 23);
-            this.btn_SendMQ.TabIndex = 0;
-            this.btn_SendMQ.Text = "发送消息";
-            this.btn_SendMQ.UseVisualStyleBackColor = true;
-            this.btn_SendMQ.Click += new System.EventHandler(this.btn_SendMQ_Click);
+            this.richText_ReciveMQ.Location = new System.Drawing.Point(4, 75);
+            this.richText_ReciveMQ.Name = "richText_ReciveMQ";
+            this.richText_ReciveMQ.Size = new System.Drawing.Size(776, 395);
+            this.richText_ReciveMQ.TabIndex = 2;
+            this.richText_ReciveMQ.Text = "";
             // 
             // txt_MQMsg
             // 
@@ -338,13 +338,25 @@
             this.btn_ReciveMQ.UseVisualStyleBackColor = true;
             this.btn_ReciveMQ.Click += new System.EventHandler(this.btn_ReciveMQ_Click);
             // 
-            // richText_ReciveMQ
+            // btn_SendMQ
             // 
-            this.richText_ReciveMQ.Location = new System.Drawing.Point(4, 75);
-            this.richText_ReciveMQ.Name = "richText_ReciveMQ";
-            this.richText_ReciveMQ.Size = new System.Drawing.Size(776, 395);
-            this.richText_ReciveMQ.TabIndex = 2;
-            this.richText_ReciveMQ.Text = "";
+            this.btn_SendMQ.Location = new System.Drawing.Point(187, 33);
+            this.btn_SendMQ.Name = "btn_SendMQ";
+            this.btn_SendMQ.Size = new System.Drawing.Size(75, 23);
+            this.btn_SendMQ.TabIndex = 0;
+            this.btn_SendMQ.Text = "发送消息";
+            this.btn_SendMQ.UseVisualStyleBackColor = true;
+            this.btn_SendMQ.Click += new System.EventHandler(this.btn_SendMQ_Click);
+            // 
+            // btn_StopMQ
+            // 
+            this.btn_StopMQ.Location = new System.Drawing.Point(536, 31);
+            this.btn_StopMQ.Name = "btn_StopMQ";
+            this.btn_StopMQ.Size = new System.Drawing.Size(114, 23);
+            this.btn_StopMQ.TabIndex = 0;
+            this.btn_StopMQ.Text = "停止监听消息";
+            this.btn_StopMQ.UseVisualStyleBackColor = true;
+            this.btn_StopMQ.Click += new System.EventHandler(this.btn_StopMQ_Click);
             // 
             // Form1
             // 
@@ -394,6 +406,7 @@
         private System.Windows.Forms.TextBox txt_MQMsg;
         private System.Windows.Forms.Button btn_ReciveMQ;
         private System.Windows.Forms.RichTextBox richText_ReciveMQ;
+        private System.Windows.Forms.Button btn_StopMQ;
     }
 }
 

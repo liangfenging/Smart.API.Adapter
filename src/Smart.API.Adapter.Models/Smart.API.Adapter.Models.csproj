@@ -61,6 +61,7 @@
     <Compile Include="Api\Api_ChannelKey.cs" />
     <Compile Include="BEApi\Api_Function.cs" />
     <Compile Include="BEApi\PlateInfo.cs" />
+    <Compile Include="Core\ActiveMQMessage.cs" />
     <Compile Include="Core\ApiResult.cs" />
     <Compile Include="Core\APIResultBase.cs" />
     <Compile Include="Core\Equipmentstatus.cs" />

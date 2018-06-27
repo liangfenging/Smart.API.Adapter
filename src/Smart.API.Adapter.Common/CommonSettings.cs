@@ -346,13 +346,13 @@ namespace Smart.API.Adapter.Common
         /// <summary>
         /// ActiveMQ服务密码
         /// </summary>
-        public static string ActiveMQQueue
+        public static string ActiveMQQueueOrTopic
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["ActiveMQQueue"]))
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["ActiveMQQueueOrTopic"]))
                 {
-                    return ConfigurationManager.AppSettings["ActiveMQQueue"];
+                    return ConfigurationManager.AppSettings["ActiveMQQueueOrTopic"];
                 }
                 return "";
             }

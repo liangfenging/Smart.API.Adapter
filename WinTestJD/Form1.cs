@@ -48,7 +48,7 @@ namespace WinTestJD
         //同步设备状态
         private void button4_Click(object sender, EventArgs e)
         {
-            
+
             HeartService.GetInstance().UpdateEquipmentStatus();
 
 
@@ -93,10 +93,10 @@ namespace WinTestJD
             inrecognition.reTrySend = "0";
 
             richText_Msg.Text = inrecognition.ToJson() + "\r\n" + richText_Msg.Text;
-           APIResultBase result = new JDParkBiz().PostInRecognition(inrecognition, enumJDBusinessType.InRecognition);
+            APIResultBase result = new JDParkBiz().PostInRecognition(inrecognition, enumJDBusinessType.InRecognition);
 
-           richText_Msg.Text = result.ToJson() + "\r\n" + richText_Msg.Text;
-          
+            richText_Msg.Text = result.ToJson() + "\r\n" + richText_Msg.Text;
+
         }
 
         private void btn_InCross_Click(object sender, EventArgs e)
@@ -214,21 +214,22 @@ namespace WinTestJD
 
         private void btn_SendMQ_Click(object sender, EventArgs e)
         {
-            ActiveMQSender.SendMQMessage(txt_MQMsg.Text);
+            ActiveMQSender.SendTopicMessage(txt_MQMsg.Text, "topic1");
+            ActiveMQSender.SendTopicMessage(txt_MQMsg.Text, "topic2");
         }
-
+        ActiveMQReciver reciver = new ActiveMQReciver();
         private void btn_ReciveMQ_Click(object sender, EventArgs e)
         {
-            ActiveMQReciver reciver = new ActiveMQReciver();
-            reciver.StartReciveMsg();
-            reciver.OnActiveMQReciveMsg +=reciver_OnActiveMQReciveMsg;
+            reciver.OnActiveMQReciveMsg += reciver_OnActiveMQReciveMsg;
+            reciver.StartReciveTopicMsg(new Dictionary<string, string>() { { "topic1", "" }, { "topic2", "" } });
+            
         }
 
-        private void reciver_OnActiveMQReciveMsg(string message)
+        private void reciver_OnActiveMQReciveMsg(ActiveMQInfo info)
         {
             Action action = delegate()
             {
-                this.richText_ReciveMQ.Text = string.Format("{0}\r\n", message) + this.richText_ReciveMQ.Text;
+                this.richText_ReciveMQ.Text = string.Format("{0}\r\n", info.Name + "_" + info.Message) + this.richText_ReciveMQ.Text;
             };
             if (!this.InvokeRequired)
             {
@@ -238,6 +239,12 @@ namespace WinTestJD
             {
                 this.BeginInvoke(action);
             }
+        }
+
+        private void btn_StopMQ_Click(object sender, EventArgs e)
+        {
+            reciver.StopConnection();
+            reciver.OnActiveMQReciveMsg -= reciver_OnActiveMQReciveMsg;
         }
 
 

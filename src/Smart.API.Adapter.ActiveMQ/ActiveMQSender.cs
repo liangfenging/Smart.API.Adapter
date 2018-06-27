@@ -22,7 +22,7 @@ namespace Smart.API.Adapter.ActiveMQ
             {
                 if (_IConnectionFactory == null)
                 {
-                    _IConnectionFactory = new ConnectionFactory(CommonSettings.ActiveMQUrl);
+                    _IConnectionFactory = new ConnectionFactory("failover:(" + CommonSettings.ActiveMQUrl + ")?timeout=3000");
                 }
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace Smart.API.Adapter.ActiveMQ
         /// <param name="message">发送的消息内容</param>
         /// <param name="queueName">队列名</param>
         /// <param name="filter">过滤关键字</param>
-        public static void SendMQMessage(string message, string queueName = null, string filter = null)
+        public static void SendQueueMessage(string message, string queueName = null, string filter = null)
         {
             //建立连接
             using (IConnection connection = CreateConnection())
@@ -48,7 +48,7 @@ namespace Smart.API.Adapter.ActiveMQ
                 {
                     if (string.IsNullOrWhiteSpace(queueName))
                     {
-                        queueName = CommonSettings.ActiveMQQueue;
+                        queueName = CommonSettings.ActiveMQQueueOrTopic;
                     }
                     //创建MQ的Queue
                     IMessageProducer prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(queueName));
@@ -62,6 +62,48 @@ namespace Smart.API.Adapter.ActiveMQ
                     }
                     //NonPersistent 非持久化消息
                     prod.DeliveryMode = MsgDeliveryMode.NonPersistent;
+                    prod.Priority = MsgPriority.Normal;
+                    prod.TimeToLive = TimeSpan.MinValue;
+                    prod.Send(IMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 发送消息到主题
+        /// </summary>
+        /// <param name="message">消息内容</param>
+        /// <param name="topicName">主题名</param>
+        /// <param name="bPersistent">是否持久化消息</param>
+        public static void SendTopicMessage(string message, string topicName = null,string filter = null,bool bPersistent = false)
+        {
+            //建立连接
+            using (IConnection connection = CreateConnection())
+            {
+                //创建Session会话
+                using (ISession session = connection.CreateSession())
+                {
+                    if (string.IsNullOrWhiteSpace(topicName))
+                    {
+                        topicName = CommonSettings.ActiveMQQueueOrTopic;
+                    }
+                    //创建MQ的Queue
+                    IMessageProducer prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQTopic(topicName));
+                    //创建一个发送消息的对象
+                    ITextMessage IMessage = prod.CreateTextMessage();
+                    IMessage.Text = message; //给这个消息对象赋实际的消息
+                    //设置消息对象的过滤关键字属性
+                    if (!string.IsNullOrWhiteSpace(filter))
+                    {
+                        IMessage.Properties.SetString("filter", filter);
+                    }
+                    prod.DeliveryMode = MsgDeliveryMode.NonPersistent;
+                    //NonPersistent 非持久化消息
+                    if (bPersistent)
+                    {
+                        prod.DeliveryMode = MsgDeliveryMode.Persistent;
+                    }
+                    
                     prod.Priority = MsgPriority.Normal;
                     prod.TimeToLive = TimeSpan.MinValue;
                     prod.Send(IMessage);
