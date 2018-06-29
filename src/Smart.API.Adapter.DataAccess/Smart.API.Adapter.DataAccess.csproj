@@ -64,7 +64,6 @@
     <Compile Include="Core\JD\JDBillArchivedDAL.cs" />
     <Compile Include="Core\JD\JDBillDAL.cs" />
     <Compile Include="Core\JD\ParkWhiteListDAL.cs" />
-    <Compile Include="Sys\SequenceDAL.cs" />
     <Compile Include="Task\TaskQueueDAL.cs" />
     <Compile Include="Sys\ApiAccessDAL.cs" />
     <Compile Include="DataBase.cs" />
