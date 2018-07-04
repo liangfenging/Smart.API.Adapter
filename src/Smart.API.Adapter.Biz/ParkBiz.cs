@@ -188,12 +188,39 @@ namespace Smart.API.Adapter.Biz
                         {
                             ve.CreateTime = vehicleDb.CreateTime;
                             ve.UpdateTime = DateTime.Now;
+                            //更新jielink+的服务
+                            if (v.yn != vehicleDb.yn)
+                            {
+                                if (v.yn == "0")//开通服务
+                                {
+
+                                }
+                                else
+                                {
+                                    //注销服务
+                                }
+                            }
+
                             dataBase.Update<VehicleInfoDb>(ve, v.vehicleNo);
                         }
                         else
                         {
                             ve.CreateTime = DateTime.Now;
                             ve.UpdateTime = DateTime.Now;
+
+                            //创建jielink+ 人事资料，绑定车辆信息，发放凭证
+
+                            //判断是否开通服务
+                            if (v.yn == "0")//开通服务
+                            {
+
+                            }
+                            else
+                            {
+                                //注销服务
+                            }
+
+
                             dataBase.Insert<VehicleInfoDb>(ve);
                         }
                     }
@@ -301,7 +328,7 @@ namespace Smart.API.Adapter.Biz
                     }
                     catch (Exception ex)
                     {
-                        LogHelper.Error("总车位数通知API时错误,",ex);
+                        LogHelper.Error("总车位数通知API时错误,", ex);
                     }
 
                 }
@@ -505,6 +532,9 @@ namespace Smart.API.Adapter.Biz
             }
         }
 
+
+
+        
 
 
 

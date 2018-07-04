@@ -19,5 +19,23 @@ namespace Smart.API.Adapter.Models
         }
         public DateTime CreateTime { get;set;}
         public DateTime UpdateTime { get; set; }
+
+        /// <summary>
+        /// 车场服务Id
+        /// </summary>
+        public string ParkServiceId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 人事资料Id
+        /// </summary>
+        public string PersonId
+        {
+            get;
+            set;
+        }
     }
 }
