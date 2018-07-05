@@ -1,12 +1,7 @@
 ﻿using Smart.API.Adapter.Common.Mail;
-using Smart.API.Adapter.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Smart.API.Adapter.Common
 {

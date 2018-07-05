@@ -1,8 +1,6 @@
-﻿#if WebUI
-namespace Smart.API.Adapter.Web.Models
-#else
+﻿
 namespace Smart.API.Adapter.Models
-#endif
+
 {
     using System;
 

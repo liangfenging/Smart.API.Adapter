@@ -1,6 +1,4 @@
-﻿using Smart.API.Adapter.Models;
-using Smart.API.Adapter.Models.DTO.JD;
-using System;
+﻿using System;
 using System.Configuration;
 namespace Smart.API.Adapter.Common
 {

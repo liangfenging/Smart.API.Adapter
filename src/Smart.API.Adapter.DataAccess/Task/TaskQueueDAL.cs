@@ -1,9 +1,7 @@
 ﻿using Smart.API.Adapter.Models;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 
 namespace Smart.API.Adapter.DataAccess.Task
 {

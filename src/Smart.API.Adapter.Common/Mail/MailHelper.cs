@@ -5,7 +5,6 @@ using System;
 using System.Text;
 using System.Linq;
 using System.IO;
-using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading;

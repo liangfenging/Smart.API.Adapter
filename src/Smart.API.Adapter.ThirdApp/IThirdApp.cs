@@ -1,10 +1,6 @@
 ﻿using Smart.API.Adapter.Models;
 using Smart.API.Adapter.Models.Core;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Smart.API.Adapter.ThirdApp
 {

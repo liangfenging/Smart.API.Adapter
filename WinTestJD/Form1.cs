@@ -2,15 +2,8 @@
 using Smart.API.Adapter.Biz;
 using Smart.API.Adapter.Common;
 using Smart.API.Adapter.Models;
-using Smart.API.Adapter.Models.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinTestJD

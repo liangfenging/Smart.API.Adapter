@@ -1,5 +1,4 @@
-﻿using Infrastructure.Common;
-using Microsoft.Practices.EnterpriseLibrary.Data;
+﻿using Microsoft.Practices.EnterpriseLibrary.Data;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections;

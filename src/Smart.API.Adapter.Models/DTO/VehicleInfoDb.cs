@@ -37,5 +37,15 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
+
+        /// <summary>
+        /// 1:已绑定
+        /// 0:未绑定
+        /// </summary>
+        public int BindCar
+        {
+            get;
+            set;
+        }
     }
 }

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Smart.API.Adapter.Models.Core
+﻿
+namespace Smart.API.Adapter.Models
 {
-    public class OutCrossRecord
+    public class InCrossRecord
     {
         /// <summary>
-        /// 出场id
+        /// 入场记录唯一标识
         /// </summary>
-        public string outRecordId
+        public string inRecordId
         {
             get;
             set;
@@ -21,43 +16,6 @@ namespace Smart.API.Adapter.Models.Core
         /// 车场ID
         /// </summary>
         public string parkId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 出场设备ID
-        /// </summary>
-        public string outDeviceId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 出场设备名称
-        /// </summary>
-        public string outDeviceName
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        /// 出场识别时间
-        /// </summary>
-        public string outTime
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 入场记录唯一标识
-        /// </summary>
-        public string inRecordId
         {
             get;
             set;
@@ -100,15 +58,6 @@ namespace Smart.API.Adapter.Models.Core
         }
 
         /// <summary>
-        /// 车牌图片地址
-        /// </summary>
-        public string outImage
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// 车牌号
         /// </summary>
         public string plateNumber
@@ -134,34 +83,6 @@ namespace Smart.API.Adapter.Models.Core
             get;
             set;
         }
-
-        /// <summary>
-        /// 应收金额
-        /// </summary>
-        public int chargeTotal
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 折扣金额
-        /// </summary>
-        public int discountAmount
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 实收金额
-        /// </summary>
-        public int charge
-        {
-            get;
-            set;
-        }
-
 
         /// <summary>
         /// 套餐名

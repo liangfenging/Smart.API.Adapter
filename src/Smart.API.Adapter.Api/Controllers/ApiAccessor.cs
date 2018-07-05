@@ -1,5 +1,4 @@
-﻿using Infrastructure.Common.Security;
-using Smart.API.Adapter.DataAccess.Sys;
+﻿using Smart.API.Adapter.DataAccess.Sys;
 using Smart.API.Adapter.Models;
 using Smart.API.Adapter.Web.Api;
 using System;

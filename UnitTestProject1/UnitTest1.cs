@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 namespace UnitTestProject1

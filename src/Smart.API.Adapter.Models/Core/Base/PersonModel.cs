@@ -1,159 +1,160 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Smart.API.Adapter.Models.Core
+﻿
+namespace Smart.API.Adapter.Models
 {
-    public class OutRecognitionRecord
+    /// <summary>
+    /// 人事资料
+    /// </summary>
+    public class PersonModel
     {
         /// <summary>
-        /// 出场id
+        /// 人员Id
         /// </summary>
-        public string outRecordId
+        public string personId
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 车场ID
+        /// 人员编号
         /// </summary>
-        public string parkId
+        public string personNo
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 出场设备ID
+        /// 人员姓名
         /// </summary>
-        public string outDeviceId
+        public string personName
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 出场设备名称
+        /// 性别
+        /// 0女 1男
         /// </summary>
-        public string outDeviceName
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        /// 出场识别时间
-        /// </summary>
-        public string recognitionTime
+        private int personGender
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 入场记录唯一标识
+        /// 组织结构Id
         /// </summary>
-        public string inRecordId
+        public string deptId
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 设备唯一标识
+        /// 组织名称路径
         /// </summary>
-        public string inDeviceId
+        public string deptName
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 设备名称
+        /// 备注
         /// </summary>
-        public string inDeviceName
+        public string remark
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 入场时间
+        /// 人员图片Base64String
         /// </summary>
-        public string inTime
+        public string personPhoto
+        {
+            get;
+            set;
+        }
+        /// <summary>
+        /// 证件类型
+        /// GENERIDENT
+        /// IDENTITY 二代身份证
+        /// 
+        /// </summary>
+        public string certificateType
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// 证件号
+        /// </summary>
+        public string identityNo
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 车牌图片地址
+        /// 手机号
         /// </summary>
-        public string inImage
+        public string mobile
+        {
+            get;
+            set;
+        }
+
+        public string tel1
+        {
+            get;
+            set;
+        }
+
+        public string tel2
+        {
+            get;
+            set;
+        }
+
+        public string email
+        {
+            get;
+            set;
+        }
+
+        public string roomNo
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 车牌图片地址
+        /// 房号
         /// </summary>
-        public string outImage
+        public string address
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 车牌号
+        /// 住户类型
+        /// 1职员
+        /// 2业主
+        /// 3租户
+        /// 4商户
+        /// 5临时人员
+        /// 6户主
+        /// 7其他
         /// </summary>
-        public string plateNumber
+        public int tenementType
         {
             get;
             set;
         }
-
-        /// <summary>
-        /// 车牌颜色
-        /// </summary>
-        public string plateColor
-        {
-            get;
-            set;
-        }
-
-
-        /// <summary>
-        /// 套餐名
-        /// </summary>
-        public string sealName
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 重试标识
-        /// 1代表为补发的记录   
-        /// </summary>
-        public string reTrySend
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 发送记录的时间
-        /// </summary>
-        public string sendTime
-        {
-            get;
-            set;
-        }
-
     }
 }

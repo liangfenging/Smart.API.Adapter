@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="HeartService.cs" />
     <Compile Include="JDParkBiz.cs" />
+    <Compile Include="JielinkApi.cs" />
     <Compile Include="MailManager.cs" />
     <Compile Include="ParkBiz.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

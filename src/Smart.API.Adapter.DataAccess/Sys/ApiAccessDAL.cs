@@ -1,5 +1,4 @@
-﻿using Smart.API.Adapter.DataAccess;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using Smart.API.Adapter.Models;
