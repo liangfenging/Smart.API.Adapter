@@ -232,7 +232,7 @@ namespace Smart.API.Adapter.Biz
                                                 VehicleModel vehicleModel = new VehicleModel();
                                                 vehicleModel.personId = parkService.personId;
                                                 vehicleModel.plateNumber = v.vehicleNo;
-
+                                                vehicleModel.vehicleStatus = 1;
                                                 vehicleModel = jielinkApi.VehicleBind(vehicleModel);
                                                 ve.BindCar = 1;
                                             }
@@ -249,6 +249,7 @@ namespace Smart.API.Adapter.Biz
                                                 DateTime dtNow = DateTime.Now;
                                                 parkService.startTime = dtNow.ToShortDateString();
                                                 parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                                parkService.setmealNo = 50;
                                                 parkService = jielinkApi.EnableParkService(parkService);
                                                 ve.ParkServiceId = parkService.parkServiceId;
                                             }
@@ -304,7 +305,7 @@ namespace Smart.API.Adapter.Biz
                                     VehicleModel vehicleModel = new VehicleModel();
                                     vehicleModel.personId = person.personId;
                                     vehicleModel.plateNumber = v.vehicleNo;
-
+                                    vehicleModel.vehicleStatus = 1;
                                     vehicleModel = jielinkApi.VehicleBind(vehicleModel);
                                     ve.BindCar = 1;
                                 }
@@ -323,6 +324,7 @@ namespace Smart.API.Adapter.Biz
                                     DateTime dtNow = DateTime.Now;
                                     parkService.startTime = dtNow.ToShortDateString();
                                     parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                    parkService.setmealNo = 50;
                                     try
                                     {
                                         parkService = jielinkApi.EnableParkService(parkService);
