@@ -414,5 +414,20 @@ namespace Smart.API.Adapter.Common
                 return "";
             }
         }
+
+        /// <summary>
+        /// WebServiceUrl
+        /// </summary>
+        public static string WebServiceUrl
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["WebServiceUrl"]))
+                {
+                    return ConfigurationManager.AppSettings["WebServiceUrl"];
+                }
+                return "";
+            }
+        }
     }
 }

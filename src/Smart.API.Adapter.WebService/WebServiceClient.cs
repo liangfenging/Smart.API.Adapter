@@ -14,7 +14,7 @@ namespace Smart.API.Adapter.WebService
     {
         private static string _OutputDLLFileName;
 
-        private static string _ProxyClassName;
+        private static string _ProxyClassName = "ProxyWebService";
 
 
         private static object _ObjInvoke = null;
@@ -41,10 +41,10 @@ namespace Smart.API.Adapter.WebService
         {
             try
             {
-                _ProxyClassName = "";
+                //_ProxyClassName = "";
                 DicMethodInfo = new Dictionary<string, MethodInfo>();
                 _OutputDLLFileName = System.AppDomain.CurrentDomain.BaseDirectory + "WSDL\\" + _ProxyClassName + ".dll";
-                string webServiceUrl = "http://axsf" + "?WSDL";
+                string webServiceUrl =CommonSettings.WebServiceUrl.TrimEnd('/') + "?WSDL";
                 if (File.Exists(_OutputDLLFileName))
                 {
                     ReflectionBuild();
