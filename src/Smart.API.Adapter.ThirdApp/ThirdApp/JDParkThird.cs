@@ -18,7 +18,7 @@ namespace Smart.API.Adapter.ThirdApp
         /// <returns></returns>
         public APIResultBase PostInRecognition(InRecognitionRecord inRecognitionRecord, enumJDBusinessType businessType)
         {
-            return new JDParkBiz().CheckWhiteList(inRecognitionRecord, businessType);
+            return new JDParkBiz().PostInRecognition(inRecognitionRecord, businessType);
         }
 
 
