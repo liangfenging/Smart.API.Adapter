@@ -1,40 +1,39 @@
 ﻿
 namespace Smart.API.Adapter.Models
 {
-    public class EquipmentStatus
+    public class PagesBase
     {
         /// <summary>
-        /// 设备guid
+        /// 当前页码
         /// </summary>
-        public string deviceGuid
+        public int pageIndex
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 设备名称
+        /// 每页显示数量
         /// </summary>
-        public string deviceName
+        public int pageSize
         {
             get;
             set;
         }
 
         /// <summary>
-        /// 出入口类型
+        /// 总记录数
         /// </summary>
-        public int deviceIoType
+        public int totalCount
         {
             get;
             set;
         }
 
-
         /// <summary>
-        /// 设备状态
+        /// 总页数
         /// </summary>
-        public string deviceStatus
+        public int pageCount
         {
             get;
             set;

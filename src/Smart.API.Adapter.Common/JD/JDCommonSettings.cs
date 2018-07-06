@@ -50,7 +50,7 @@ namespace Smart.API.Adapter.Common.JD
                 {
                     try
                     {
-                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS);
+                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
                         var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", "");
                         if (!res.successed)
                         {
@@ -88,7 +88,7 @@ namespace Smart.API.Adapter.Common.JD
                 {
                     try
                     {
-                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS);
+                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
                         var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", "");
                         if (!res.successed)
                         {
@@ -124,7 +124,7 @@ namespace Smart.API.Adapter.Common.JD
             {
                 try
                 {
-                    InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS);
+                    InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
                     RequestInparkingRecord requestParmters = new RequestInparkingRecord();
                     requestParmters.pageIndex = 1;
                     requestParmters.pageSize = 1;

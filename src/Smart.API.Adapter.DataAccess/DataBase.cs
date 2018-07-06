@@ -123,6 +123,17 @@ namespace Smart.API.Adapter.DataAccess {
 			if(obj == null) { return 1; } else { return int.Parse(obj.ToString()); }
 		}
 
+        public virtual int GetCount()
+        {
+            string sqlcmd = string.Format("select count({0})  from {1} ", PrimaryKey, tableName);
+            object obj = null;
+            using (DbCommand command = db.GetSqlStringCommand(sqlcmd))
+            {
+                obj = db.ExecuteScalar(command);
+            }
+            if (obj == null) { return 0; } else { return int.Parse(obj.ToString()); }
+        }
+
 		public virtual ICollection<TResult> FindAll<TResult>() where TResult : new() {
 			string sqlcmd = string.Format("SELECT * FROM {0}  ", tableName);
 			return GetEnityListBySqlString<TResult>(sqlcmd, null);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,10 +12,53 @@ namespace Smart.API.Adapter.Common
     public class InterfaceHttpProxyApi
     {
         static readonly TimeSpan DefaultTimeOut = TimeSpan.FromSeconds(CommonSettings.PostTimeOut);//TODO:可配置
+
         private string _BaseAddress;
-        public InterfaceHttpProxyApi(string BaseAddress)
+        private int _IsJielink;
+        private static string _appId = "";
+        private static string _jielinkKey = "";
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="BaseAddress">请求地址</param>
+        /// <param name="isJielink">1：jielink  0其他</param>
+        public InterfaceHttpProxyApi(string BaseAddress, int isJielink = 0)
         {
             _BaseAddress = BaseAddress;
+            _IsJielink = isJielink;
+            if (isJielink == 1 && string.IsNullOrWhiteSpace(_jielinkKey))
+            {
+                AppChanelModel app = appChanel();
+                if (app != null)
+                {
+                    _appId = app.appId;
+                    _jielinkKey = app.key;
+                }
+            }
+        }
+
+        public AppChanelModel appChanel()
+        {
+            UserModel user = new UserModel();
+            user.userName = CommonSettings.JielinkUserName;
+            user.password = CommonSettings.JielinkPassword;
+            ApiResult<APIResultBase<List<AppChanelModel>>> result = PostRaw<APIResultBase<List<AppChanelModel>>>("internal/sign", user);
+            if (result.successed)
+            {
+                if (result.data.code == "0")
+                {
+                    return result.data.data[0];
+                }
+                else
+                {
+                    LogHelper.Info("[" + user.userName + "]获取key失败," + result.data.msg);
+                }
+            }
+            else
+            {
+                LogHelper.Info("[" + user.userName + "]获取key失败," + result.message);
+            }
+            return null;
         }
 
         /// <summary>
@@ -56,7 +100,7 @@ namespace Smart.API.Adapter.Common
                 }
                 catch (Exception)
                 {
-                   
+
                 }
                 return HandleApiResult<T>(response);
             }
@@ -108,7 +152,7 @@ namespace Smart.API.Adapter.Common
             string sJson = parameters.ToJson();
             LogHelper.Info("PostRaw:[" + relativeUri + "]" + sJson);//记录日志
             using (var client = GetHttpClient(timeout))
-            {  
+            {
                 var response = await client.PostAsync(relativeUri, new RestfulFormUrlEncodedContent(parameters));
                 try
                 {
@@ -138,6 +182,18 @@ namespace Smart.API.Adapter.Common
             client.Timeout = timeout.HasValue ? timeout.Value : DefaultTimeOut;
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            if (_IsJielink == 1)
+            {
+                client.DefaultRequestHeaders.Add("appId", _appId);
+                client.DefaultRequestHeaders.Add("random", "jielink");
+                long timestamp = StringHelper.ConvertDateTimeInt(DateTime.Now);
+                client.DefaultRequestHeaders.Add("timestamp", timestamp.ToString());
+                client.DefaultRequestHeaders.Add("v", "1");
+                MD5 md5 = MD5.Create();
+                string serverSign = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(_jielinkKey))).Replace("-", "");
+                client.DefaultRequestHeaders.Add("sign", serverSign);
+            }
+
             return client;
         }
 

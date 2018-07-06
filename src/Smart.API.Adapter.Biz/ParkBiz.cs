@@ -6,6 +6,7 @@ using Smart.API.Adapter.Models.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Smart.API.Adapter.Biz
 {
@@ -16,7 +17,6 @@ namespace Smart.API.Adapter.Biz
         private static bool isConnect = false;
         private DataBase dataBase;
         private DataBase dataBaseDic;
-        private string xmlAddr;
         private JDParkBiz jdParkBiz;
 
         public int HeartInterval
@@ -174,6 +174,16 @@ namespace Smart.API.Adapter.Biz
                 //更新到数据库
                 try
                 {
+
+                    JielinkApi jielinkApi = new JielinkApi();
+                    //查询组织结构的根节点
+                    requestDeptModel requestDept = new requestDeptModel();
+                    requestDept.pageIndex = 1;
+                    requestDept.pageSize = 10;
+                    responseDeptModel responseDept = jielinkApi.Depts(requestDept);
+                    List<DeptsModel> Ldept = responseDept.depts.Where(p => p.parentId == "00000000-0000-0000-0000-000000000000").ToList();
+                    string deptId = Ldept[0].deptId;
+
                     foreach (VehicleInfo v in vehicleJd.data)
                     {
                         VehicleInfoDb ve = new VehicleInfoDb(v);
@@ -189,11 +199,25 @@ namespace Smart.API.Adapter.Biz
                             {
                                 if (v.yn == "0")//开通服务
                                 {
-
+                                    ParkServiceModel parkService = new ParkServiceModel();
+                                    parkService.carNumber = 1;
+                                    parkService.personId = vehicleDb.PersonId;
+                                    DateTime dtNow = DateTime.Now;
+                                    parkService.startTime = dtNow.ToShortDateString();
+                                    parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                    parkService = jielinkApi.EnableParkService(parkService);
+                                    ve.ParkServiceId = parkService.parkServiceId;
                                 }
                                 else
                                 {
                                     //注销服务
+                                    ParkServiceModel parkService = new ParkServiceModel();
+                                    parkService.parkServiceId = vehicleDb.ParkServiceId;
+                                    bool result = jielinkApi.StopParkService(parkService);
+                                    if (result)
+                                    {
+                                        ve.ParkServiceId = "";
+                                    }
                                 }
                             }
 
@@ -205,11 +229,31 @@ namespace Smart.API.Adapter.Biz
                             ve.UpdateTime = DateTime.Now;
 
                             //创建jielink+ 人事资料，绑定车辆信息，发放凭证
+                            PersonModel person = new PersonModel();
+                            person.deptId = deptId;
+                            person.personName = v.vehicleNo;
 
+                            int iCount = dataBase.GetCount();
+                            person.mobile = "135" + iCount.ToString().PadLeft(8, '0');
+                            person = jielinkApi.AddPerson(person);
+                            ve.PersonId = person.personId;
+                            //绑定车辆
+                            VehicleModel vehicleModel = new VehicleModel();
+                            vehicleModel.personId = person.personId;
+                            vehicleModel.plateNumber = v.vehicleNo;
+                            vehicleModel = jielinkApi.VehicleBind(vehicleModel);
+                            ve.BindCar = 1;
                             //判断是否开通服务
                             if (v.yn == "0")//开通服务
                             {
-
+                                ParkServiceModel parkService = new ParkServiceModel();
+                                parkService.carNumber = 1;
+                                parkService.personId = person.personId;
+                                DateTime dtNow = DateTime.Now;
+                                parkService.startTime = dtNow.ToShortDateString();
+                                parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                parkService = jielinkApi.EnableParkService(parkService);
+                                ve.ParkServiceId = parkService.parkServiceId;
                             }
                             else
                             {
@@ -464,7 +508,7 @@ namespace Smart.API.Adapter.Biz
         {
             //请求JieLink车场数据，parkId使用不到
             string parkId = JDCommonSettings.ParkLotCode; ;
-            InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS);
+            InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
             var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", parkId);
             if (!res.successed)
             {
@@ -530,7 +574,7 @@ namespace Smart.API.Adapter.Biz
 
 
 
-        
+
 
 
 

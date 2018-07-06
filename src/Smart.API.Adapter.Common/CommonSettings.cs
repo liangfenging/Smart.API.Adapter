@@ -384,5 +384,35 @@ namespace Smart.API.Adapter.Common
                 return "";
             }
         }
+
+        /// <summary>
+        /// JielinkUserName
+        /// </summary>
+        public static string JielinkUserName
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["JielinkUserName"]))
+                {
+                    return ConfigurationManager.AppSettings["JielinkUserName"];
+                }
+                return "";
+            }
+        }
+
+        /// <summary>
+        /// JielinkPassword
+        /// </summary>
+        public static string JielinkPassword
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["JielinkPassword"]))
+                {
+                    return ConfigurationManager.AppSettings["JielinkPassword"];
+                }
+                return "";
+            }
+        }
     }
 }
