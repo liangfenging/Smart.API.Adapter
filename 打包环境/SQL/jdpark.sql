@@ -61,6 +61,9 @@ CREATE TABLE `parkwhitelist` (
   `VehicleNo` varchar(50) NOT NULL,
   `ParkLotCode` varchar(50) DEFAULT NULL,
   `yn` varchar(10) DEFAULT NULL,
+  `PersonId` varchar(50) DEFAULT NULL,
+  `ParkServiceId` varchar(50) DEFAULT NULL,
+  `BindCar` tinyint(2) DEFAULT NULL,
   `CreateTime` datetime DEFAULT NULL,
   `UpdateTime` datetime DEFAULT NULL,
   KEY `VehicleNo_Index` (`VehicleNo`)

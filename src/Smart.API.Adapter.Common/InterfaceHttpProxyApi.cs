@@ -184,13 +184,15 @@ namespace Smart.API.Adapter.Common
             client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             if (_IsJielink == 1)
             {
+                string random = "jielink";
                 client.DefaultRequestHeaders.Add("appId", _appId);
-                client.DefaultRequestHeaders.Add("random", "jielink");
-                long timestamp = StringHelper.ConvertDateTimeInt(DateTime.Now);
-                client.DefaultRequestHeaders.Add("timestamp", timestamp.ToString());
+                client.DefaultRequestHeaders.Add("random", random);
+                string timestamp = StringHelper.ConvertDateTimeInt(DateTime.Now).ToString();
+                client.DefaultRequestHeaders.Add("timestamp", timestamp);
                 client.DefaultRequestHeaders.Add("v", "1");
                 MD5 md5 = MD5.Create();
-                string serverSign = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(_jielinkKey))).Replace("-", "");
+                string sn = "random" + random + "timestamp" + timestamp + "key" + _jielinkKey.ToLower();
+                string serverSign = BitConverter.ToString(md5.ComputeHash(Encoding.UTF8.GetBytes(sn))).Replace("-", "");
                 client.DefaultRequestHeaders.Add("sign", serverSign);
             }
 
