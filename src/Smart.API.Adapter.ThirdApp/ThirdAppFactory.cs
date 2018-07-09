@@ -11,6 +11,9 @@ namespace Smart.API.Adapter.ThirdApp
                 case (int)enumAppType.JDPark:
                     iThirdApp = new JDParkThird();
                     break;
+                case (int)enumAppType.NanFangUnion:
+                    iThirdApp = new NanFangUnion();
+                    break;
                 default:
                     break;
             }

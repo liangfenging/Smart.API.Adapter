@@ -8,6 +8,6 @@ namespace Smart.API.Adapter.ThirdApp
         /// </summary>
         JDPark = 1,
 
-
+        NanFangUnion =2,
     }
 }
