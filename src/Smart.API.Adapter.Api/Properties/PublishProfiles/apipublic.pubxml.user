@@ -34,28 +34,28 @@
       <publishTime>08/03/2016 09:59:44</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Api.dll">
-      <publishTime>07/10/2018 18:29:00</publishTime>
+      <publishTime>07/10/2018 18:39:48</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Biz.dll">
-      <publishTime>07/10/2018 18:28:59</publishTime>
+      <publishTime>07/10/2018 18:39:48</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.BizCore.dll">
-      <publishTime>07/10/2018 18:28:59</publishTime>
+      <publishTime>07/10/2018 18:39:47</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Common.dll">
-      <publishTime>07/10/2018 18:28:59</publishTime>
+      <publishTime>07/10/2018 18:39:47</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.DataAccess.dll">
-      <publishTime>07/10/2018 18:27:57</publishTime>
+      <publishTime>07/10/2018 18:39:47</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Models.dll">
       <publishTime>07/10/2018 18:27:57</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.ThirdApp.dll">
-      <publishTime>07/10/2018 18:28:59</publishTime>
+      <publishTime>07/10/2018 18:39:48</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Web.dll">
-      <publishTime>07/10/2018 18:28:59</publishTime>
+      <publishTime>07/10/2018 18:39:48</publishTime>
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
       <publishTime>08/03/2016 09:58:06</publishTime>
@@ -94,7 +94,7 @@
       <publishTime>07/04/2018 09:07:21</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>07/10/2018 18:29:00</publishTime>
+      <publishTime>07/10/2018 18:39:49</publishTime>
     </File>
   </ItemGroup>
 </Project>
