@@ -67,7 +67,9 @@
     <Compile Include="Core\Base\DeptsModel.cs" />
     <Compile Include="Core\Base\PersonModel.cs" />
     <Compile Include="Core\Base\VehicleModel.cs" />
+    <Compile Include="Core\Park\BlackWhiteListModel.cs" />
     <Compile Include="Core\Equipmentstatus.cs" />
+    <Compile Include="DTO\NanFangUnion\NanFangUnionModel.cs" />
     <Compile Include="Core\PagesBase.cs" />
     <Compile Include="Core\Park\InCrossRecord.cs" />
     <Compile Include="Core\Park\InRecognitionRecord.cs" />
@@ -111,9 +113,7 @@
     <Compile Include="Task\ArchivedTaskQueueEntity.cs" />
     <Compile Include="Task\TaskQueueEntity.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DTO\NanFangUnion\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

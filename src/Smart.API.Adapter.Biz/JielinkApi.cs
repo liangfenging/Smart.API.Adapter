@@ -165,5 +165,28 @@ namespace Smart.API.Adapter.Biz
             }
             return false;
         }
+
+
+        /// <summary>
+        /// 添加黑白名单
+        /// </summary>
+        /// <param name="requestdata"></param>
+        /// <returns></returns>
+        public APIResultBase<BlackWhiteListModel> AddBackWhiteList(BlackWhiteListModel requestdata)
+        {
+            ApiResult<APIResultBase<BlackWhiteListModel>> result = proxyApi.PostRaw<APIResultBase<BlackWhiteListModel>>("park/addblackwhitelist", requestdata);
+            if (result.successed)
+            {
+                if (result.data.code != "0")
+                {
+                    LogHelper.Info("增加黑白名单失败," + result.data.msg);
+                }
+            }
+            else
+            {
+                LogHelper.Info("增加黑白名单失败," + result.message);
+            }
+            return result.data;
+        }
     }
 }

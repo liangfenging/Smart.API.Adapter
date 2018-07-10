@@ -1,4 +1,7 @@
 ﻿using Smart.API.Adapter.Models;
+using Smart.API.Adapter.Models.Core.NanFangUnion;
+using Smart.API.Adapter.Biz;
+using Smart.API.Adapter.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -101,6 +104,50 @@ namespace Smart.API.Adapter.ThirdApp
             APIResultBase apiBaseResult = new APIResultBase();
             apiBaseResult.code = "0";
             apiBaseResult.msg = "";
+            return apiBaseResult;
+        }
+
+        /// <summary>
+        ///新增黑白名单
+        /// </summary>
+        /// <param name="requesPayCheck"></param>
+        /// <returns></returns>
+        public APIResultBase<NanFangUnionModel> GetBackWhiteCarInfo(NanFangUnionModel carInfo)
+        {
+            APIResultBase<NanFangUnionModel> apiBaseResult = new APIResultBase<NanFangUnionModel>();
+            apiBaseResult.code = "0";
+            apiBaseResult.msg = "";
+            try
+            {
+                BlackWhiteListModel blackWhiteModel = new BlackWhiteListModel();
+                blackWhiteModel.PlateNumber = carInfo.PlateNumber;
+                blackWhiteModel.BlackWhiteType = 3;
+                blackWhiteModel.StartDate = carInfo.StartTime;
+                blackWhiteModel.EndDate = carInfo.EndTime;
+                if(carInfo.CheckoutFlag == "0")
+                {
+                    blackWhiteModel.Reason = "在场";
+                }
+                else
+                {
+                    blackWhiteModel.Reason = "离场";
+                }
+                blackWhiteModel.Remark = carInfo.RoomNo;
+
+                JielinkApi jieLinApi = new JielinkApi();
+                APIResultBase<BlackWhiteListModel> result = jieLinApi.AddBackWhiteList(blackWhiteModel);
+                if(result.code !="0")
+                {
+                    apiBaseResult.code = "1";
+                    apiBaseResult.msg = "失败！";
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO:错误信息
+                LogHelper.Error("传送黑白名单失败：", ex);
+            }
+
             return apiBaseResult;
         }
     }

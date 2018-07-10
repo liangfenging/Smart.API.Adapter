@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Smart.API.Adapter.Biz;
 using Smart.API.Adapter.Models.Core;
 using Smart.API.Adapter.ThirdApp;
+using Smart.API.Adapter.Models.Core.NanFangUnion;
 
 namespace Smart.API.Adapter.Api.Controllers.V1
 {
@@ -112,6 +113,18 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         {
             new JDParkBiz().ClearReTryCache(requestdata);
             return Request.CreateOKResponse();
+        }
+
+        /// <summary>
+        /// 接收从酒店传过来的黑白名单车辆信息
+        /// </summary>
+        /// <param name="LEquipmentStatus"></param>
+        /// <returns></returns>
+        [HttpPost, WriteLog, ActionName("cardlicenseSyn")]
+        public HttpResponseMessage cardlicenseSyn(NanFangUnionModel requestdata)
+        {
+            NanFangUnion result = new NanFangUnion();
+            return Request.CreateResponse(result.GetBackWhiteCarInfo(requestdata));
         }
     }
 }
