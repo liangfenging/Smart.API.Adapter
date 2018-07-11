@@ -22,7 +22,7 @@ CREATE TABLE `jdbill` (
   `PayResult` tinyint(2) DEFAULT NULL,
   `ReasonCode` varchar(50) DEFAULT NULL,
   `Reason` varchar(255) DEFAULT NULL,
-  `CreateTime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreateTime` datetime DEFAULT NULL,
   KEY `LogNo_Index` (`LogNo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -38,7 +38,7 @@ CREATE TABLE `jdbillarchived` (
   `PayResult` tinyint(2) DEFAULT NULL,
   `ReasonCode` varchar(50) DEFAULT NULL,
   `Reason` varchar(255) DEFAULT NULL,
-  `CreatTime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `CreatTime` datetime DEFAULT NULL,
   KEY `LogNo_Index` (`LogNo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

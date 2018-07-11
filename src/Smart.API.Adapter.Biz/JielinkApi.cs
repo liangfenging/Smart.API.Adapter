@@ -1,12 +1,28 @@
 ﻿using Smart.API.Adapter.Common;
 using Smart.API.Adapter.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Smart.API.Adapter.Biz
 {
     public class JielinkApi
     {
-        static InterfaceHttpProxyApi proxyApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
+        static InterfaceHttpProxyApi proxyApi = null;
+
+        public JielinkApi()
+        {
+            try
+            {
+                if (proxyApi == null)
+                {
+                    proxyApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error("Jielink获取key失败",ex);
+            }
+        }
 
         public AppChanelModel appChanel()
         {
