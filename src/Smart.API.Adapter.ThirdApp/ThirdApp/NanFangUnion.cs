@@ -120,7 +120,7 @@ namespace Smart.API.Adapter.ThirdApp
             try
             {
                 BlackWhiteListModel blackWhiteModel = new BlackWhiteListModel();
-                blackWhiteModel.PlateNumber = carInfo.PlateNumber;
+                blackWhiteModel.PlateNumber = carInfo.PlatNumber;
                 blackWhiteModel.BlackWhiteType = 3;
                 blackWhiteModel.StartDate = carInfo.StartTime;
                 blackWhiteModel.EndDate = carInfo.EndTime;

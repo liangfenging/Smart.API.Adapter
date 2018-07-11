@@ -29,7 +29,7 @@ namespace Smart.API.Adapter.Models.Core.NanFangUnion
         /// <summary>
         /// 车牌号码
         /// </summary>
-        public string PlateNumber
+        public string PlatNumber
         {
             get;
             set;
