@@ -221,7 +221,7 @@ namespace Smart.API.Adapter.Biz
                                             catch (Exception ex)
                                             {
                                                 LogHelper.Error("创建人事资料错误", ex);
-                                                flag = false;
+                                                //flag = false;
                                             }
                                         }
                                         if (vehicleDb.BindCar != 1)
@@ -239,7 +239,7 @@ namespace Smart.API.Adapter.Biz
                                             catch (Exception ex)
                                             {
                                                 LogHelper.Error("绑定车辆错误", ex);
-                                                flag = false;
+                                               // flag = false;
                                             }
                                         }
                                         if (!string.IsNullOrWhiteSpace(parkService.personId) && string.IsNullOrWhiteSpace(ve.ParkServiceId))
@@ -256,7 +256,7 @@ namespace Smart.API.Adapter.Biz
                                             catch (Exception ex)
                                             {
                                                 LogHelper.Error("开通车场服务错误", ex);
-                                                flag = false;
+                                                //flag = false;
                                             }
                                         }
                                     }
@@ -278,7 +278,7 @@ namespace Smart.API.Adapter.Biz
                                             catch (Exception ex)
                                             {
                                                 LogHelper.Error("注销车场服务错误", ex);
-                                                flag = false;
+                                                //flag = false;
                                             }
                                         }
                                     }
@@ -312,7 +312,7 @@ namespace Smart.API.Adapter.Biz
                                 catch (Exception ex)
                                 {
                                     LogHelper.Error("人事资料或车辆错误", ex);
-                                    flag = false;
+                                    //flag = false;
                                 }
 
                                 //判断是否开通服务
@@ -333,7 +333,7 @@ namespace Smart.API.Adapter.Biz
                                     catch (Exception ex)
                                     {
                                         LogHelper.Error("开通服务错误", ex);
-                                        flag = false;
+                                        //flag = false;
                                     }
                                 }
                                 else
@@ -347,8 +347,8 @@ namespace Smart.API.Adapter.Biz
                         }
                         catch (Exception ex)
                         {
-                            LogHelper.Error("更新白名单错误", ex);
-                            flag = false;
+                            LogHelper.Error("更新白名单错误[" + v.vehicleNo + "]", ex);
+                            //flag = false;
                         }
                     }
                     return flag;
