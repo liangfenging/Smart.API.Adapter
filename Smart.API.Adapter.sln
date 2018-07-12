@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.API.Adapter.WebServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.API.Adapter.WebServiceServer", "src\Smart.API.Adapter.WebServiceServer\Smart.API.Adapter.WebServiceServer.csproj", "{E6095200-5419-4919-9E0E-2AD466CA378F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.API.Adapter.WebPortal", "src\Smart.API.Adapter.WebPortal\Smart.API.Adapter.WebPortal.csproj", "{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,12 @@ Global
 		{E6095200-5419-4919-9E0E-2AD466CA378F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6095200-5419-4919-9E0E-2AD466CA378F}.Uat|Any CPU.ActiveCfg = Release|Any CPU
 		{E6095200-5419-4919-9E0E-2AD466CA378F}.Uat|Any CPU.Build.0 = Release|Any CPU
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Uat|Any CPU.ActiveCfg = Release|Any CPU
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Uat|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,5 +163,6 @@ Global
 		{1C633EA5-8CBB-47CD-AA4E-C75575398747} = {1D688060-E9F9-44FD-A6B3-377BDFC48F4D}
 		{179E3F7C-59F5-4556-98DB-7F61D340DEC6} = {1D688060-E9F9-44FD-A6B3-377BDFC48F4D}
 		{E6095200-5419-4919-9E0E-2AD466CA378F} = {3F1A7AB1-14DB-4809-98C9-41B57C0678DE}
+		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA} = {3F1A7AB1-14DB-4809-98C9-41B57C0678DE}
 	EndGlobalSection
 EndGlobal
