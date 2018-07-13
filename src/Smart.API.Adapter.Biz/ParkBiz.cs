@@ -183,6 +183,10 @@ namespace Smart.API.Adapter.Biz
                     requestDept.pageIndex = 1;
                     requestDept.pageSize = 10;
                     responseDeptModel responseDept = jielinkApi.Depts(requestDept);
+                    if (responseDept ==null)
+                    {
+                        return false;
+                    }
                     List<DeptsModel> Ldept = responseDept.depts.Where(p => p.parentId == "00000000-0000-0000-0000-000000000000").ToList();
                     string deptId = Ldept[0].deptId;
 
@@ -676,6 +680,10 @@ namespace Smart.API.Adapter.Biz
                 requestDept.pageIndex = 1;
                 requestDept.pageSize = 10;
                 responseDeptModel responseDept = jielinkApi.Depts(requestDept);
+                if (responseDept == null)
+                {
+                    return;
+                }
                 List<DeptsModel> Ldept = responseDept.depts.Where(p => p.parentId == "00000000-0000-0000-0000-000000000000").ToList();
                 string deptId = Ldept[0].deptId;
 

@@ -39,13 +39,13 @@ namespace Smart.API.Adapter.Models
         public ApiError()
         {
             this.Code = "SERVER_ERROR";
-            this.Message = "";
+            this.Msg = "";
         }
 
         public ApiError(string code, string message)
         {
             this.Code = code;
-            this.Message = message;
+            this.Msg = message;
         }
 
         /// <summary>
@@ -58,8 +58,8 @@ namespace Smart.API.Adapter.Models
         /// <summary>
         /// 错误消息
         /// </summary>
-        [DataMember(Name = "message")]
-        public string Message { get; set; }
+        [DataMember(Name = "msg")]
+        public string Msg { get; set; }
 
 
         /// <summary>

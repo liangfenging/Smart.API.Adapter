@@ -352,7 +352,7 @@ namespace Smart.API.Adapter.Common
                 EnsureResponseContentTypeWithApplicationJson(response.Content);
                 var innerResult = response.Content.ReadAsStringAsync().Result.FromJson<ApiError>();
                 apiResult.code = "BadRequest";
-                apiResult.message = innerResult.Message;
+                apiResult.message = innerResult.Msg;
 #if DEBUG
                 apiResult.stackTrace = innerResult.stackTrace;
 #endif
@@ -394,7 +394,7 @@ namespace Smart.API.Adapter.Common
                     EnsureResponseContentTypeWithApplicationJson(response.Content);
                     var innerResult = response.Content.ReadAsStringAsync().Result.FromJson<ApiError>();
                     apiResult.code = "InterfaceHttpApiFail";
-                    apiResult.message = innerResult.Message;
+                    apiResult.message = innerResult.Msg;
 #if DEBUG
                     apiResult.stackTrace = innerResult.stackTrace;
 #endif

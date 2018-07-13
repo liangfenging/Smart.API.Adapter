@@ -76,8 +76,8 @@ namespace Smart.API.Adapter.Biz
         private void UpdateFailWhiteList(object obj)
         {
             parkBiz.UpdateFailWhiteList();
-            
-            timerUpdateFailWhiteList.Change(JDCommonSettings.UpdateFailWhiteInterval, Timeout.Infinite);
+
+            timerUpdateFailWhiteList.Change(JDCommonSettings.UpdateFailWhiteInterval * 60 * 1000, Timeout.Infinite);
         }
 
         /// <summary>
