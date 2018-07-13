@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Smart.API.Adapter.BizCore.JD;
 
 namespace Smart.API.Adapter.Biz
 {
@@ -239,7 +240,7 @@ namespace Smart.API.Adapter.Biz
                                             catch (Exception ex)
                                             {
                                                 LogHelper.Error("绑定车辆错误", ex);
-                                               // flag = false;
+                                                // flag = false;
                                             }
                                         }
                                         if (!string.IsNullOrWhiteSpace(parkService.personId) && string.IsNullOrWhiteSpace(ve.ParkServiceId))
@@ -656,6 +657,137 @@ namespace Smart.API.Adapter.Biz
                 LogHelper.Error(string.Format("{0}:更新车位剩余数出错:{1}", DateTime.Now.ToString(), ex.Message));
                 return false;
 
+            }
+        }
+
+
+        /// <summary>
+        /// 更新下发失败的白名单记录
+        /// 重新下发
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateFailWhiteList()
+        {
+            try
+            {
+                JielinkApi jielinkApi = new JielinkApi();
+                //查询组织结构的根节点
+                requestDeptModel requestDept = new requestDeptModel();
+                requestDept.pageIndex = 1;
+                requestDept.pageSize = 10;
+                responseDeptModel responseDept = jielinkApi.Depts(requestDept);
+                List<DeptsModel> Ldept = responseDept.depts.Where(p => p.parentId == "00000000-0000-0000-0000-000000000000").ToList();
+                string deptId = Ldept[0].deptId;
+
+                ICollection<VehicleInfoDb> IVehicleInfoDb = new ParkWhiteListBLL().GetParkUpdateFailWhiteList();
+
+                foreach (VehicleInfoDb ve in IVehicleInfoDb)
+                {
+                    try
+                    {
+                        //更新jielink+的服务
+                        if (ve.yn == "0")//开通服务
+                        {
+                            ParkServiceModel parkService = new ParkServiceModel();
+                            parkService.carNumber = 1;
+                            parkService.personId = ve.PersonId;
+                            if (string.IsNullOrWhiteSpace(ve.PersonId))
+                            {
+                                try
+                                { //创建jielink+ 人事资料，绑定车辆信息，发放凭证
+                                    PersonModel person = new PersonModel();
+                                    person.deptId = deptId;
+                                    person.personName = ve.vehicleNo;
+
+                                    int iCount = dataBase.GetCount();
+                                    person.mobile = "135" + iCount.ToString().PadLeft(8, '0');
+                                    person = jielinkApi.AddPerson(person);
+                                    ve.PersonId = parkService.personId = person.personId;
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogHelper.Error("创建人事资料错误", ex);
+                                    //flag = false;
+                                }
+                            }
+                            if (ve.BindCar != 1)
+                            {
+                                try
+                                {
+                                    //绑定车辆
+                                    VehicleModel vehicleModel = new VehicleModel();
+                                    vehicleModel.personId = parkService.personId;
+                                    vehicleModel.plateNumber = ve.vehicleNo;
+                                    vehicleModel.vehicleStatus = 1;
+                                    vehicleModel = jielinkApi.VehicleBind(vehicleModel);
+                                    ve.BindCar = 1;
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogHelper.Error("绑定车辆错误", ex);
+                                    // flag = false;
+                                }
+                            }
+                            if (!string.IsNullOrWhiteSpace(parkService.personId) && string.IsNullOrWhiteSpace(ve.ParkServiceId))
+                            {
+                                try
+                                {
+                                    DateTime dtNow = DateTime.Now;
+                                    parkService.startTime = dtNow.ToShortDateString();
+                                    parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                    parkService.setmealNo = 50;
+                                    parkService = jielinkApi.EnableParkService(parkService);
+                                    ve.ParkServiceId = parkService.parkServiceId;
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogHelper.Error("开通车场服务错误", ex);
+                                    //flag = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //注销服务
+                            if (!string.IsNullOrWhiteSpace(ve.ParkServiceId))
+                            {
+                                try
+                                {
+                                    ParkServiceModel parkService = new ParkServiceModel();
+                                    parkService.parkServiceId = ve.ParkServiceId;
+                                    bool result = jielinkApi.StopParkService(parkService);
+                                    if (result)
+                                    {
+                                        ve.ParkServiceId = "";
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogHelper.Error("注销车场服务错误", ex);
+                                    //flag = false;
+                                }
+                            }
+                        }
+
+
+                        dataBase.Update<VehicleInfoDb>(ve, ve.vehicleNo);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Error("更新白名单错误[" + ve.vehicleNo + "]", ex);
+                        //flag = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("{0}:更新数据库出错:{1}", DateTime.Now.ToString(), ex.Message);
+                if (CommonSettings.IsDev)
+                {
+                    Console.WriteLine(message);
+                }
+                LogHelper.Error(message);
             }
         }
 

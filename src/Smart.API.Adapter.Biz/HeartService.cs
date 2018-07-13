@@ -1,10 +1,11 @@
 ﻿using Smart.API.Adapter.Common;
+using Smart.API.Adapter.Common.JD;
 using System;
 using System.Threading;
 
 namespace Smart.API.Adapter.Biz
 {
-    public  class HeartService
+    public class HeartService
     {
         private ParkBiz parkBiz = new ParkBiz();
         private Timer timerHeart;
@@ -20,30 +21,32 @@ namespace Smart.API.Adapter.Biz
 
         private Timer timerUpdateTotal;
 
+        private Timer timerUpdateFailWhiteList;
+
         private SendMailHelper mail = new SendMailHelper();
 
         private static HeartService _heartService;
-        private static readonly object  objLock=new object();
+        private static readonly object objLock = new object();
         private HeartService()
-        { 
+        {
         }
 
         public static HeartService GetInstance()
         {
-            if(_heartService==null)
+            if (_heartService == null)
             {
                 lock (objLock)
                 {
                     if (_heartService == null)
                     {
                         _heartService = new HeartService();
- 
+
                     }
- 
+
                 }
             }
             return _heartService;
-        
+
         }
 
         public void Start()
@@ -63,7 +66,18 @@ namespace Smart.API.Adapter.Biz
             //客户端应用初始化时同步停车场总车位数，之后每天0点同步一次
             timerUpdateTotal = new Timer(new TimerCallback(UpdateParkTotalByTime), null, 0, Timeout.Infinite);
 
+            timerUpdateFailWhiteList = new Timer(new TimerCallback(UpdateFailWhiteList), null, 0, Timeout.Infinite);
+        }
 
+        /// <summary>
+        /// 下发到Jielink失败的白名单，定时重试更新
+        /// </summary>
+        /// <param name="obj"></param>
+        private void UpdateFailWhiteList(object obj)
+        {
+            parkBiz.UpdateFailWhiteList();
+            
+            timerUpdateFailWhiteList.Change(JDCommonSettings.UpdateFailWhiteInterval, Timeout.Infinite);
         }
 
         /// <summary>
@@ -167,7 +181,7 @@ namespace Smart.API.Adapter.Biz
             if (result)
             {
                 //更新总车位成功后，紧跟着要更新剩余车位
-                UpdateParkRemainCount(); 
+                UpdateParkRemainCount();
             }
             //if (!result)
             //{

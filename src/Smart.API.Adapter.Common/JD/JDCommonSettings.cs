@@ -246,5 +246,26 @@ namespace Smart.API.Adapter.Common.JD
             return null;
         }
 
+
+
+        
+            
+        /// <summary>
+        /// 请求第三方超时时间，默认30分钟，单位分钟
+        /// </summary>
+        public static int UpdateFailWhiteInterval
+        {
+            get
+            {
+                string UpdateFailWhiteInterval = ConfigurationManager.AppSettings["UpdateFailWhiteInterval"];
+                int iUpdateFailWhiteInterval = 0;
+                int.TryParse(UpdateFailWhiteInterval, out iUpdateFailWhiteInterval);
+                if (iUpdateFailWhiteInterval <= 0)
+                {
+                    iUpdateFailWhiteInterval = 30;
+                }
+                return iUpdateFailWhiteInterval;
+            }
+        }
     }
 }

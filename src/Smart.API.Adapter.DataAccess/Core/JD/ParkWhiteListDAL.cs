@@ -20,5 +20,15 @@ namespace Smart.API.Adapter.DataAccess.Core.JD
             string sql = "select * from ParkWhiteList where yn = '0' ";
             return base.GetEnityListBySqlString<VehicleInfo>(sql, null);
         }
+
+        /// <summary>
+        /// 查询下发到Jielink更新失败的白名单
+        /// </summary>
+        /// <returns></returns>
+        public ICollection<VehicleInfoDb> GetParkUpdateFailWhiteList()
+        {
+            string sql = "select * from ParkWhiteList where ISNULL(PersonId) or BindCar !=1 or ISNULL(ParkServiceId) ";
+            return base.GetEnityListBySqlString<VehicleInfoDb>(sql, null);
+        }
     }
 }
