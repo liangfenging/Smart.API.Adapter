@@ -688,6 +688,10 @@ namespace Smart.API.Adapter.Biz
                 string deptId = Ldept[0].deptId;
 
                 ICollection<VehicleInfoDb> IVehicleInfoDb = new ParkWhiteListBLL().GetParkUpdateFailWhiteList();
+                if (IVehicleInfoDb == null)
+                {
+                    return;
+                }
 
                 foreach (VehicleInfoDb ve in IVehicleInfoDb)
                 {
