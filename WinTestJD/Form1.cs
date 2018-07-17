@@ -1,7 +1,10 @@
 ﻿using Smart.API.Adapter.ActiveMQ;
 using Smart.API.Adapter.Biz;
+using Smart.API.Adapter.BizCore.JD;
 using Smart.API.Adapter.Common;
+using Smart.API.Adapter.DataAccess;
 using Smart.API.Adapter.Models;
+using Smart.API.Adapter.Models.Core.JD;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -238,6 +241,29 @@ namespace WinTestJD
         {
             reciver.StopConnection();
             reciver.OnActiveMQReciveMsg -= reciver_OnActiveMQReciveMsg;
+        }
+
+        private void btn_test_Click(object sender, EventArgs e)
+        {
+            VehicleInfoDb ve = new VehicleInfoDb();
+            ve.vehicleNo = "粤B12345";
+            ve.yn = "0";
+            ve.CreateTime = DateTime.Now;
+            DataBase dataBase = new DataBase(DataBase.DbName.SmartAPIAdapterCore, "ParkWhiteList", "VehicleNo", false);
+            //dataBase.FindByKey<VehicleInfoDb>("123");
+
+            //dataBase.Insert<VehicleInfoDb>(ve);
+
+            JDBillModel model = new JDBillModel();
+            model.LogNo = "12345";
+            model.ResultCode = "0";
+            model.QrCode = "";
+            model.Cost = "1";
+            model.ReasonCode = "";
+            model.Reason = "";
+
+
+            new JDBillBLL().Insert(model);
         }
 
 
