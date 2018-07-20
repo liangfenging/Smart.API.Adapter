@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Smart.API.Adapter.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +17,7 @@ namespace Smart.API.Adapter.WebPortal
     {
         protected void Application_Start()
         {
+            LogHelper.RegisterLog4Config(System.Web.HttpContext.Current.Server.MapPath("Config\\Log4net.config"));
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);

@@ -34,28 +34,28 @@
       <publishTime>08/03/2016 09:59:44</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Api.dll">
-      <publishTime>07/17/2018 14:57:42</publishTime>
+      <publishTime>07/17/2018 15:04:11</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Biz.dll">
-      <publishTime>07/17/2018 14:57:36</publishTime>
+      <publishTime>07/17/2018 15:02:48</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.BizCore.dll">
-      <publishTime>07/17/2018 14:57:35</publishTime>
+      <publishTime>07/17/2018 15:02:47</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Common.dll">
-      <publishTime>07/17/2018 14:57:35</publishTime>
+      <publishTime>07/17/2018 15:02:48</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.DataAccess.dll">
-      <publishTime>07/17/2018 14:57:35</publishTime>
+      <publishTime>07/17/2018 15:02:47</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Models.dll">
-      <publishTime>07/17/2018 14:57:34</publishTime>
+      <publishTime>07/17/2018 15:02:47</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.ThirdApp.dll">
-      <publishTime>07/17/2018 14:57:41</publishTime>
+      <publishTime>07/17/2018 15:04:10</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Web.dll">
-      <publishTime>07/17/2018 14:57:41</publishTime>
+      <publishTime>07/17/2018 15:04:10</publishTime>
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
       <publishTime>08/03/2016 09:58:06</publishTime>
