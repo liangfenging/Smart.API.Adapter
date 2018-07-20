@@ -5,7 +5,7 @@ namespace Smart.API.Adapter.DataAccess.Core.JD
     public class JDBillDAL : DataBase
     {
         public JDBillDAL()
-            : base(DbName.SmartAPIAdapterCore, "JDBill", "logNo", false)
+            : base(DbName.SmartAPIAdapterCore, "JDBill", "ID")
         { }
 
 

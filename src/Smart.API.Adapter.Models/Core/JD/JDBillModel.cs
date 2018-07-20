@@ -4,6 +4,12 @@ namespace Smart.API.Adapter.Models.Core.JD
 {
     public class JDBillModel
     {
+        public int ID
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 车辆进出的唯一标识，采用Jielink+的 inReocrdId
         /// </summary>

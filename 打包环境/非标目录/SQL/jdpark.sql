@@ -3,7 +3,7 @@ liliangfeng
 
 Date: 2018-06-20 18:34:29
 */
-drop database if exists jdpark;
+--drop database if exists jdpark;
 
 
 CREATE DATABASE jdpark CHARACTER SET utf8;
@@ -25,6 +25,8 @@ CREATE TABLE `jdbill` (
   `ReasonCode` varchar(50) DEFAULT NULL,
   `Reason` varchar(255) DEFAULT NULL,
   `CreateTime` datetime DEFAULT NULL,
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`ID`),
   KEY `LogNo_Index` (`LogNo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -41,6 +43,8 @@ CREATE TABLE `jdbillarchived` (
   `ReasonCode` varchar(50) DEFAULT NULL,
   `Reason` varchar(255) DEFAULT NULL,
   `CreatTime` datetime DEFAULT NULL,
+  `ID` bigint(20) NOT NULL,
+  PRIMARY KEY (`ID`),
   KEY `LogNo_Index` (`LogNo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -53,7 +57,7 @@ CREATE TABLE `parkdic` (
   `KeyStr` varchar(255) DEFAULT NULL,
   `ValueStr` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for parkwhitelist
@@ -68,9 +72,9 @@ CREATE TABLE `parkwhitelist` (
   `BindCar` tinyint(2) DEFAULT NULL,
   `CreateTime` datetime DEFAULT NULL,
   `UpdateTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`VehicleNo`),
   KEY `VehicleNo_Index` (`VehicleNo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 insert into ParkDic (KeyStr,ValueStr) values ('Version','0');
 insert into ParkDic (KeyStr,ValueStr) values ('OverFlowCount','0');
