@@ -3,7 +3,7 @@ liliangfeng
 
 Date: 2018-06-20 18:34:29
 */
-drop database if exists jdpark;
+--drop database if exists jdpark;
 
 
 CREATE DATABASE jdpark CHARACTER SET utf8;
