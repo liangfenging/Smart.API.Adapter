@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.API.Adapter.Api", "src\Smart.API.Adapter.Api\Smart.API.Adapter.Api.csproj", "{8C732F07-6B73-486D-8D78-F7D1F806AA61}"
 EndProject
@@ -46,6 +46,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.API.Adapter.WebServiceServer", "src\Smart.API.Adapter.WebServiceServer\Smart.API.Adapter.WebServiceServer.csproj", "{E6095200-5419-4919-9E0E-2AD466CA378F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.API.Adapter.WebPortal", "src\Smart.API.Adapter.WebPortal\Smart.API.Adapter.WebPortal.csproj", "{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "08-Others", "08-Others", "{77198E60-B789-4410-A91B-924E2CBBAC40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsManagePlatform", "src\CarsManagePlatform\CarsManagePlatform.csproj", "{F42EC5CA-FFCA-423E-AE5C-568570F58107}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -144,6 +148,12 @@ Global
 		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Uat|Any CPU.ActiveCfg = Release|Any CPU
 		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA}.Uat|Any CPU.Build.0 = Release|Any CPU
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107}.Uat|Any CPU.ActiveCfg = Release|Any CPU
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107}.Uat|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,5 +174,6 @@ Global
 		{179E3F7C-59F5-4556-98DB-7F61D340DEC6} = {1D688060-E9F9-44FD-A6B3-377BDFC48F4D}
 		{E6095200-5419-4919-9E0E-2AD466CA378F} = {3F1A7AB1-14DB-4809-98C9-41B57C0678DE}
 		{DB5AF539-E81C-4BF2-93AE-BE64D5E198DA} = {3F1A7AB1-14DB-4809-98C9-41B57C0678DE}
+		{F42EC5CA-FFCA-423E-AE5C-568570F58107} = {77198E60-B789-4410-A91B-924E2CBBAC40}
 	EndGlobalSection
 EndGlobal

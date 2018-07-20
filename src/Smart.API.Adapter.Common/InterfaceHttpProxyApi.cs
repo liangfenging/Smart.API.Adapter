@@ -28,12 +28,21 @@ namespace Smart.API.Adapter.Common
             _IsJielink = isJielink;
             if (isJielink == 1 && string.IsNullOrWhiteSpace(_jielinkKey))
             {
-                AppChanelModel app = appChanel();
-                if (app != null)
+                try
                 {
-                    _appId = app.appId;
-                    _jielinkKey = app.key;
+                    AppChanelModel app = appChanel();
+                    if (app != null)
+                    {
+                        _appId = app.appId;
+                        _jielinkKey = app.key;
+                    }
                 }
+                catch (Exception)
+                {
+
+                    //throw;
+                }
+               
             }
         }
 
