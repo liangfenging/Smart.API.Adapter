@@ -16,9 +16,14 @@ namespace Smart.API.Adapter.DataAccess {
 		/// </summary>
 		public enum DbName {
 			/// <summary>
-			/// db
+			/// API db
 			/// </summary>
             SmartAPIAdapterCore,
+
+            /// <summary>
+            /// jielink DB
+            /// </summary>
+            SmartJieLink
 		}
 
 		public Database database = null;
