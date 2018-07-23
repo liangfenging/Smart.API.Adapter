@@ -253,7 +253,7 @@ namespace Smart.API.Adapter.Biz
                                             {
                                                 DateTime dtNow = DateTime.Now;
                                                 parkService.startTime = dtNow.ToShortDateString();
-                                                parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                                parkService.endTime = dtNow.AddYears(19).ToShortDateString();
                                                 parkService.setmealNo = 50;
                                                 parkService = jielinkApi.EnableParkService(parkService);
                                                 ve.ParkServiceId = parkService.parkServiceId;
@@ -328,7 +328,7 @@ namespace Smart.API.Adapter.Biz
                                     parkService.personId = person.personId;
                                     DateTime dtNow = DateTime.Now;
                                     parkService.startTime = dtNow.ToShortDateString();
-                                    parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                    parkService.endTime = dtNow.AddYears(19).ToShortDateString();
                                     parkService.setmealNo = 50;
                                     try
                                     {
@@ -746,7 +746,7 @@ namespace Smart.API.Adapter.Biz
                                 {
                                     DateTime dtNow = DateTime.Now;
                                     parkService.startTime = dtNow.ToShortDateString();
-                                    parkService.endTime = dtNow.AddDays(-1).ToShortDateString();
+                                    parkService.endTime = dtNow.AddYears(19).ToShortDateString();
                                     parkService.setmealNo = 50;
                                     parkService = jielinkApi.EnableParkService(parkService);
                                     ve.ParkServiceId = parkService.parkServiceId;
