@@ -31,18 +31,16 @@ namespace Smart.API.Adapter.Common
                 try
                 {
                     AppChanelModel app = appChanel();
-                    if (app != null)
+                    //if (app != null)
                     {
                         _appId = app.appId;
                         _jielinkKey = app.key;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
-                    //throw;
+                    throw new Exception("获取jielink Key失败：" + ex.ToString());
                 }
-               
             }
         }
 

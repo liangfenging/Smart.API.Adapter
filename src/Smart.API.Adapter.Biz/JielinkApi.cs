@@ -11,16 +11,9 @@ namespace Smart.API.Adapter.Biz
 
         public JielinkApi()
         {
-            try
+            if (proxyApi == null)
             {
-                if (proxyApi == null)
-                {
-                    proxyApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Error("Jielink获取key失败",ex);
+                proxyApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
             }
         }
 
@@ -55,10 +48,6 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public responseDeptModel Depts(requestDeptModel requestdata)
         {
-            if (proxyApi == null)
-            {
-                return null;
-            }
             ApiResult<APIResultBase<responseDeptModel>> result = proxyApi.PostRaw<APIResultBase<responseDeptModel>>("base/depts", requestdata);
             if (result.successed)
             {
@@ -86,10 +75,6 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public PersonModel AddPerson(PersonModel requestdata)
         {
-            if (proxyApi == null)
-            {
-                return null;
-            }
             ApiResult<APIResultBase<PersonModel>> result = proxyApi.PostRaw<APIResultBase<PersonModel>>("base/addperson", requestdata);
             if (result.successed)
             {
@@ -118,10 +103,6 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public VehicleModel VehicleBind(VehicleModel requestdata)
         {
-            if (proxyApi == null)
-            {
-                return null;
-            }
             ApiResult<APIResultBase<VehicleModel>> result = proxyApi.PostRaw<APIResultBase<VehicleModel>>("base/vehicleinfo", requestdata);
             if (result.successed)
             {
@@ -148,10 +129,6 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public ParkServiceModel EnableParkService(ParkServiceModel requestdata)
         {
-            if (proxyApi == null)
-            {
-                return null;
-            }
             ApiResult<APIResultBase<ParkServiceModel>> result = proxyApi.PostRaw<APIResultBase<ParkServiceModel>>("park/enableparkservice", requestdata);
             if (result.successed)
             {
@@ -179,10 +156,6 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public bool StopParkService(ParkServiceModel requestdata)
         {
-            if (proxyApi == null)
-            {
-                return false;
-            }
             ApiResult<APIResultBase> result = proxyApi.PostRaw<APIResultBase>("park/stopparkservice", requestdata);
             if (result.successed)
             {
@@ -210,13 +183,6 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public APIResultBase<BlackWhiteListModel> AddBackWhiteList(BlackWhiteListModel requestdata)
         {
-            if (proxyApi ==null)
-            {
-                APIResultBase<BlackWhiteListModel> apiresult = new APIResultBase<BlackWhiteListModel>();
-                apiresult.code = "1";
-                apiresult.msg = "proxyApi为null,获取jielink key失败";
-                return apiresult;
-            }
             ApiResult<APIResultBase<BlackWhiteListModel>> result = proxyApi.PostRaw<APIResultBase<BlackWhiteListModel>>("park/addblackwhitelist", requestdata);
             if (result.successed)
             {
