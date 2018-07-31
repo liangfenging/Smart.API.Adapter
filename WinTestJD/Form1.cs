@@ -245,25 +245,8 @@ namespace WinTestJD
 
         private void btn_test_Click(object sender, EventArgs e)
         {
-            VehicleInfoDb ve = new VehicleInfoDb();
-            ve.vehicleNo = "粤B12345";
-            ve.yn = "0";
-            ve.CreateTime = DateTime.Now;
-            DataBase dataBase = new DataBase(DataBase.DbName.SmartAPIAdapterCore, "ParkWhiteList", "VehicleNo", false);
-            //dataBase.FindByKey<VehicleInfoDb>("123");
-
-            //dataBase.Insert<VehicleInfoDb>(ve);
-
-            JDBillModel model = new JDBillModel();
-            model.LogNo = "12345";
-            model.ResultCode = "0";
-            model.QrCode = "";
-            model.Cost = "1";
-            model.ReasonCode = "";
-            model.Reason = "";
-
-
-            new JDBillBLL().Insert(model);
+            SendMailHelper sendmail = new SendMailHelper();
+            sendmail.SendMail("test", true);
         }
 
 

@@ -776,9 +776,18 @@ namespace Smart.API.Adapter.Common.Mail
 
                         ThreadPool.QueueUserWorkItem((userState) =>
                         {
+                            try
+                            {
+                                MailUserState curUserState = userState as MailUserState;
+                                curUserState.CurSmtpClient.SendAsync(mMailMessage, userState);
+                            }
+                            catch (Exception ex)
+                            {
+                                LogHelper.Error("发送邮件错误：" + ex.ToString());
+
+                            }
                             // 无需 catch 发送异常，因为是异步，所以这里 catch 不到。
-                            MailUserState curUserState = userState as MailUserState;
-                            curUserState.CurSmtpClient.SendAsync(mMailMessage, userState);
+
                         }, state);
 
                     }
