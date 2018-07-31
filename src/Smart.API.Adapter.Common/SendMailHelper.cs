@@ -25,7 +25,7 @@ namespace Smart.API.Adapter.Common
         /// 发送邮件
         /// </summary>
         /// <param name="isAsync">是否异步发送</param>
-        public void SendMail(string eventType,bool isAsync = true)
+        public void SendMail(string eventType,bool isAsync = false)
         {
             try
             {

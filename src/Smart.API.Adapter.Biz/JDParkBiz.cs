@@ -213,11 +213,11 @@ namespace Smart.API.Adapter.Biz
                         if (dicDevStatus.ContainsKey(item.deviceGuid))
                         {
 
-                            if (dicDevStatus[item.deviceGuid] == item.deviceStatus)
+                            if (dicDevStatus[item.deviceGuid] == GetDevStatus(item.deviceStatus))
                             {
                                 flag = true;
                             }
-                            dicDevStatus[item.deviceGuid] = item.deviceStatus;
+                            dicDevStatus[item.deviceGuid] = GetDevStatus(item.deviceStatus);
                         }
                         if (!flag)
                         {
@@ -230,7 +230,7 @@ namespace Smart.API.Adapter.Biz
                             LjdEquipment.Add(jdEquipment);
                             if (!dicDevStatus.ContainsKey(item.deviceGuid))
                             {
-                                dicDevStatus.Add(item.deviceGuid, item.deviceStatus);
+                                dicDevStatus.Add(item.deviceGuid, jdEquipment.status);
                             }
                         }
                     }
@@ -379,7 +379,7 @@ namespace Smart.API.Adapter.Biz
                 {
                     bIsWhiteList = false;
                 }
-               
+
                 apiBaseResult = PostInRecognition(inRecognitionRecord, businessType);
                 if (apiBaseResult.code != "0")//请求第三方接口失败
                 {
@@ -507,7 +507,7 @@ namespace Smart.API.Adapter.Biz
                     apiBaseResult.msg = "等待第三方重试的时间间隔";
                     return apiBaseResult;
                 }
-
+                LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
                 ApiResult<BaseJdRes> apiResult = httpApi.PostUrl<BaseJdRes>("external/createVehicleLogDetail", reqVehicleLog);
                 if (!apiResult.successed)
                 {
@@ -585,16 +585,17 @@ namespace Smart.API.Adapter.Biz
                 }
 
                 string fileName = "";
-                reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inCrossRecord.inImage, out fileName);
+                string filePicData = "";
+                filePicData = reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inCrossRecord.inImage, out fileName);
                 reqVehicleLog.photoName = fileName;
 
                 int iCount = 0;
-                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
+                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 3)
                 {
                     iCount++;
                     reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(inCrossRecord.inImage, out fileName);
                     reqVehicleLog.photoName = fileName;
-                    System.Threading.Thread.Sleep(100);
+                    System.Threading.Thread.Sleep(500);
                 }
 
                 reqVehicleLog.vehicleNo = ConvJdPlateNo(inCrossRecord.plateNumber);
@@ -625,7 +626,10 @@ namespace Smart.API.Adapter.Biz
                     apiBaseResult.msg = "等待第三方重试的时间间隔";
                     return apiBaseResult;
                 }
-
+                reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : null;//方便日志查看，不记录图片数据
+                LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
+                reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : filePicData;
+                reqVehicleLog.photoName = string.IsNullOrWhiteSpace(fileName) ? "no picture" : fileName;
                 ApiResult<BaseJdRes> apiResult = httpApi.PostUrl<BaseJdRes>("external/createVehicleLogDetail", reqVehicleLog);
                 if (!apiResult.successed)
                 {
@@ -668,9 +672,11 @@ namespace Smart.API.Adapter.Biz
                 LogHelper.Error("请求第三方入场过闸错误:", ex);
                 JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
             }
-
-            //更新剩余停车位
-            HeartService.GetInstance().UpdateParkRemainCount();
+            if (inCrossRecord.reTrySend != "1")
+            {
+                //更新剩余停车位
+                HeartService.GetInstance().UpdateParkRemainCount();
+            }
             return apiBaseResult;
         }
 
@@ -733,6 +739,7 @@ namespace Smart.API.Adapter.Biz
                     return apiBaseResult;
                 }
 
+                LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
                 ApiResult<ResponseOutRecognition> apiResult = httpApi.PostUrl<ResponseOutRecognition>("external/createVehicleLogDetail", reqVehicleLog);
                 if (!apiResult.successed)
                 {
@@ -842,15 +849,16 @@ namespace Smart.API.Adapter.Biz
                 reqVehicleLog.actionPosition = outCrossRecord.outDeviceName;
 
                 string fileName = "";
-                reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outCrossRecord.outImage, out fileName);
+                string filePicData = "";
+                filePicData = reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outCrossRecord.outImage, out fileName);
                 reqVehicleLog.photoName = fileName;
                 int iCount = 0;
-                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 5)
+                while (string.IsNullOrWhiteSpace(reqVehicleLog.photoStr) && iCount < 3)
                 {
                     iCount++;
                     reqVehicleLog.photoStr = StringHelper.GetPicStringByUrl(outCrossRecord.outImage, out fileName);
                     reqVehicleLog.photoName = fileName;
-                    System.Threading.Thread.Sleep(100);
+                    System.Threading.Thread.Sleep(500);
                 }
 
                 reqVehicleLog.resend = "1";
@@ -896,8 +904,13 @@ namespace Smart.API.Adapter.Biz
                     new JDBillArchivedBLL().Insert(model);
                 }
 
+                //LogHelper.Info("接收SDK传carOut:" + outCrossRecord.ToJson());//记录日志
+                reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : null;//方便日志查看，不记录图片数据
 
+                LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
 
+                reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : filePicData;
+                reqVehicleLog.photoName = string.IsNullOrWhiteSpace(fileName) ? "no picture" : fileName;
                 ApiResult<ResponseOutRecognition> apiResult = httpApi.PostUrl<ResponseOutRecognition>("external/createVehicleLogDetail", reqVehicleLog);
                 if (!apiResult.successed)
                 {
@@ -947,10 +960,11 @@ namespace Smart.API.Adapter.Biz
                 LogHelper.Error("请求第三方出场过闸错误:", ex);
                 JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
             }
-
-            //更新剩余停车位
-            HeartService.GetInstance().UpdateParkRemainCount();
-
+            if (outCrossRecord.reTrySend != "1")
+            {
+                //更新剩余停车位
+                HeartService.GetInstance().UpdateParkRemainCount();
+            }
             return apiBaseResult;
         }
 
@@ -1361,7 +1375,7 @@ namespace Smart.API.Adapter.Biz
             {
                 return "000000";
             }
-            return plateNumber; 
+            return plateNumber;
         }
     }
 }

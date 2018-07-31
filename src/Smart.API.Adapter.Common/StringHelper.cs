@@ -112,16 +112,16 @@ namespace Smart.API.Adapter.Common {
             try
             {
                 using (var client = new HttpClient())
-                {
-                    picUrl.TrimEnd('/');
-                    if (picUrl.Contains('/'))
-                    {
-                        fileName = picUrl.Substring(picUrl.LastIndexOf('/') + 1);
-                    }
+                {       
                     byte[] imgByte = client.GetByteArrayAsync(picUrl).Result;
                     if (imgByte != null)
                     {
                         fileBase64 = Convert.ToBase64String(imgByte);
+                    }
+                    picUrl.TrimEnd('/');//http://192.168.1.100:9012/down/pic/20180726/park/128654848/132801_SB1.jpg
+                    if (picUrl.Contains('/'))
+                    {
+                        fileName = picUrl.Substring(picUrl.LastIndexOf('/') + 1);
                     }
                 }
             }
