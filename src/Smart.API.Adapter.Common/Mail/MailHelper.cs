@@ -786,7 +786,6 @@ namespace Smart.API.Adapter.Common.Mail
                                 LogHelper.Error("发送邮件错误：" + ex.ToString());
 
                             }
-                            // 无需 catch 发送异常，因为是异步，所以这里 catch 不到。
 
                         }, state);
 

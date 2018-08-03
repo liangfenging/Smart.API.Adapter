@@ -46,7 +46,7 @@ namespace Smart.API.Adapter.Biz
             try
             {
                 version = dataBaseDic.FindByKey<ParkDic>("Version").ValueStr;
-                overFlowCount = Convert.ToInt32(dataBaseDic.FindByKey<ParkDic>("Version").ValueStr);
+                overFlowCount = Convert.ToInt32(dataBaseDic.FindByKey<ParkDic>("OverFlowCount").ValueStr);
             }
             catch (Exception ex)
             {
@@ -183,7 +183,7 @@ namespace Smart.API.Adapter.Biz
                     requestDept.pageIndex = 1;
                     requestDept.pageSize = 10;
                     responseDeptModel responseDept = jielinkApi.Depts(requestDept);
-                    if (responseDept ==null)
+                    if (responseDept == null)
                     {
                         return false;
                     }
