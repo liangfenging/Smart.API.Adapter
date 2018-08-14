@@ -209,10 +209,19 @@ namespace Smart.API.Adapter.Biz
                 {
                     foreach (EquipmentStatus item in LEquipmentStatus)
                     {
+                        //因为中心上传的数据有相同id,不同状态。过滤掉02 离线的状态
+                        EquipmentStatus ReEquipment = LEquipmentStatus.Where(p => p.deviceGuid == item.deviceGuid && p.deviceStatus != item.deviceStatus).FirstOrDefault();
+                        if (ReEquipment != null && ReEquipment.deviceStatus != "02")
+                        {
+                            item.deviceStatus = ReEquipment.deviceStatus;
+                        }
+                    }
+
+                    foreach (EquipmentStatus item in LEquipmentStatus)
+                    {
                         bool flag = false;//同设备状态未改变，不用上传信息
                         if (dicDevStatus.ContainsKey(item.deviceGuid))
                         {
-
                             if (dicDevStatus[item.deviceGuid] == GetDevStatus(item.deviceStatus))
                             {
                                 flag = true;
@@ -227,6 +236,7 @@ namespace Smart.API.Adapter.Biz
                             jdEquipment.position = GetDevPositonByIoType(item.deviceIoType);
                             jdEquipment.status = GetDevStatus(item.deviceStatus);
                             jdEquipment.sysTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
                             LjdEquipment.Add(jdEquipment);
                             if (!dicDevStatus.ContainsKey(item.deviceGuid))
                             {

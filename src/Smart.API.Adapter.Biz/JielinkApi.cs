@@ -183,6 +183,7 @@ namespace Smart.API.Adapter.Biz
         /// <returns></returns>
         public APIResultBase<BlackWhiteListModel> AddBackWhiteList(BlackWhiteListModel requestdata)
         {
+
             ApiResult<APIResultBase<BlackWhiteListModel>> result = proxyApi.PostRaw<APIResultBase<BlackWhiteListModel>>("park/addblackwhitelist", requestdata);
             if (result.successed)
             {

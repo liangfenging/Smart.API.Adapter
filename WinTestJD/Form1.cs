@@ -7,6 +7,7 @@ using Smart.API.Adapter.Models;
 using Smart.API.Adapter.Models.Core.JD;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace WinTestJD
@@ -245,8 +246,9 @@ namespace WinTestJD
 
         private void btn_test_Click(object sender, EventArgs e)
         {
-            SendMailHelper sendmail = new SendMailHelper();
-            sendmail.SendMail("test", true);
+
+
+         
         }
 
 
