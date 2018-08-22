@@ -42,6 +42,7 @@
     <Compile Include="JD\JDBillArchivedBLL.cs" />
     <Compile Include="JD\JDBillBLL.cs" />
     <Compile Include="JD\ParkWhiteListBLL.cs" />
+    <Compile Include="JD\VehicleLogSqlBLL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

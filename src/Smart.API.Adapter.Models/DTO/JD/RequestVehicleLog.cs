@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace Smart.API.Adapter.Models.DTO.JD
 {
     public class RequestVehicleLog : RequestJDBase
@@ -111,4 +112,46 @@ namespace Smart.API.Adapter.Models.DTO.JD
             set;
         }
     }
+
+    public class VehicleLogSql : RequestVehicleLog
+    {
+        public VehicleLogSql()
+        { }
+
+        public VehicleLogSql(RequestVehicleLog v)
+        {
+            logNo = v.logNo;
+            actionDescId = v.actionDescId;
+            vehicleNo = v.vehicleNo;
+            actionPositionCode = v.actionPositionCode;
+            actionPosition = v.actionPosition;
+            actionTime = v.actionTime;
+            entryTime = v.entryTime;
+            reasonCode = v.reasonCode;
+            reason = v.reason;
+            photoStr = v.photoStr;
+            photoName = v.photoName;
+            resend = v.resend;
+        }
+
+        public DateTime postTime
+        {
+            get;
+            set;
+        }
+
+        public int result
+        {
+            get;
+            set;
+        }
+
+        public string failReason
+        {
+
+            get;
+            set;
+        }
+    }
+
 }

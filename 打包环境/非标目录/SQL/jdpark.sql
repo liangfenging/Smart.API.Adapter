@@ -41,7 +41,7 @@ CREATE TABLE `jdbillarchived` (
   `PayResult` tinyint(2) DEFAULT NULL,
   `ReasonCode` varchar(50) DEFAULT NULL,
   `Reason` varchar(255) DEFAULT NULL,
-  `CreatTime` datetime DEFAULT NULL,
+  `CreateTime` datetime DEFAULT NULL,
   `ID` bigint(20) NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `LogNo_Index` (`LogNo`)
