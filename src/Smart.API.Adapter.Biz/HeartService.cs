@@ -13,10 +13,12 @@ namespace Smart.API.Adapter.Biz
         private Timer timerUpdateParkRemainCount;
         private Timer timerUpdateEquipmentStatus;
         private Timer timerCheckNowTime;
+        private Timer timerSetSysTime;
         private int faliTimes = 0;
         private int faliTimesUpdateParkTotalCount = 0;
         private int faliTimesUpdateParkRemainCount = 0;
         private int faliTimesUpdateEquipmentStatus = 0;
+        private int faliTimesSetSysTime = 0;
         private bool updateParkTotalByTimeFlag = false;
 
         private Timer timerUpdateTotal;
@@ -125,6 +127,8 @@ namespace Smart.API.Adapter.Biz
         private void UpdateParkTotalByTime(object obj)
         {
             UpdateParkTotalCount();
+            //设置系统时间
+            UpdateSysTime();
             //一分钟后每隔一分钟检测一次
             timerCheckNowTime = new Timer(new TimerCallback(CheckTime), null, 1000 * 60, 1000 * 60);
         }
@@ -273,6 +277,25 @@ namespace Smart.API.Adapter.Biz
                 timer.Change(parkBiz.HeartInterval, Timeout.Infinite);
             }
             //5次不行则发邮件通知
+        }
+
+
+        /// <summary>
+        /// 设置系统时间
+        /// </summary>
+        private void UpdateSysTime()
+        {
+            timerSetSysTime = new Timer(new TimerCallback(UpdateSysTimeCallBack), null, 0, Timeout.Infinite); 
+        }
+
+        /// <summary>
+        /// 设置系统时间
+        /// </summary>
+        /// <param name="o"></param>
+        private void UpdateSysTimeCallBack(object o)
+        {
+            bool result = parkBiz.SetSysTime();
+            ReTryAndEmail(result, ref faliTimesSetSysTime, timerUpdateParkTotalCount, "设置系统时间");
         }
     }
 }

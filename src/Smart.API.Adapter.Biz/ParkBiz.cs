@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Smart.API.Adapter.BizCore.JD;
+using Smart.API.Adapter.Models.DTO.JD;
 
 namespace Smart.API.Adapter.Biz
 {
@@ -800,6 +801,71 @@ namespace Smart.API.Adapter.Biz
                     Console.WriteLine(message);
                 }
                 LogHelper.Error(message);
+            }
+        }
+
+        /// <summary>
+        /// 设置系统时间
+        /// </summary>
+        /// <returns></returns>
+        public bool SetSysTime()
+        {
+            try
+            {
+                RequestJDBase requsetdata = new RequestJDBase();
+                InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
+                ApiResult<ResponseSyncSysTime> apiResult = httpApi.PostUrl<ResponseSyncSysTime>("external/syncSystemTime", requsetdata);
+                if (apiResult.successed && apiResult.data != null)
+                {
+                    if (apiResult.data.returnCode == "success")
+                    {
+                        DateTimeHelper.SetSysTime(StringHelper.GetTime(apiResult.data.systemTime));
+                    }
+                    else
+                    {
+                        if (apiResult.data.returnCode == "fail")
+                        {
+                            string message = string.Format("{0}:设置系统时间错误:{1}", DateTime.Now.ToString(), apiResult.data.description);
+                            if (CommonSettings.IsDev)
+                            {
+                                Console.WriteLine(message);
+                            }
+                            LogHelper.Error(message);
+                            //客户端未验证
+                        }
+                        if (apiResult.data.returnCode == "exception")
+                        {
+                            string message = string.Format("{0}:设置系统时间错误:{1}", DateTime.Now.ToString(), apiResult.data.description);
+                            if (CommonSettings.IsDev)
+                            {
+                                Console.WriteLine(message);
+                            }
+                            LogHelper.Error(message);
+                            //服务端异常
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    string message = string.Format("{0}:设置系统时间错误:{1},或者返回的data为null", DateTime.Now.ToString(), apiResult.message);
+                    if (CommonSettings.IsDev)
+                    {
+                        Console.WriteLine(message);
+                    }
+                    LogHelper.Error(message);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("{0}:设置系统时间错误:{1}", DateTime.Now.ToString(), ex.Message);
+                if (CommonSettings.IsDev)
+                {
+                    Console.WriteLine(message);
+                }
+                LogHelper.Error(message);
+                return false;
             }
         }
 

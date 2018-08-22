@@ -246,9 +246,9 @@ namespace WinTestJD
 
         private void btn_test_Click(object sender, EventArgs e)
         {
+            //DateTime dt = StringHelper.GetTime("1534915546094");
 
-
-         
+            //DateTimeHelper.SetSysTime(dt);
         }
 
 

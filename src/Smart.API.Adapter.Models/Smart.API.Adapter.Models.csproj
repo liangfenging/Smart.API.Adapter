@@ -69,6 +69,7 @@
     <Compile Include="Core\Base\VehicleModel.cs" />
     <Compile Include="Core\Park\BlackWhiteListModel.cs" />
     <Compile Include="Core\Equipmentstatus.cs" />
+    <Compile Include="DTO\JD\ResponseSyncSysTime.cs" />
     <Compile Include="DTO\NanFangUnion\NanFangUnionModel.cs" />
     <Compile Include="Core\PagesBase.cs" />
     <Compile Include="Core\Park\InCrossRecord.cs" />
