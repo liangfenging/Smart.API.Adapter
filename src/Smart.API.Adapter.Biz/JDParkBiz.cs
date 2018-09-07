@@ -219,6 +219,50 @@ namespace Smart.API.Adapter.Biz
 
                     foreach (EquipmentStatus item in LEquipmentStatus)
                     {
+                        try
+                        {
+                            if (CacheHelper.GetCache(item.deviceGuid) == null)
+                            {
+                                if (GetDevStatus(item.deviceStatus) == "1")
+                                {
+                                    OffLineEquipment offEquipment = new OffLineEquipment();
+                                    offEquipment.deviceGuid = item.deviceGuid;
+                                    offEquipment.offTime = DateTime.UtcNow;
+                                    CacheHelper.SetCache(item.deviceGuid, offEquipment, System.DateTime.MaxValue);
+                                    LogHelper.Info("设备状态离线缓存：[" + item.deviceGuid + "]" + offEquipment.offTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                if (GetDevStatus(item.deviceStatus) != "1")
+                                {
+                                    CacheHelper.RemoveCache(item.deviceGuid);
+                                    LogHelper.Info("设备状态恢复在线，清除缓存：[" + item.deviceGuid + "]");
+                                }
+                                else
+                                {
+                                    OffLineEquipment offEquipment = CacheHelper.GetCache(item.deviceGuid) as OffLineEquipment;
+                                    if (DateTime.UtcNow.Subtract(offEquipment.offTime).TotalSeconds < JDCommonSettings.OfflineTime)
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        LogHelper.Info("设备状态离线，超出[" + JDCommonSettings.OfflineTime + "]秒：[" + item.deviceGuid + "]");
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            LogHelper.Error("设备状态离线缓存错误：" + ex);
+
+                        }
+
+
+
+
                         bool flag = false;//同设备状态未改变，不用上传信息
                         if (dicDevStatus.ContainsKey(item.deviceGuid))
                         {
@@ -503,7 +547,7 @@ namespace Smart.API.Adapter.Biz
                 {
                     reqVehicleLog.resend = "0";//补发的记录
                 }
-              
+
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
                 string sReType = "unavailable";
                 if (dicReConnectInfo.ContainsKey((int)businessType))
@@ -584,6 +628,14 @@ namespace Smart.API.Adapter.Biz
                 else
                 {
                     VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
+                    {
+                        info.photoStr = "Y";
+                    }
+                    else
+                    {
+                        info.photoStr = "N";
+                    }
                     info.postTime = dtPost;
                     info.result = postResult;
                     info.failReason = failReason;
@@ -746,6 +798,14 @@ namespace Smart.API.Adapter.Biz
                 else
                 {
                     VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
+                    {
+                        info.photoStr = "Y";
+                    }
+                    else
+                    {
+                        info.photoStr = "N";
+                    }
                     info.postTime = dtPost;
                     info.result = postResult;
                     info.failReason = failReason;
@@ -886,14 +946,14 @@ namespace Smart.API.Adapter.Biz
                         else if (apiResult.data.returnCode == "fail")
                         {
                             postResult = 0;
-                            apiBaseResult.code = "0";//请求失败后自动出场
+                            //apiBaseResult.code = "0";//请求失败后自动出场
                             JDRePostAndEail(businessType, "fail");//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[fail]:" + apiResult.data.description;
                         }
                         else
                         {
                             postResult = 0;
-                            apiBaseResult.code = "0";//请求失败后自动出场
+                            //apiBaseResult.code = "0";//请求失败后自动出场
                             JDRePostAndEail(businessType, "exception");//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[exception]:" + apiResult.data.description;
                         }
@@ -901,7 +961,7 @@ namespace Smart.API.Adapter.Biz
                     else
                     {
                         postResult = 0;
-                        apiBaseResult.code = "0";//请求失败后自动出场
+                        //apiBaseResult.code = "0";//请求失败后自动出场
                         failReason = apiBaseResult.msg = "请求第三方失败，返回的data为null";
                         JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
                     }
@@ -910,7 +970,7 @@ namespace Smart.API.Adapter.Biz
             catch (Exception ex)
             {
                 postResult = 0;
-                apiBaseResult.code = "0";//请求失败后自动出场
+                //apiBaseResult.code = "0";//请求失败后自动出场
                 apiBaseResult.msg = "请求第三方失败，" + ex.Message;
                 failReason = "请求超时," + apiBaseResult.msg;
                 LogHelper.Error("请求第三方出场识别错误:", ex);
@@ -925,6 +985,14 @@ namespace Smart.API.Adapter.Biz
                 else
                 {
                     VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
+                    {
+                        info.photoStr = "Y";
+                    }
+                    else
+                    {
+                        info.photoStr = "N";
+                    }
                     info.postTime = dtPost;
                     info.result = postResult;
                     info.failReason = failReason;
@@ -976,7 +1044,7 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.reason = outCrossRecord.remark;
                 }
 
-                if (string.IsNullOrWhiteSpace(outCrossRecord.inTime)|| outCrossRecord.inTime.Contains("0000"))
+                if (string.IsNullOrWhiteSpace(outCrossRecord.inTime) || outCrossRecord.inTime.Contains("0000"))
                 {
                     outCrossRecord.inTime = null;
                 }
@@ -1014,7 +1082,7 @@ namespace Smart.API.Adapter.Biz
                     reqVehicleLog.resend = "0";//补发的记录
                 }
 
-               
+
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
                 string sReType = "unavailable";
                 if (dicReConnectInfo.ContainsKey((int)businessType))
@@ -1127,6 +1195,14 @@ namespace Smart.API.Adapter.Biz
                 else
                 {
                     VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
+                    {
+                        info.photoStr = "Y";
+                    }
+                    else
+                    {
+                        info.photoStr = "N";
+                    }
                     info.postTime = dtPost;
                     info.result = postResult;
                     info.failReason = failReason;
@@ -1208,16 +1284,41 @@ namespace Smart.API.Adapter.Biz
             {
                 RequsetJDQueryPay queryPay = new RequsetJDQueryPay();
                 queryPay.logNo = sLogNo;
+                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(enumJDBusinessType.PayCheck);
 
                 //查询JD账单表
                 JDBillModel model = new JDBillBLL().GetJDBillByLogNo(queryPay.logNo);
                 if (model != null)
                 {
                     queryPay.payType = model.ResultCode;
+                    responsePayCheck.payQrcodeLink = model.QrCode;
                 }
+                if (queryPay.payType == "0")
+                {
+                    if (!dicPayCheckTime.ContainsKey(sLogNo))
+                    {
+                        dicPayCheckTime.Add(sLogNo, DateTime.Now);
+                    }
+                    if (!dicPayCheckCount.ContainsKey(model.LogNo))
+                    {
+                        dicPayCheckCount.Add(model.LogNo, 1);
+                    }
+                    if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds < jdTimer.FailTimeSpan)
+                    {
+                        apiBaseResult.msg = "上次请求时间[" + dicPayCheckTime[sLogNo].ToString()+ "]，等待二维码支付，" + jdTimer.FailTimeSpan + "秒后再请求第三方支付反查";
+                        responsePayCheck.chargeTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                        responsePayCheck.payStatus = -1;
+                        responsePayCheck.payType = "OTHER";
+                        responsePayCheck.transactionId = queryPay.logNo;
+                        apiBaseResult.data = responsePayCheck;
+                        return apiBaseResult;
+                    }
+                }
+
+
                 InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 ApiResult<ResponseJDQueryPay> apiResult = new ApiResult<ResponseJDQueryPay>();
-                JDTimer jdTimer = JDCommonSettings.JDTimerInfo(enumJDBusinessType.PayCheck);
+
 
                 try
                 {
@@ -1284,13 +1385,17 @@ namespace Smart.API.Adapter.Biz
                             apiBaseResult.msg = "请求第三方失败，返回[fail]:" + apiResult.data.description;
 
                             responsePayCheck.chargeTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                            responsePayCheck.payStatus = 1;
+                            responsePayCheck.payStatus = -1;
                             responsePayCheck.payType = "OTHER";
                             responsePayCheck.transactionId = queryPay.logNo;
+                            if (model != null)
+                            {
+                                responsePayCheck.payQrcodeLink = model.QrCode;
+                            }
                             if (apiResult.data.resultCode == null)
                             {
                                 dicPayCheckCount[model.LogNo]++;
-                                responsePayCheck.payStatus = 1;
+                                responsePayCheck.payStatus = -1;
                                 //更新JD账单，将失败原因写入账单记录 reasonCode 和 reason,出场时需要带上推送
                                 bFlagUpdateBill = true;
 
@@ -1333,6 +1438,7 @@ namespace Smart.API.Adapter.Biz
                                     {
                                         if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds > jdTimer.FailTimeSpan)
                                         {
+                                            dicPayCheckTime[sLogNo] = DateTime.Now;
                                             dicPayCheckCount[model.LogNo]++;
                                         }
                                     }
@@ -1551,5 +1657,9 @@ namespace Smart.API.Adapter.Biz
             }
             return plateNumber;
         }
+
+
     }
+
+
 }

@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheHelper.cs" />
     <Compile Include="DateTimeHelper.cs" />
     <Compile Include="Expend.cs" />
     <Compile Include="FtpclientExpend.cs" />

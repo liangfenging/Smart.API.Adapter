@@ -50,7 +50,7 @@ namespace Smart.API.Adapter.Common.JD
                 {
                     try
                     {
-                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
+                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
                         var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", "");
                         if (!res.successed)
                         {
@@ -88,7 +88,7 @@ namespace Smart.API.Adapter.Common.JD
                 {
                     try
                     {
-                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
+                        InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
                         var res = requestApi.PostRaw<ParkPlaceRes>("park/parkingplace", "");
                         if (!res.successed)
                         {
@@ -124,7 +124,7 @@ namespace Smart.API.Adapter.Common.JD
             {
                 try
                 {
-                    InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS,1);
+                    InterfaceHttpProxyApi requestApi = new InterfaceHttpProxyApi(CommonSettings.BaseAddressJS, 1);
                     RequestInparkingRecord requestParmters = new RequestInparkingRecord();
                     requestParmters.pageIndex = 1;
                     requestParmters.pageSize = 1;
@@ -248,8 +248,8 @@ namespace Smart.API.Adapter.Common.JD
 
 
 
-        
-            
+
+
         /// <summary>
         /// 请求第三方超时时间，默认30分钟，单位分钟
         /// </summary>
@@ -265,6 +265,27 @@ namespace Smart.API.Adapter.Common.JD
                     iUpdateFailWhiteInterval = 30;
                 }
                 return iUpdateFailWhiteInterval;
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// 设备断线后，超过60S 再推送
+        /// </summary>
+        public static int OfflineTime
+        {
+            get
+            {
+                string OfflineTime = ConfigurationManager.AppSettings["OfflineTime"];
+                int iOfflineTime = 0;
+                int.TryParse(OfflineTime, out iOfflineTime);
+                if (iOfflineTime <= 0)
+                {
+                    iOfflineTime = 60;
+                }
+                return iOfflineTime;
             }
         }
     }

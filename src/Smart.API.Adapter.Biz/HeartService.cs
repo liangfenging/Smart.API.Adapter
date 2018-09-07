@@ -273,8 +273,11 @@ namespace Smart.API.Adapter.Biz
                     tryCount = 0;
                     mail.SendMail(eventStr);
                 }
-                //如果出错5s后重试
-                timer.Change(parkBiz.HeartInterval, Timeout.Infinite);
+                else
+                {
+                    //如果出错5s后重试
+                    timer.Change(parkBiz.HeartInterval, Timeout.Infinite);
+                }
             }
             //5次不行则发邮件通知
         }
@@ -285,7 +288,7 @@ namespace Smart.API.Adapter.Biz
         /// </summary>
         private void UpdateSysTime()
         {
-            timerSetSysTime = new Timer(new TimerCallback(UpdateSysTimeCallBack), null, 0, Timeout.Infinite); 
+            timerSetSysTime = new Timer(new TimerCallback(UpdateSysTimeCallBack), null, 0, Timeout.Infinite);
         }
 
         /// <summary>
@@ -295,7 +298,7 @@ namespace Smart.API.Adapter.Biz
         private void UpdateSysTimeCallBack(object o)
         {
             bool result = parkBiz.SetSysTime();
-            ReTryAndEmail(result, ref faliTimesSetSysTime, timerUpdateParkTotalCount, "设置系统时间");
+            ReTryAndEmail(result, ref faliTimesSetSysTime, timerSetSysTime, "设置系统时间");
         }
     }
 }

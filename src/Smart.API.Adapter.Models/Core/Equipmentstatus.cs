@@ -1,4 +1,5 @@
 ﻿
+using System;
 namespace Smart.API.Adapter.Models
 {
     public class EquipmentStatus
@@ -35,6 +36,23 @@ namespace Smart.API.Adapter.Models
         /// 设备状态
         /// </summary>
         public string deviceStatus
+        {
+            get;
+            set;
+        }
+    }
+
+
+    public class OffLineEquipment
+    {
+        public string deviceGuid
+        {
+            get;
+            set;
+        }
+
+
+        public DateTime offTime
         {
             get;
             set;

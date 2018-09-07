@@ -219,7 +219,7 @@ namespace WinTestJD
         {
             reciver.OnActiveMQReciveMsg += reciver_OnActiveMQReciveMsg;
             reciver.StartReciveTopicMsg(new Dictionary<string, string>() { { "topic1", "" }, { "topic2", "" } });
-            
+
         }
 
         private void reciver_OnActiveMQReciveMsg(ActiveMQInfo info)
@@ -246,9 +246,14 @@ namespace WinTestJD
 
         private void btn_test_Click(object sender, EventArgs e)
         {
-            //DateTime dt = StringHelper.GetTime("1534915546094");
+            //\\Ti8qsvk9za8jllk\京东项目
 
-            //DateTimeHelper.SetSysTime(dt);
+
+            if (File.Exists("\\\\Ti8qsvk9za8jllk\\京东项目\\微信图片_20180718092510.jpg"))
+            {
+                FileStream fileStream = new FileStream("\\\\Ti8qsvk9za8jllk\\京东项目\\微信图片_20180718092510.jpg", FileMode.Open, FileAccess.Read);
+            }
+
         }
 
 

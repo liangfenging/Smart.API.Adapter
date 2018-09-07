@@ -17,9 +17,15 @@ namespace Smart.API.Adapter.BizCore.JD
             new VehicleLogSqlDAL().Insert<VehicleLogSql>(info);
         }
 
-        public DataTable GetDTVehicleLog(DateTime dtStart, DateTime dtEnd, int limitStart, int limitEnd)
+        public DataTable GetDTVehicleLog(DateTime dtStart, DateTime dtEnd, int limitStart, int limitEnd, bool isLimit = true)
         {
-            return new VehicleLogSqlDAL().GetDTVehicleLog(dtStart, dtEnd, limitStart, limitEnd);
+            return new VehicleLogSqlDAL().GetDTVehicleLog(dtStart, dtEnd, limitStart, limitEnd, isLimit);
+
+        }
+
+        public DataTable GetDTVehicleLogHasPic(DateTime dtStart, DateTime dtEnd, int limitStart, int limitEnd, bool isLimit = true)
+        {
+            return new VehicleLogSqlDAL().GetDTVehicleLogHasPic(dtStart, dtEnd, limitStart, limitEnd, isLimit);
 
         }
         public int GetCountVehicleLog(DateTime dtStart, DateTime dtEnd)

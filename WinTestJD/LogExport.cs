@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using NPOI.SS.UserModel;
 using NPOI.HSSF.UserModel;
 using NPOI.XSSF.UserModel;
+using Smart.API.Adapter.Common;
 
 namespace WinTestJD
 {
@@ -23,6 +24,7 @@ namespace WinTestJD
         public LogExport()
         {
             InitializeComponent();
+            LogHelper.RegisterLog4Config(AppDomain.CurrentDomain.BaseDirectory + "\\Config\\Log4net.config");
         }
 
         private DataTable dtTotal;
@@ -45,32 +47,37 @@ namespace WinTestJD
                     int totalCount = new VehicleLogSqlBLL().GetCountVehicleLog(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date);
                     if (totalCount > 0)
                     {
-                        int page = totalCount / 1 + 50;
+                        //int page = totalCount / 1 + 1000;
 
-                        string filePath = foldPath + "log_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
-                        for (int i = 0; i < page; i++)
-                        {
-                            int limitStart = i * 50;
-                            int limitEnd = 50;
-                            DataTable dt = new VehicleLogSqlBLL().GetDTVehicleLog(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date, limitStart, limitEnd);
-                            if (i == 0)
-                            {
-                                dtTotal = dt.Copy(); ;
-                            }
-                            else
-                            {
+                        string filePath = theFolder.FullName + "\\log_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".xlsx";
+                        //for (int i = 0; i < page; i++)
+                        //{
+                        //    int limitStart = i * 1000;
+                        //    int limitEnd = 1000;
+                        //    DataTable dt = new VehicleLogSqlBLL().GetDTVehicleLog(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date, limitStart, limitEnd);
+                        //    if (i == 0)
+                        //    {
+                        //        dtTotal = dt.Copy(); ;
+                        //    }
+                        //    else
+                        //    {
 
-                                //添加DataTable的数据
-                                foreach (DataRow dr in dt.Rows)
-                                {
-                                    dtTotal.ImportRow(dr);
-                                }
-                            }
+                        //        //添加DataTable的数据
+                        //        foreach (DataRow dr in dt.Rows)
+                        //        {
+                        //            dtTotal.ImportRow(dr);
+                        //        }
+                        //    }
 
-                        }
+                        //}
+                        //DataTable haspicdata = new VehicleLogSqlBLL().GetDTVehicleLogHasPic(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date, 0, 0, false);
+                        //string filePath1 = theFolder.FullName + "\\log_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+                        //ExportExcel(haspicdata, filePath1, 0);
+
+                        dtTotal = new VehicleLogSqlBLL().GetDTVehicleLogHasPic(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date, 0, 0, false);
                         if (dtTotal != null)
                         {
-                            
+
 
                             int inCount = new VehicleLogSqlBLL().GetInCountVehicleLog(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date);
                             int outCount = new VehicleLogSqlBLL().GetOutCountVehicleLog(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date);
@@ -82,14 +89,15 @@ namespace WinTestJD
                             dtInOutCount.Columns.Add("出场车辆总数量");
 
                             dtInOutCount.Rows.Add(startDateTimePicker.Value.Date, endDateTimePicker.Value.Date, inCount, outCount);
-                            DataTableToExcel(dtTotal,dtInOutCount, filePath, true);
+                            DataTableToExcel(dtTotal, dtInOutCount, filePath, true);
 
-                          
+
                             MessageBox.Show("导出成功");
                         }
                         else
                         {
                             MessageBox.Show("未查询到数据");
+                            LogHelper.Error("未查询到数据");
                         }
                     }
                     else
@@ -102,6 +110,7 @@ namespace WinTestJD
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
+                LogHelper.Error("Exception1: " + ex.ToString());
             }
 
             label3.Text = "请选择保存至非桌面的路径";
@@ -124,16 +133,18 @@ namespace WinTestJD
             //以指定的字符编码向指定的流写入字符
             StreamWriter sw = new StreamWriter(file, Encoding.GetEncoding("GB2312"));
 
-            StringBuilder strbu = new StringBuilder();
+            //StringBuilder strbu = new StringBuilder();
             if (isFirst == 0)
             {
+                string title = "";
                 //写入标题
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
-                    strbu.Append(dt.Columns[i].ColumnName.ToString() + "\t");
+                    title = title + dt.Columns[i].ColumnName.ToString() + ",";
                 }
                 //加入换行字符串
-                strbu.Append(Environment.NewLine);
+                title = title + Environment.NewLine;
+                sw.Write(title);
             }
 
 
@@ -141,14 +152,15 @@ namespace WinTestJD
             //写入内容
             for (int i = 0; i < dt.Rows.Count; i++)
             {
+                string bodytext = "";
                 for (int j = 0; j < dt.Columns.Count; j++)
                 {
-                    strbu.Append(dt.Rows[i][j].ToString() + "\t");
+                    bodytext = bodytext + dt.Rows[i][j].ToString() + ",";
                 }
-                strbu.Append(Environment.NewLine);
+                bodytext = bodytext + Environment.NewLine;
+                sw.Write(bodytext);
             }
 
-            sw.Write(strbu.ToString());
             sw.Flush();
             file.Flush();
 
@@ -163,127 +175,6 @@ namespace WinTestJD
         {
             this.startDateTimePicker.Value = DateTime.Now.AddDays(-1);
             this.endDateTimePicker.Value = DateTime.Now.AddDays(-1);
-        }
-
-        public void ExportExcel2(DataTable dt, string filename, int isFirst)
-        {
-            OleDbConnection conn = null;
-            OleDbCommand cmd = null;
-
-            Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
-
-            Microsoft.Office.Interop.Excel.Workbooks workbooks = excel.Workbooks;
-
-            Microsoft.Office.Interop.Excel.Workbook workbook = workbooks.Add(true);
-
-            try
-            {
-                //设置区域为当前线程的区域
-                dt.Locale = System.Threading.Thread.CurrentThread.CurrentCulture;
-
-                //设置导出文件路径
-                // string path = HttpContext.Current.Server.MapPath("Export/");
-
-                //设置新建文件路径及名称
-                string savePath = filename;
-
-                //创建文件
-                FileStream file = new FileStream(savePath, FileMode.Append, FileAccess.Write);
-
-                //关闭释放流，不然没办法写入数据
-                file.Close();
-                file.Dispose();
-
-                //由于使用流创建的 excel 文件不能被正常识别，所以只能使用这种方式另存为一下。
-                workbook.SaveCopyAs(savePath);
-
-
-                // Excel 2003 版本连接字符串
-                //string strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source='" + savePath + "';Extended Properties='Excel 8.0;HDR=Yes;'";
-
-                // Excel 2007 以上版本连接字符串
-                string strConn = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source='" + savePath + "';Extended Properties='Excel 12.0;HDR=Yes;'";
-
-                //创建连接对象
-                conn = new OleDbConnection(strConn);
-                //打开连接
-                conn.Open();
-
-                //创建命令对象
-                cmd = conn.CreateCommand();
-
-                //获取 excel 所有的数据表。
-                //new object[] { null, null, null, "Table" }指定返回的架构信息：参数介绍
-                //第一个参数指定目录
-                //第二个参数指定所有者
-                //第三个参数指定表名
-                //第四个参数指定表类型
-                DataTable dtSheetName = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "Table" });
-
-                if (isFirst == 0)
-                {
-                    //因为后面创建的表都会在最后面，所以本想删除掉前面的表，结果发现做不到，只能清空数据。
-                    for (int i = 0; i < dtSheetName.Rows.Count; i++)
-                    {
-                        cmd.CommandText = "drop table [" + dtSheetName.Rows[i]["TABLE_NAME"].ToString() + "]";
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    //添加一个表，即 Excel 中 sheet 表
-                    cmd.CommandText = "create table " + dt.TableName + " ([序号] INT,[推送时间] VarChar,[推送结果] VarChar,[actionDescId] VarChar,[vehicleNo] VarChar,[parkLotCode] VarChar,[actionPositionCode] VarChar,[LogNo] VarChar,[entryTime] VarChar,[reasonCode] VarChar,[reason] VarChar,[photoStr] VarChar,[photoName] VarChar,[resend] VarChar)";
-                    cmd.ExecuteNonQuery();
-                }
-                //"create table " + dt.TableName + " ([S_Id] INT,[S_StuNo] VarChar,[S_Name] VarChar,[S_Sex] VarChar,[S_Height] VarChar,[S_BirthDate] VarChar,[C_S_Id] INT)";
-
-
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    string values = "";
-
-                    for (int j = 0; j < dt.Columns.Count; j++)
-                    {
-                        values += "'" + dt.Rows[i][j].ToString() + "',";
-                    }
-
-                    //判断最后一个字符是否为逗号，如果是就截取掉
-                    if (values.LastIndexOf(',') == values.Length - 1)
-                    {
-                        values = values.Substring(0, values.Length - 1);
-                    }
-
-                    //写入数据
-                    cmd.CommandText = "insert into " + dt.TableName + " (序号,推送时间,推送结果, actionDescId, vehicleNo, parkLotCode,actionPositionCode,actionPosition,actionTime ,LogNo, entryTime,reasonCode,reason,photoStr,photoName,resend) values (" + values + ")";
-                    cmd.ExecuteNonQuery();
-                }
-
-                conn.Close();
-                conn.Dispose();
-                cmd.Dispose();
-
-                //加入下面的方法，把保存的 Excel 文件输出到浏览器下载。需要先关闭连接。
-                //FileInfo fileInfo = new FileInfo(savePath);
-                //OutputClient(fileInfo);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            finally
-            {
-                workbook.Close(false, Type.Missing, Type.Missing);
-                workbooks.Close();
-                excel.Quit();
-
-                Marshal.ReleaseComObject(workbook);
-                Marshal.ReleaseComObject(workbooks);
-                Marshal.ReleaseComObject(excel);
-
-                workbook = null;
-                workbooks = null;
-                excel = null;
-
-                GC.Collect();
-            }
         }
 
 
@@ -313,7 +204,7 @@ namespace WinTestJD
 
         private IWorkbook workbook = null;
         private FileStream fs = null;
-  
+
 
         /// <summary>
         /// 将DataTable数据导入到excel中
@@ -326,8 +217,6 @@ namespace WinTestJD
         {
             int i = 0;
             int j = 0;
-
-
 
             fs = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             if (fileName.IndexOf(".xlsx") > 0 && workbook == null) // 2007版本
@@ -358,6 +247,7 @@ namespace WinTestJD
 
                 for (i = 0; i < data1.Rows.Count; ++i)
                 {
+
                     IRow row = sheet.CreateRow(count);
                     for (j = 0; j < data1.Columns.Count; ++j)
                     {
@@ -389,6 +279,7 @@ namespace WinTestJD
                     ++count2;
                 }
 
+
                 workbook.Write(fs); //写入到excel
 
                 fs.Close();
@@ -398,9 +289,109 @@ namespace WinTestJD
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception: " + ex.Message);
+                LogHelper.Error("Exception: " + ex.ToString());
                 return -1;
             }
+        }
+
+        /// <summary>
+        /// 图片在单元格等比缩放居中显示
+        /// </summary>
+        /// <param name="cell">单元格</param>
+        /// <param name="value">图片二进制流</param>
+        private void CellImage(ICell cell, byte[] value)
+        {
+            if (value.Length == 0) return;//空图片处理
+            double scalx = 0;//x轴缩放比例
+            double scaly = 0;//y轴缩放比例
+            int Dx1 = 0;//图片左边相对excel格的位置(x偏移) 范围值为:0~1023,超过1023就到右侧相邻的单元格里了
+            int Dy1 = 0;//图片上方相对excel格的位置(y偏移) 范围值为:0~256,超过256就到下方的单元格里了
+            bool bOriginalSize = false;//是否显示图片原始大小 true表示图片显示原始大小  false表示显示图片缩放后的大小
+            ///计算单元格的长度和宽度
+            double CellWidth = 0;
+            double CellHeight = 0;
+            int RowSpanCount = 1;//合并的单元格行数
+            int ColSpanCount = 1;//合并的单元格列数 
+            int j = 0;
+            for (j = 0; j < RowSpanCount; j++)//根据合并的行数计算出高度
+            {
+                CellHeight += cell.Sheet.GetRow(cell.RowIndex + j).Height;
+            }
+            for (j = 0; j < ColSpanCount; j++)
+            {
+                CellWidth += cell.Row.Sheet.GetColumnWidth(cell.ColumnIndex + j);
+            }
+            //单元格长度和宽度与图片的长宽单位互换是根据实例得出
+            CellWidth = CellWidth / 35;
+            CellHeight = CellHeight / 15;
+            ///计算图片的长度和宽度
+            MemoryStream ms = new MemoryStream(value);
+            Image Img = Bitmap.FromStream(ms, true);
+            double ImageOriginalWidth = Img.Width;//原始图片的长度
+            double ImageOriginalHeight = Img.Height;//原始图片的宽度
+            double ImageScalWidth = 0;//缩放后显示在单元格上的图片长度
+            double ImageScalHeight = 0;//缩放后显示在单元格上的图片宽度
+            if (CellWidth > ImageOriginalWidth && CellHeight > ImageOriginalHeight)//单元格的长度和宽度比图片的大，说明单元格能放下整张图片，不缩放
+            {
+                ImageScalWidth = ImageOriginalWidth;
+                ImageScalHeight = ImageOriginalHeight;
+                bOriginalSize = true;
+            }
+            else//需要缩放，根据单元格和图片的长宽计算缩放比例
+            {
+                bOriginalSize = false;
+                if (ImageOriginalWidth > CellWidth && ImageOriginalHeight > CellHeight)//图片的长和宽都比单元格的大的情况
+                {
+                    double WidthSub = ImageOriginalWidth - CellWidth;//图片长与单元格长的差距
+                    double HeightSub = ImageOriginalHeight - CellHeight;//图片宽与单元格宽的差距
+                    if (WidthSub > HeightSub)//长的差距比宽的差距大时,长度x轴的缩放比为1，表示长度就用单元格的长度大小，宽度y轴的缩放比例需要根据x轴的比例来计算
+                    {
+                        scalx = 1;
+                        scaly = (CellWidth / ImageOriginalWidth) * ImageOriginalHeight / CellHeight;//计算y轴的缩放比例,CellWidth / ImageWidth计算出图片整体的缩放比例,然后 * ImageHeight计算出单元格应该显示的图片高度,然后/ CellHeight就是高度的缩放比例
+                    }
+                    else
+                    {
+                        scaly = 1;
+                        scalx = (CellHeight / ImageOriginalHeight) * ImageOriginalWidth / CellWidth;
+                    }
+                }
+                else if (ImageOriginalWidth > CellWidth && ImageOriginalHeight < CellHeight)//图片长度大于单元格长度但图片高度小于单元格高度，此时长度不需要缩放，直接取单元格的，因此scalx=1，但图片高度需要等比缩放
+                {
+                    scalx = 1;
+                    scaly = (CellWidth / ImageOriginalWidth) * ImageOriginalHeight / CellHeight;
+                }
+                else if (ImageOriginalWidth < CellWidth && ImageOriginalHeight > CellHeight)//图片长度小于单元格长度但图片高度大于单元格高度，此时单元格高度直接取单元格的，scaly = 1,长度需要等比缩放
+                {
+                    scaly = 1;
+                    scalx = (CellHeight / ImageOriginalHeight) * ImageOriginalWidth / CellWidth;
+                }
+                ImageScalWidth = scalx * CellWidth;
+                ImageScalHeight = scaly * CellHeight;
+            }
+            Dx1 = Convert.ToInt32((CellWidth - ImageScalWidth) / CellWidth * 1023 / 2);
+            Dy1 = Convert.ToInt32((CellHeight - ImageScalHeight) / CellHeight * 256 / 2);
+            int pictureIdx = cell.Sheet.Workbook.AddPicture((Byte[])value, PictureType.PNG);
+            IClientAnchor anchor = cell.Sheet.Workbook.GetCreationHelper().CreateClientAnchor();
+            anchor.AnchorType = AnchorType.MoveDontResize;
+            anchor.Col1 = cell.ColumnIndex;
+            anchor.Col2 = cell.ColumnIndex + 1;
+            anchor.Row1 = cell.RowIndex;
+            anchor.Row2 = cell.RowIndex + 1;
+            anchor.Dy1 = Dy1;//图片下移量
+            anchor.Dx1 = Dx1;//图片右移量，通过图片下移和右移，使得图片能居中显示，因为图片不同文字，图片是浮在单元格上的，文字是钳在单元格里的
+            IDrawing patriarch = cell.Sheet.CreateDrawingPatriarch();
+            IPicture pic = patriarch.CreatePicture(anchor, pictureIdx);
+            if (bOriginalSize)
+            {
+                pic.Resize();//显示图片原始大小 
+            }
+            else
+            {
+                pic.Resize(scalx, scaly);//等比缩放   
+            }
+
+            ms.Close();
+            ms.Dispose();
         }
 
         /// <summary>
