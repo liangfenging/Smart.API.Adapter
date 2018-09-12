@@ -14,6 +14,11 @@ namespace Smart.API.Adapter.BizCore.JD
         public bool Insert(JDBillModel model)
         {
             return dal.Insert<JDBillModel>(model);
-        } 
+        }
+
+        public void Archive(string logNo)
+        {
+             dal.Archive(logNo);
+        }
     }
 }

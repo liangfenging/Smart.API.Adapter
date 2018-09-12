@@ -21,7 +21,7 @@ namespace Smart.API.Adapter.Biz
         /// 3：到达出口
         /// 4：车辆出场
         /// </summary>
-        static Dictionary<int, JDPostInfo> dicReConnectInfo = new Dictionary<int, JDPostInfo>();
+        //static Dictionary<int, JDPostInfo> dicReConnectInfo = new Dictionary<int, JDPostInfo>();
         static Dictionary<string, string> dicDevStatus = new Dictionary<string, string>();
 
         static Dictionary<string, int> dicPayCheckCount = new Dictionary<string, int>();
@@ -187,21 +187,21 @@ namespace Smart.API.Adapter.Biz
 
             try
             {
-                bool bReTry = true;
-                string sReType = "unavailable";
+                //bool bReTry = true;
+                //string sReType = "unavailable";
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(enumJDBusinessType.EquipmentStatus);
-                if (dicReConnectInfo.ContainsKey((int)enumJDBusinessType.EquipmentStatus))
-                {
-                    bReTry = dicReConnectInfo[(int)enumJDBusinessType.EquipmentStatus].IsReTry;
-                    sReType = dicReConnectInfo[(int)enumJDBusinessType.EquipmentStatus].ReType;
-                }
-                if (!bReTry)
-                {
-                    JDRePostUpdatePostTime(enumJDBusinessType.EquipmentStatus, sReType);
-                    apiBaseResult.code = "1";
-                    apiBaseResult.msg = "等待第三方重试的时间间隔";
-                    return apiBaseResult;
-                }
+                //if (dicReConnectInfo.ContainsKey((int)enumJDBusinessType.EquipmentStatus))
+                //{
+                //    bReTry = dicReConnectInfo[(int)enumJDBusinessType.EquipmentStatus].IsReTry;
+                //    sReType = dicReConnectInfo[(int)enumJDBusinessType.EquipmentStatus].ReType;
+                //}
+                //if (!bReTry)
+                //{
+                //    JDRePostUpdatePostTime(enumJDBusinessType.EquipmentStatus, sReType);
+                //    apiBaseResult.code = "1";
+                //    apiBaseResult.msg = "等待第三方重试的时间间隔";
+                //    return apiBaseResult;
+                //}
 
 
                 List<JDEquipmentInfo> LjdEquipment = new List<JDEquipmentInfo>();
@@ -305,7 +305,7 @@ namespace Smart.API.Adapter.Biz
                             apiBaseResult.msg = apiResult.message;
                         }
                         //处理失败超过次数，则发送邮件
-                        JDRePostAndEail(enumJDBusinessType.EquipmentStatus, "unavailable");
+                        JDRePostAndEail(enumJDBusinessType.EquipmentStatus, "unavailable", "");
                     }
                     else
                     {
@@ -314,9 +314,13 @@ namespace Smart.API.Adapter.Biz
                             if (apiResult.data.returnCode == "success")
                             {
                                 apiBaseResult.code = "0";
-                                if (dicReConnectInfo.ContainsKey((int)enumJDBusinessType.EquipmentStatus))
+                                if (CacheHelper.GetCache(enumJDBusinessType.EquipmentStatus.ToString()) != null)
                                 {
-                                    dicReConnectInfo.Remove((int)enumJDBusinessType.EquipmentStatus);
+                                    Dictionary<string, JDPostInfo> dicPost = CacheHelper.GetCache(enumJDBusinessType.PayCheck.ToString()) as Dictionary<string, JDPostInfo>;
+                                    if (dicPost.ContainsKey("unavailable"))
+                                    {
+                                        dicPost.Remove("unavailable");
+                                    }
                                 }
                             }
                             else if (apiResult.data.returnCode == "fail")
@@ -343,7 +347,7 @@ namespace Smart.API.Adapter.Biz
                 apiBaseResult.msg = "请求第三方失败，" + ex.Message;
                 LogHelper.Error("请求设备状态错误:", ex);
                 //处理失败超过次数，则发送邮件
-                JDRePostAndEail(enumJDBusinessType.EquipmentStatus, "unavailable");
+                JDRePostAndEail(enumJDBusinessType.EquipmentStatus, "unavailable", "");
             }
             return apiBaseResult;
         }
@@ -549,23 +553,32 @@ namespace Smart.API.Adapter.Biz
                 }
 
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
-                string sReType = "unavailable";
-                if (dicReConnectInfo.ContainsKey((int)businessType))
+                Dictionary<string, JDPostInfo> dicPost = null;
+                if (CacheHelper.GetCache(businessType.ToString()) != null)
                 {
-                    if (dicReConnectInfo[(int)businessType].ReCount > jdTimer.ReConnectCount)
+                    dicPost = CacheHelper.GetCache(businessType.ToString()) as Dictionary<string, JDPostInfo>;
+                    if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                     {
-                        reqVehicleLog.resend = "0";
-                        bReTry = dicReConnectInfo[(int)businessType].IsReTry;
-                        sReType = dicReConnectInfo[(int)businessType].ReType;
+                        if (dicPost[reqVehicleLog.logNo].ReType == "unavailable")
+                        {
+                            if (dicPost[reqVehicleLog.logNo].ReCount > jdTimer.ReConnectCount)
+                            {
+                                if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                                {
+                                    apiBaseResult.msg = "等待第三方重试的时间间隔";
+                                    return apiBaseResult;
+                                }
+                            }
+                        }
+                        else if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                        {
+                            apiBaseResult.msg = "等待第三方重试的时间间隔";
+                            return apiBaseResult;
+                        }
                     }
                 }
 
-                if (!bReTry && inRecognitionRecord.reTrySend == "1")
-                {
-                    JDRePostUpdatePostTime(businessType, sReType);
-                    apiBaseResult.msg = "等待第三方重试的时间间隔";
-                    return apiBaseResult;
-                }
+
                 LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
 
                 dtPost = DateTime.Now;
@@ -575,7 +588,7 @@ namespace Smart.API.Adapter.Biz
                 {
                     postResult = 0;
                     failReason = apiBaseResult.msg = "请求第三方失败，" + apiResult.message;
-                    JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                    JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                 }
                 else
                 {
@@ -584,21 +597,25 @@ namespace Smart.API.Adapter.Biz
                         if (apiResult.data.returnCode == "success")
                         {
                             apiBaseResult.code = "0";//请求成功
-                            if (dicReConnectInfo.ContainsKey((int)businessType))
+                            if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                             {
-                                dicReConnectInfo.Remove((int)businessType);
+                                dicPost.Remove(reqVehicleLog.logNo);
                             }
+                            //if (dicReConnectInfo.ContainsKey((int)businessType))
+                            //{
+                            //    dicReConnectInfo.Remove((int)businessType);
+                            //}
                         }
                         else if (apiResult.data.returnCode == "fail")
                         {
                             postResult = 0;
-                            JDRePostAndEail(businessType, "fail");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "fail", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[fail]:" + apiResult.data.description;
                         }
                         else
                         {
                             postResult = 0;
-                            JDRePostAndEail(businessType, "exception");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "exception", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[exception]:" + apiResult.data.description;
                         }
                     }
@@ -606,7 +623,7 @@ namespace Smart.API.Adapter.Biz
                     {
                         postResult = 0;
                         failReason = apiBaseResult.msg = "请求第三方失败，返回的data为null";
-                        JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                        JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                     }
                 }
             }
@@ -616,32 +633,27 @@ namespace Smart.API.Adapter.Biz
                 apiBaseResult.msg = "请求第三方失败，" + ex.Message;
                 failReason = "请求超时," + apiBaseResult.msg;
                 LogHelper.Error("请求第三方入场识别错误:", ex);
-                JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
             }
             try
             {
 
-                if (!bReTry && inRecognitionRecord.reTrySend == "1")
+
+                VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
                 {
-                    //等待重试的
+                    info.photoStr = "Y";
                 }
                 else
                 {
-                    VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
-                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
-                    {
-                        info.photoStr = "Y";
-                    }
-                    else
-                    {
-                        info.photoStr = "N";
-                    }
-                    info.postTime = dtPost;
-                    info.result = postResult;
-                    info.failReason = failReason;
-
-                    new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+                    info.photoStr = "N";
                 }
+                info.postTime = dtPost;
+                info.result = postResult;
+                info.failReason = failReason;
+
+                new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+
             }
             catch (Exception ex)
             {
@@ -711,23 +723,47 @@ namespace Smart.API.Adapter.Biz
                 }
 
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
-                string sReType = "unavailable";
-                if (dicReConnectInfo.ContainsKey((int)businessType))
+                //string sReType = "unavailable";
+                Dictionary<string, JDPostInfo> dicPost = null;
+                if (CacheHelper.GetCache(businessType.ToString()) != null)
                 {
-                    if (dicReConnectInfo[(int)businessType].ReCount > jdTimer.ReConnectCount)
+                    dicPost = CacheHelper.GetCache(businessType.ToString()) as Dictionary<string, JDPostInfo>;
+                    if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                     {
-                        reqVehicleLog.resend = "0";
-                        bReTry = dicReConnectInfo[(int)businessType].IsReTry;
-                        sReType = dicReConnectInfo[(int)businessType].ReType;
+                        if (dicPost[reqVehicleLog.logNo].ReType == "unavailable")
+                        {
+                            if (dicPost[reqVehicleLog.logNo].ReCount > jdTimer.ReConnectCount)
+                            {
+                                if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                                {
+                                    apiBaseResult.msg = "等待第三方重试的时间间隔";
+                                    return apiBaseResult;
+                                }
+                            }
+                        }
+                        else if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                        {
+                            apiBaseResult.msg = "等待第三方重试的时间间隔";
+                            return apiBaseResult;
+                        }
                     }
                 }
-                if (!bReTry && inCrossRecord.reTrySend == "1")
-                {
-                    JDRePostUpdatePostTime(businessType, sReType);
-                    apiBaseResult.code = "99";//99代表数据需要重传 ,jielink+中心会发起重试，频率是每5秒重试一次。
-                    apiBaseResult.msg = "等待第三方重试的时间间隔";
-                    return apiBaseResult;
-                }
+                //if (dicReConnectInfo.ContainsKey((int)businessType))
+                //{
+                //    if (dicReConnectInfo[(int)businessType].ReCount > jdTimer.ReConnectCount)
+                //    {
+                //        //reqVehicleLog.resend = "0";
+                //        bReTry = dicReConnectInfo[(int)businessType].IsReTry;
+                //        sReType = dicReConnectInfo[(int)businessType].ReType;
+                //    }
+                //}
+                //if (!bReTry && inCrossRecord.reTrySend == "1")
+                //{
+                //    JDRePostUpdatePostTime(businessType, sReType);
+                //    apiBaseResult.code = "99";//99代表数据需要重传 ,jielink+中心会发起重试，频率是每5秒重试一次。
+                //    apiBaseResult.msg = "等待第三方重试的时间间隔";
+                //    return apiBaseResult;
+                //}
                 reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : null;//方便日志查看，不记录图片数据
                 LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
                 reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : filePicData;
@@ -741,7 +777,7 @@ namespace Smart.API.Adapter.Biz
                 {
                     postResult = 0;
                     failReason = apiBaseResult.msg = "请求第三方失败，" + apiResult.message;
-                    JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                    JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                 }
                 else
                 {
@@ -750,21 +786,21 @@ namespace Smart.API.Adapter.Biz
                         if (apiResult.data.returnCode == "success")
                         {
                             apiBaseResult.code = "0";//请求成功
-                            if (dicReConnectInfo.ContainsKey((int)businessType))
+                            if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                             {
-                                dicReConnectInfo.Remove((int)businessType);
+                                dicPost.Remove(reqVehicleLog.logNo);
                             }
                         }
                         else if (apiResult.data.returnCode == "fail")
                         {
                             postResult = 0;
-                            JDRePostAndEail(businessType, "fail");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "fail", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[fail]:" + apiResult.data.description;
                         }
                         else
                         {
                             postResult = 0;
-                            JDRePostAndEail(businessType, "exception");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "exception", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[exception]:" + apiResult.data.description;
                         }
                     }
@@ -772,7 +808,7 @@ namespace Smart.API.Adapter.Biz
                     {
                         postResult = 0;
                         failReason = apiBaseResult.msg = "请求第三方失败，返回的data为null";
-                        JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                        JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                     }
                 }
             }
@@ -782,7 +818,7 @@ namespace Smart.API.Adapter.Biz
                 apiBaseResult.msg = "请求第三方失败，" + ex.Message;
                 failReason = "请求超时," + apiBaseResult.msg;
                 LogHelper.Error("请求第三方入场过闸错误:", ex);
-                JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
             }
             if (inCrossRecord.reTrySend != "1")
             {
@@ -791,27 +827,22 @@ namespace Smart.API.Adapter.Biz
             }
             try
             {
-                if (!bReTry && inCrossRecord.reTrySend == "1")
+
+                VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
                 {
-                    //等待重试的
+                    info.photoStr = "Y";
                 }
                 else
                 {
-                    VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
-                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
-                    {
-                        info.photoStr = "Y";
-                    }
-                    else
-                    {
-                        info.photoStr = "N";
-                    }
-                    info.postTime = dtPost;
-                    info.result = postResult;
-                    info.failReason = failReason;
-
-                    new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+                    info.photoStr = "N";
                 }
+                info.postTime = dtPost;
+                info.result = postResult;
+                info.failReason = failReason;
+
+                new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+
             }
             catch (Exception ex)
             {
@@ -882,21 +913,30 @@ namespace Smart.API.Adapter.Biz
                 //}
 
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
-                string sReType = "unavailable";
-                if (dicReConnectInfo.ContainsKey((int)businessType))
+                // string sReType = "unavailable";
+                Dictionary<string, JDPostInfo> dicPost = null;
+                if (CacheHelper.GetCache(businessType.ToString()) != null)
                 {
-                    if (dicReConnectInfo[(int)businessType].ReCount > jdTimer.ReConnectCount)
+                    dicPost = CacheHelper.GetCache(businessType.ToString()) as Dictionary<string, JDPostInfo>;
+                    if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                     {
-                        reqVehicleLog.resend = "0";
-                        bReTry = dicReConnectInfo[(int)businessType].IsReTry;
-                        sReType = dicReConnectInfo[(int)businessType].ReType;
+                        if (dicPost[reqVehicleLog.logNo].ReType == "unavailable")
+                        {
+                            if (dicPost[reqVehicleLog.logNo].ReCount > jdTimer.ReConnectCount)
+                            {
+                                if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                                {
+                                    apiBaseResult.msg = "等待第三方重试的时间间隔";
+                                    return apiBaseResult;
+                                }
+                            }
+                        }
+                        else if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                        {
+                            apiBaseResult.msg = "等待第三方重试的时间间隔";
+                            return apiBaseResult;
+                        }
                     }
-                }
-                if (!bReTry && outRecognitionRecord.reTrySend == "1")
-                {
-                    JDRePostUpdatePostTime(businessType, sReType);
-                    apiBaseResult.msg = "等待第三方重试的时间间隔";
-                    return apiBaseResult;
                 }
 
                 LogHelper.Info("PostRaw:[external/createVehicleLogDetail]" + reqVehicleLog.ToJson());//记录日志
@@ -907,7 +947,7 @@ namespace Smart.API.Adapter.Biz
                     postResult = 0;
                     apiBaseResult.code = "99";//请求失败后自动出场
                     failReason = apiBaseResult.msg = "请求第三方失败，" + apiResult.message;
-                    JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                    JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                 }
                 else
                 {
@@ -916,15 +956,17 @@ namespace Smart.API.Adapter.Biz
                         if (apiResult.data.returnCode == "success")
                         {
                             apiBaseResult.code = "0";//请求成功
-                            if (dicReConnectInfo.ContainsKey((int)businessType))
+                            if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                             {
-                                dicReConnectInfo.Remove((int)businessType);
+                                dicPost.Remove(reqVehicleLog.logNo);
                             }
 
                             //保存JD账单
                             if (apiResult.data.resultCode != "1")//需要缴费
                             {
-                                if (outRecognitionRecord.reTrySend != "1")//并且不是补发的记录
+                                decimal fCharge = 0;
+                                decimal.TryParse(apiResult.data.cost, out fCharge);
+                                if (outRecognitionRecord.reTrySend != "1" && !string.IsNullOrWhiteSpace(apiResult.data.resultCode) && fCharge > 0)//并且不是补发的记录
                                 {
                                     JDBillModel model = new JDBillModel();
                                     model.LogNo = reqVehicleLog.logNo;
@@ -947,14 +989,14 @@ namespace Smart.API.Adapter.Biz
                         {
                             postResult = 0;
                             //apiBaseResult.code = "0";//请求失败后自动出场
-                            JDRePostAndEail(businessType, "fail");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "fail", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[fail]:" + apiResult.data.description;
                         }
                         else
                         {
                             postResult = 0;
                             //apiBaseResult.code = "0";//请求失败后自动出场
-                            JDRePostAndEail(businessType, "exception");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "exception", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[exception]:" + apiResult.data.description;
                         }
                     }
@@ -963,7 +1005,7 @@ namespace Smart.API.Adapter.Biz
                         postResult = 0;
                         //apiBaseResult.code = "0";//请求失败后自动出场
                         failReason = apiBaseResult.msg = "请求第三方失败，返回的data为null";
-                        JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                        JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                     }
                 }
             }
@@ -974,31 +1016,26 @@ namespace Smart.API.Adapter.Biz
                 apiBaseResult.msg = "请求第三方失败，" + ex.Message;
                 failReason = "请求超时," + apiBaseResult.msg;
                 LogHelper.Error("请求第三方出场识别错误:", ex);
-                JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
             }
             try
             {
-                if (!bReTry && outRecognitionRecord.reTrySend == "1")
+
+                VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
                 {
-                    //等待重试的
+                    info.photoStr = "Y";
                 }
                 else
                 {
-                    VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
-                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
-                    {
-                        info.photoStr = "Y";
-                    }
-                    else
-                    {
-                        info.photoStr = "N";
-                    }
-                    info.postTime = dtPost;
-                    info.result = postResult;
-                    info.failReason = failReason;
-
-                    new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+                    info.photoStr = "N";
                 }
+                info.postTime = dtPost;
+                info.result = postResult;
+                info.failReason = failReason;
+
+                new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+
             }
             catch (Exception ex)
             {
@@ -1024,6 +1061,18 @@ namespace Smart.API.Adapter.Biz
             string failReason = "";
             DateTime dtPost = DateTime.Now;
             RequestVehicleLog reqVehicleLog = new RequestVehicleLog();
+            //TODO:出场成功，先查询reasonCode和reason ，进行赋值，并将JD账单记录进行归档,
+            JDBillBLL jdBillBLL = new JDBillBLL();
+            //查询JD账单表
+            JDBillModel model = jdBillBLL.GetJDBillByLogNo(reqVehicleLog.logNo);
+            if (model != null)
+            {
+                if (!string.IsNullOrWhiteSpace(model.ReasonCode))
+                {
+                    reqVehicleLog.reasonCode = model.ReasonCode;
+                    reqVehicleLog.reason = model.Reason;
+                }
+            }
             bool bReTry = true;
             try
             {
@@ -1084,39 +1133,31 @@ namespace Smart.API.Adapter.Biz
 
 
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(businessType);
-                string sReType = "unavailable";
-                if (dicReConnectInfo.ContainsKey((int)businessType))
+                Dictionary<string, JDPostInfo> dicPost = null;
+                if (CacheHelper.GetCache(businessType.ToString()) != null)
                 {
-                    if (dicReConnectInfo[(int)businessType].ReCount > jdTimer.ReConnectCount)
+                    dicPost = CacheHelper.GetCache(businessType.ToString()) as Dictionary<string, JDPostInfo>;
+                    if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                     {
-                        reqVehicleLog.resend = "0";
-                        bReTry = dicReConnectInfo[(int)businessType].IsReTry;
-                        sReType = dicReConnectInfo[(int)businessType].ReType;
+                        if (dicPost[reqVehicleLog.logNo].ReType == "unavailable")
+                        {
+                            if (dicPost[reqVehicleLog.logNo].ReCount > jdTimer.ReConnectCount)
+                            {
+                                if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                                {
+                                    apiBaseResult.msg = "等待第三方重试的时间间隔";
+                                    return apiBaseResult;
+                                }
+                            }
+                        }
+                        else if (DateTime.Now.Subtract(dicPost[reqVehicleLog.logNo].ReTime).TotalSeconds < jdTimer.ExceptionTimeSpan)
+                        {
+                            apiBaseResult.msg = "等待第三方重试的时间间隔";
+                            return apiBaseResult;
+                        }
                     }
                 }
-                if (!bReTry && outCrossRecord.reTrySend == "1")
-                {
-                    JDRePostUpdatePostTime(businessType, sReType);
-                    apiBaseResult.msg = "等待第三方重试的时间间隔";
-                    return apiBaseResult;
-                }
-                //TODO:出场成功，先查询reasonCode和reason ，进行赋值，并将JD账单记录进行归档,
-                JDBillBLL jdBillBLL = new JDBillBLL();
-                //查询JD账单表
-                JDBillModel model = jdBillBLL.GetJDBillByLogNo(reqVehicleLog.logNo);
-                if (model != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(model.ReasonCode))
-                    {
-                        reqVehicleLog.reasonCode = model.ReasonCode;
-                        reqVehicleLog.reason = model.Reason;
-                    }
 
-
-                    //进行账单归档
-                    jdBillBLL.Delete(model);
-                    new JDBillArchivedBLL().Insert(model);
-                }
 
                 //LogHelper.Info("接收SDK传carOut:" + outCrossRecord.ToJson());//记录日志
                 reqVehicleLog.photoStr = string.IsNullOrWhiteSpace(filePicData) ? "no picture" : null;//方便日志查看，不记录图片数据
@@ -1131,7 +1172,7 @@ namespace Smart.API.Adapter.Biz
                 {
                     postResult = 0;
                     failReason = apiBaseResult.msg = "请求第三方失败，" + apiResult.message;
-                    JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                    JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                 }
                 else
                 {
@@ -1140,21 +1181,21 @@ namespace Smart.API.Adapter.Biz
                         if (apiResult.data.returnCode == "success")
                         {
                             apiBaseResult.code = "0";//请求成功
-                            if (dicReConnectInfo.ContainsKey((int)businessType))
+                            if (dicPost != null && dicPost.ContainsKey(reqVehicleLog.logNo))
                             {
-                                dicReConnectInfo.Remove((int)businessType);
+                                dicPost.Remove(reqVehicleLog.logNo);
                             }
                         }
                         else if (apiResult.data.returnCode == "fail")
                         {
                             postResult = 0;
-                            JDRePostAndEail(businessType, "fail");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "fail", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[fail]:" + apiResult.data.description;
                         }
                         else
                         {
                             postResult = 0;
-                            JDRePostAndEail(businessType, "exception");//重试计数和发送邮件
+                            JDRePostAndEail(businessType, "exception", reqVehicleLog.logNo);//重试计数和发送邮件
                             failReason = apiBaseResult.msg = "请求第三方失败，返回[exception]:" + apiResult.data.description;
                         }
                     }
@@ -1162,7 +1203,7 @@ namespace Smart.API.Adapter.Biz
                     {
                         postResult = 0;
                         failReason = apiBaseResult.msg = "请求第三方失败，返回的data为null";
-                        JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                        JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
                     }
                 }
 
@@ -1179,7 +1220,7 @@ namespace Smart.API.Adapter.Biz
                 apiBaseResult.msg = "请求第三方失败，" + ex.Message;
                 failReason = "请求超时," + apiBaseResult.msg;
                 LogHelper.Error("请求第三方出场过闸错误:", ex);
-                JDRePostAndEail(businessType, "unavailable");//重试计数和发送邮件
+                JDRePostAndEail(businessType, "unavailable", reqVehicleLog.logNo);//重试计数和发送邮件
             }
             if (outCrossRecord.reTrySend != "1")
             {
@@ -1188,27 +1229,34 @@ namespace Smart.API.Adapter.Biz
             }
             try
             {
-                if (!bReTry && outCrossRecord.reTrySend == "1")
+                if (model != null)
                 {
-                    //等待重试的
+                    new JDBillArchivedBLL().Archive(model.LogNo);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error("归档账单JDBill数据库错误，" + ex);
+            }
+            try
+            {
+
+
+                VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
+                if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
+                {
+                    info.photoStr = "Y";
                 }
                 else
                 {
-                    VehicleLogSql info = new VehicleLogSql(reqVehicleLog);
-                    if (!string.IsNullOrWhiteSpace(info.photoStr) && info.photoStr != "no picture")
-                    {
-                        info.photoStr = "Y";
-                    }
-                    else
-                    {
-                        info.photoStr = "N";
-                    }
-                    info.postTime = dtPost;
-                    info.result = postResult;
-                    info.failReason = failReason;
-
-                    new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+                    info.photoStr = "N";
                 }
+                info.postTime = dtPost;
+                info.result = postResult;
+                info.failReason = failReason;
+
+                new VehicleLogSqlBLL().InsertVehicleLogSql(info);
+
             }
             catch (Exception ex)
             {
@@ -1301,11 +1349,13 @@ namespace Smart.API.Adapter.Biz
                     }
                     if (!dicPayCheckCount.ContainsKey(model.LogNo))
                     {
-                        dicPayCheckCount.Add(model.LogNo, 1);
+                        dicPayCheckCount.Add(model.LogNo, 0);
                     }
-                    if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds < jdTimer.FailTimeSpan)
+
+                    //第一次等待20S后反查
+                    if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds < jdTimer.FailTimeSpan && dicPayCheckCount[model.LogNo] == 0)
                     {
-                        apiBaseResult.msg = "上次请求时间[" + dicPayCheckTime[sLogNo].ToString()+ "]，等待二维码支付，" + jdTimer.FailTimeSpan + "秒后再请求第三方支付反查";
+                        apiBaseResult.msg = "上次请求时间[" + dicPayCheckTime[sLogNo].ToString() + "]，等待二维码支付，" + jdTimer.FailTimeSpan + "秒后再请求第三方支付反查";
                         responsePayCheck.chargeTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                         responsePayCheck.payStatus = -1;
                         responsePayCheck.payType = "OTHER";
@@ -1319,19 +1369,32 @@ namespace Smart.API.Adapter.Biz
                 InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 ApiResult<ResponseJDQueryPay> apiResult = new ApiResult<ResponseJDQueryPay>();
 
-
+                Dictionary<string, JDPostInfo> dicPost = null;
                 try
                 {
                     apiResult = httpApi.PostUrl<ResponseJDQueryPay>("external/queryPay", queryPay);
                 }
                 catch (Exception ex)
                 {
-                    JDRePostAndEail(enumJDBusinessType.PayCheck, "unavailable");
+                    JDRePostAndEail(enumJDBusinessType.PayCheck, "unavailable", sLogNo);
                     int iPayStatus = -1;
-                    if (dicReConnectInfo[(int)enumJDBusinessType.PayCheck].ReCount > jdTimer.ReConnectCount)
+                    //if (dicReConnectInfo[(int)enumJDBusinessType.PayCheck].ReCount > jdTimer.ReConnectCount)
+                    //{
+                    //    iPayStatus = 0;
+                    //}
+                   
+                    if (CacheHelper.GetCache(enumJDBusinessType.PayCheck.ToString()) != null)
                     {
-                        iPayStatus = 0;
+                        dicPost = CacheHelper.GetCache(enumJDBusinessType.PayCheck.ToString()) as Dictionary<string, JDPostInfo>;
+                        if (dicPost != null && dicPost.ContainsKey(sLogNo))
+                        {
+                            if (dicPost[sLogNo].ReCount > jdTimer.ReConnectCount)
+                            {
+                                iPayStatus = 0;
+                            }
+                        }
                     }
+
                     apiBaseResult.msg = "请求第三方失败，" + apiResult.message;
                     responsePayCheck.chargeTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                     responsePayCheck.payStatus = iPayStatus;
@@ -1359,6 +1422,10 @@ namespace Smart.API.Adapter.Biz
                 }
                 else
                 {
+                    if (dicPost != null && dicPost.ContainsKey(sLogNo))
+                    {
+                        dicPost.Remove(sLogNo);
+                    }
                     if (apiResult.data != null)
                     {
                         if (apiResult.data.returnCode == "success")
@@ -1436,7 +1503,7 @@ namespace Smart.API.Adapter.Biz
                                     }
                                     else
                                     {
-                                        if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds > jdTimer.FailTimeSpan)
+                                        if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds > jdTimer.ExceptionTimeSpan)
                                         {
                                             dicPayCheckTime[sLogNo] = DateTime.Now;
                                             dicPayCheckCount[model.LogNo]++;
@@ -1524,10 +1591,11 @@ namespace Smart.API.Adapter.Biz
         /// 重试计数,间隔时间再次重试和发送邮件
         /// </summary>
         /// <param name="type"></param>
-        private void JDRePostAndEail(enumJDBusinessType type, string failType)
+        private void JDRePostAndEail(enumJDBusinessType type, string failType, string logNo)
         {
             try
             {
+
                 int ReConnectCount = 5;
                 bool bSendEmail = false;
                 JDTimer jdTimer = JDCommonSettings.JDTimerInfo(type);
@@ -1536,40 +1604,96 @@ namespace Smart.API.Adapter.Biz
                 ReConnectCount = jdTimer.ReConnectCount;
                 //是否发送邮件
                 bSendEmail = jdTimer.SendEmail;
+                //if (failType == "unavailable")
+                //{
+                //    if (!dicReConnectInfo.ContainsKey((int)type))
+                //    {
+                //        JDPostInfo jdPostInfo = new JDPostInfo();
+                //        jdPostInfo.ReCount++;
+                //        jdPostInfo.ReTime = DateTime.Now;
+                //        jdPostInfo.IsReTry = true;
+                //        jdPostInfo.ReType = failType;
+                //        dicReConnectInfo.Add((int)type, jdPostInfo);
+                //    }
+                //    else
+                //    {
+                //        dicReConnectInfo[(int)type].ReType = failType;
+                //        if (dicReConnectInfo[(int)type].ReCount > ReConnectCount)
+                //        {
+                //            JDRePostUpdatePostTime(type, failType);
+                //            return;
+                //        }
+                //        dicReConnectInfo[(int)type].ReCount++;
+                //        dicReConnectInfo[(int)type].ReTime = DateTime.Now;
+                //    }
 
-                if (!dicReConnectInfo.ContainsKey((int)type))
+                //    if (dicReConnectInfo.ContainsKey((int)type) && dicReConnectInfo[(int)type].ReCount > ReConnectCount)
+                //    {
+                //        //超过重试最大次数后，不再计数增加，防止溢出
+                //        dicReConnectInfo[(int)type].ReCount = ReConnectCount + 1;
+                //        //超过5次失败发送邮件
+                //        if (bSendEmail)
+                //        {
+                //            //发送邮件
+                //            SendMailHelper mail = new SendMailHelper();
+                //            mail.SendMail(type.ToString());
+                //        }
+                //    }
+                //}
+                //if (!string.IsNullOrWhiteSpace(logNo))//单独每条的重试
                 {
-                    JDPostInfo jdPostInfo = new JDPostInfo();
-                    jdPostInfo.ReCount++;
-                    jdPostInfo.ReTime = DateTime.Now;
-                    jdPostInfo.IsReTry = true;
-                    jdPostInfo.ReType = failType;
-                    dicReConnectInfo.Add((int)type, jdPostInfo);
-                }
-                else
-                {
-                    dicReConnectInfo[(int)type].ReType = failType;
-                    if (dicReConnectInfo[(int)type].ReCount > ReConnectCount)
+                    if (string.IsNullOrWhiteSpace(logNo))
                     {
-                        JDRePostUpdatePostTime(type, failType);
-                        return;
+                        logNo = "unavailable";
                     }
-                    dicReConnectInfo[(int)type].ReCount++;
-                    dicReConnectInfo[(int)type].ReTime = DateTime.Now;
+                    if (CacheHelper.GetCache(type.ToString()) == null)
+                    {
+                        Dictionary<string, JDPostInfo> dicPost = new Dictionary<string, JDPostInfo>();
+                        JDPostInfo jdPostInfo = new JDPostInfo();
+                        jdPostInfo.ReCount = 1;
+                        jdPostInfo.ReTime = DateTime.Now;
+                        jdPostInfo.IsReTry = true;
+                        jdPostInfo.ReType = failType;
+                        dicPost.Add(logNo, jdPostInfo);
+                        CacheHelper.SetCache(type.ToString(), dicPost, DateTime.MaxValue);
+                    }
+                    else
+                    {
+                        Dictionary<string, JDPostInfo> dicPost = CacheHelper.GetCache(type.ToString()) as Dictionary<string, JDPostInfo>;
+                        if (dicPost.ContainsKey(logNo))
+                        {
+                            dicPost[logNo].ReCount++;
+                            dicPost[logNo].ReTime = DateTime.Now;
+                            dicPost[logNo].IsReTry = true;
+                            dicPost[logNo].ReType = failType;
+
+                            if (failType == "unavailable")
+                            {
+                                if (dicPost[logNo].ReCount > ReConnectCount)
+                                {
+                                    //超过5次失败发送邮件
+                                    if (bSendEmail)
+                                    {
+                                        //发送邮件
+                                        SendMailHelper mail = new SendMailHelper();
+                                        mail.SendMail(type.ToString());
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            JDPostInfo jdPostInfo = new JDPostInfo();
+                            jdPostInfo.ReCount = 1;
+                            jdPostInfo.ReTime = DateTime.Now;
+                            jdPostInfo.IsReTry = true;
+                            jdPostInfo.ReType = failType;
+                            dicPost.Add(logNo, jdPostInfo);
+                        }
+                        CacheHelper.SetCache(type.ToString(), dicPost, DateTime.MaxValue);
+                    }
                 }
 
-                if (dicReConnectInfo.ContainsKey((int)type) && dicReConnectInfo[(int)type].ReCount > ReConnectCount)
-                {
-                    //超过重试最大次数后，不再计数增加，防止溢出
-                    dicReConnectInfo[(int)type].ReCount = ReConnectCount + 1;
-                    //超过5次失败发送邮件
-                    if (bSendEmail)
-                    {
-                        //发送邮件
-                        SendMailHelper mail = new SendMailHelper();
-                        mail.SendMail(type.ToString());
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -1583,46 +1707,46 @@ namespace Smart.API.Adapter.Biz
         /// </summary>
         /// <param name="type"></param>
         /// <param name="failType"></param>
-        private void JDRePostUpdatePostTime(enumJDBusinessType type, string failType)
-        {
-            JDTimer jdTimer = JDCommonSettings.JDTimerInfo(type);
-            if (failType == "fail")
-            {
-                if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.FailTimeSpan)
-                {
-                    dicReConnectInfo[(int)type].IsReTry = true;
-                    dicReConnectInfo[(int)type].ReTime = DateTime.Now;
-                }
-                else
-                {
-                    dicReConnectInfo[(int)type].IsReTry = false;
-                }
-            }
-            else if (failType == "exception")
-            {
-                if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.ExceptionTimeSpan)
-                {
-                    dicReConnectInfo[(int)type].IsReTry = true;
-                    dicReConnectInfo[(int)type].ReTime = DateTime.Now;
-                }
-                else
-                {
-                    dicReConnectInfo[(int)type].IsReTry = false;
-                }
-            }
-            else
-            {
-                if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.UnavailableTimeSpan)
-                {
-                    dicReConnectInfo[(int)type].IsReTry = true;
-                    dicReConnectInfo[(int)type].ReTime = DateTime.Now;
-                }
-                else
-                {
-                    dicReConnectInfo[(int)type].IsReTry = false;
-                }
-            }
-        }
+        //private void JDRePostUpdatePostTime(enumJDBusinessType type, string failType)
+        //{
+        //    JDTimer jdTimer = JDCommonSettings.JDTimerInfo(type);
+        //    if (failType == "fail")
+        //    {
+        //        if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.FailTimeSpan)
+        //        {
+        //            dicReConnectInfo[(int)type].IsReTry = true;
+        //            dicReConnectInfo[(int)type].ReTime = DateTime.Now;
+        //        }
+        //        else
+        //        {
+        //            dicReConnectInfo[(int)type].IsReTry = false;
+        //        }
+        //    }
+        //    else if (failType == "exception")
+        //    {
+        //        if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.ExceptionTimeSpan)
+        //        {
+        //            dicReConnectInfo[(int)type].IsReTry = true;
+        //            dicReConnectInfo[(int)type].ReTime = DateTime.Now;
+        //        }
+        //        else
+        //        {
+        //            dicReConnectInfo[(int)type].IsReTry = false;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (DateTime.Now.Subtract(dicReConnectInfo[(int)type].ReTime).TotalSeconds > jdTimer.UnavailableTimeSpan)
+        //        {
+        //            dicReConnectInfo[(int)type].IsReTry = true;
+        //            dicReConnectInfo[(int)type].ReTime = DateTime.Now;
+        //        }
+        //        else
+        //        {
+        //            dicReConnectInfo[(int)type].IsReTry = false;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// 清除缓存
@@ -1632,7 +1756,7 @@ namespace Smart.API.Adapter.Biz
             //清除所有重试记录缓存，可以立即重试记录
             if (requestdata.ClearCache)
             {
-                dicReConnectInfo.Clear();
+                //dicReConnectInfo.Clear();
             }
 
             //白名单重新更新
