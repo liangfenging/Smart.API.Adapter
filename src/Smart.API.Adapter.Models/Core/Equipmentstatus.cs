@@ -40,6 +40,12 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
+
+        public int deviceType
+        {
+            get;
+            set;
+        }
     }
 
 

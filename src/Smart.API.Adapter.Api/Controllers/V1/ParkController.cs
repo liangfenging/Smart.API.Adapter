@@ -38,7 +38,18 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("inrecognition")]
         public HttpResponseMessage inrecognition(InRecognitionRecord requestdata)
         {
-            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostInRecognition(requestdata, enumJDBusinessType.InRecognition);
+            APIResultBase result = new APIResultBase();
+
+            try
+            {
+                result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostInRecognition(requestdata, enumJDBusinessType.InRecognition);
+            }
+            catch (System.Exception ex)
+            {
+                result.code = "99";
+                LogHelper.Error("inrecognition：", ex);
+            }
+
             return Request.CreateResponse(result);
         }
 
@@ -50,7 +61,17 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("carin")]
         public HttpResponseMessage carin(InCrossRecord requestdata)
         {
-            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostCarIn(requestdata, enumJDBusinessType.InCross);
+            APIResultBase result = new APIResultBase();
+
+            try
+            {
+                result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostCarIn(requestdata, enumJDBusinessType.InCross);
+            }
+            catch (System.Exception ex)
+            {
+                result.code = "99";
+                LogHelper.Error("carin：", ex);
+            }
             return Request.CreateResponse(result);
         }
 
@@ -62,8 +83,20 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("outrecognition")]
         public HttpResponseMessage outrecognition(OutRecognitionRecord requestdata)
         {
-            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostOutRecognition(requestdata, enumJDBusinessType.OutRecognition);
+            APIResultBase result = new APIResultBase();
+
+            try
+            {
+                result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostOutRecognition(requestdata, enumJDBusinessType.OutRecognition);
+            }
+            catch (System.Exception ex)
+            {
+                result.code = "99";
+                LogHelper.Error("outrecognition：", ex);
+            }
+
             return Request.CreateResponse(result);
+
         }
 
         /// <summary>
@@ -74,7 +107,17 @@ namespace Smart.API.Adapter.Api.Controllers.V1
         [HttpPost, WriteLog, ActionName("carout")]
         public HttpResponseMessage carout(OutCrossRecord requestdata)
         {
-            APIResultBase result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostCarOut(requestdata, enumJDBusinessType.OutCross);
+            APIResultBase result = new APIResultBase();
+            try
+            {
+                result = ThirdAppFactory.Create(CommonSettings.ThirdApp).PostCarOut(requestdata, enumJDBusinessType.OutCross);
+            }
+            catch (System.Exception ex)
+            {
+                result.code = "99";
+                LogHelper.Error("carout：", ex);
+            }
+
             return Request.CreateResponse(result);
         }
 

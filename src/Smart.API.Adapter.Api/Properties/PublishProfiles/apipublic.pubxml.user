@@ -34,10 +34,10 @@
       <publishTime>08/03/2016 09:59:44</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Api.dll">
-      <publishTime>09/12/2018 11:44:27</publishTime>
+      <publishTime>09/12/2018 18:01:28</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Biz.dll">
-      <publishTime>09/12/2018 11:44:26</publishTime>
+      <publishTime>09/12/2018 18:01:27</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.BizCore.dll">
       <publishTime>09/12/2018 11:44:26</publishTime>
@@ -52,7 +52,7 @@
       <publishTime>09/12/2018 11:44:25</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.ThirdApp.dll">
-      <publishTime>09/12/2018 11:44:27</publishTime>
+      <publishTime>09/12/2018 18:01:27</publishTime>
     </File>
     <File Include="bin/Smart.API.Adapter.Web.dll">
       <publishTime>09/12/2018 11:44:26</publishTime>
@@ -94,7 +94,7 @@
       <publishTime>07/04/2018 09:07:21</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>09/12/2018 11:44:32</publishTime>
+      <publishTime>09/12/2018 17:58:44</publishTime>
     </File>
   </ItemGroup>
 </Project>

@@ -43,7 +43,7 @@ namespace Smart.API.Adapter.DataAccess.Core.JD
         public DataTable GetDTVehicleLogHasPic(DateTime dtStart, DateTime dtEnd, int limitStart, int limitEnd, bool isLimit)
         {
             string sql = @"SELECT ID as 序号,postTime as 推送时间,if(result=0,'N','Y') as 推送结果, actionDescId, vehicleNo, parkLotCode,actionPositionCode,actionPosition,actionTime ,
-                                LogNo, entryTime,reasonCode,reason,photoStr,photoName,resend
+                                LogNo, entryTime,reasonCode,reason,photoStr,photoName,resend,failReason
                                 FROM vehiclelogsql  where DATE(actionTime)<=@dtEnd and DATE(actionTime)>=@dtStart ";
 
             if (isLimit)

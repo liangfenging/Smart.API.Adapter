@@ -221,35 +221,38 @@ namespace Smart.API.Adapter.Biz
                     {
                         try
                         {
-                            if (CacheHelper.GetCache(item.deviceGuid) == null)
+                            if (item.deviceType != 25)//盒子状态不做缓存处理
                             {
-                                if (GetDevStatus(item.deviceStatus) == "1")
+                                if (CacheHelper.GetCache(item.deviceGuid) == null)
                                 {
-                                    OffLineEquipment offEquipment = new OffLineEquipment();
-                                    offEquipment.deviceGuid = item.deviceGuid;
-                                    offEquipment.offTime = DateTime.UtcNow;
-                                    CacheHelper.SetCache(item.deviceGuid, offEquipment, System.DateTime.MaxValue);
-                                    LogHelper.Info("设备状态离线缓存：[" + item.deviceGuid + "]" + offEquipment.offTime.ToString("yyyy-MM-dd HH:mm:ss"));
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                if (GetDevStatus(item.deviceStatus) != "1")
-                                {
-                                    CacheHelper.RemoveCache(item.deviceGuid);
-                                    LogHelper.Info("设备状态恢复在线，清除缓存：[" + item.deviceGuid + "]");
+                                    if (GetDevStatus(item.deviceStatus) == "1")
+                                    {
+                                        OffLineEquipment offEquipment = new OffLineEquipment();
+                                        offEquipment.deviceGuid = item.deviceGuid;
+                                        offEquipment.offTime = DateTime.Now;
+                                        CacheHelper.SetCache(item.deviceGuid, offEquipment, System.DateTime.MaxValue);
+                                        LogHelper.Info("设备状态离线缓存：[" + item.deviceGuid + "]" + offEquipment.offTime.ToString("yyyy-MM-dd HH:mm:ss"));
+                                        continue;
+                                    }
                                 }
                                 else
                                 {
-                                    OffLineEquipment offEquipment = CacheHelper.GetCache(item.deviceGuid) as OffLineEquipment;
-                                    if (DateTime.UtcNow.Subtract(offEquipment.offTime).TotalSeconds < JDCommonSettings.OfflineTime)
+                                    if (GetDevStatus(item.deviceStatus) != "1")
                                     {
-                                        continue;
+                                        CacheHelper.RemoveCache(item.deviceGuid);
+                                        LogHelper.Info("设备状态恢复在线，清除缓存：[" + item.deviceGuid + "]");
                                     }
                                     else
                                     {
-                                        LogHelper.Info("设备状态离线，超出[" + JDCommonSettings.OfflineTime + "]秒：[" + item.deviceGuid + "]");
+                                        OffLineEquipment offEquipment = CacheHelper.GetCache(item.deviceGuid) as OffLineEquipment;
+                                        if (DateTime.Now.Subtract(offEquipment.offTime).TotalSeconds < JDCommonSettings.OfflineTime)
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            LogHelper.Info("设备状态离线，超出[" + JDCommonSettings.OfflineTime + "]秒：[" + item.deviceGuid + "]");
+                                        }
                                     }
                                 }
                             }
@@ -257,7 +260,6 @@ namespace Smart.API.Adapter.Biz
                         catch (Exception ex)
                         {
                             LogHelper.Error("设备状态离线缓存错误：" + ex);
-
                         }
 
 
@@ -822,8 +824,17 @@ namespace Smart.API.Adapter.Biz
             }
             if (inCrossRecord.reTrySend != "1")
             {
-                //更新剩余停车位
-                HeartService.GetInstance().UpdateParkRemainCount();
+                try
+                {
+                    //更新剩余停车位
+                    HeartService.GetInstance().UpdateParkRemainCount();
+                }
+                catch (Exception ex)
+                {
+
+
+                }
+
             }
             try
             {
@@ -1224,8 +1235,16 @@ namespace Smart.API.Adapter.Biz
             }
             if (outCrossRecord.reTrySend != "1")
             {
-                //更新剩余停车位
-                HeartService.GetInstance().UpdateParkRemainCount();
+                try
+                {
+                    //更新剩余停车位
+                    HeartService.GetInstance().UpdateParkRemainCount();
+                }
+                catch (Exception ex)
+                {
+
+                }
+
             }
             try
             {
@@ -1382,7 +1401,7 @@ namespace Smart.API.Adapter.Biz
                     //{
                     //    iPayStatus = 0;
                     //}
-                   
+
                     if (CacheHelper.GetCache(enumJDBusinessType.PayCheck.ToString()) != null)
                     {
                         dicPost = CacheHelper.GetCache(enumJDBusinessType.PayCheck.ToString()) as Dictionary<string, JDPostInfo>;
