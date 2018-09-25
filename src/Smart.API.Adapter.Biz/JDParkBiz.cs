@@ -549,7 +549,7 @@ namespace Smart.API.Adapter.Biz
                 //}
 
                 reqVehicleLog.resend = "1";
-                if (inRecognitionRecord.reTrySend == "1")
+                if (inRecognitionRecord.reTrySend == "1" || inRecognitionRecord.offlineFlag == 1)
                 {
                     reqVehicleLog.resend = "0";//补发的记录
                 }
@@ -719,7 +719,7 @@ namespace Smart.API.Adapter.Biz
                 reqVehicleLog.actionPositionCode = inCrossRecord.inDeviceId;
                 reqVehicleLog.actionPosition = inCrossRecord.inDeviceName;
                 reqVehicleLog.resend = "1";
-                if (inCrossRecord.reTrySend == "1")
+                if (inCrossRecord.reTrySend == "1" || inCrossRecord.offlineFlag == 1)
                 {
                     reqVehicleLog.resend = "0";//补发的记录
                 }
@@ -906,7 +906,7 @@ namespace Smart.API.Adapter.Biz
                 reqVehicleLog.actionPositionCode = outRecognitionRecord.outDeviceId;
                 reqVehicleLog.actionPosition = outRecognitionRecord.outDeviceName;
                 reqVehicleLog.resend = "1";
-                if (outRecognitionRecord.reTrySend == "1")
+                if (outRecognitionRecord.reTrySend == "1" || outRecognitionRecord.offlineFlag == 1)
                 {
                     reqVehicleLog.resend = "0";//补发的记录
                 }
@@ -1137,7 +1137,7 @@ namespace Smart.API.Adapter.Biz
 
                 reqVehicleLog.resend = "1";
 
-                if (outCrossRecord.reTrySend == "1")
+                if (outCrossRecord.reTrySend == "1" || outCrossRecord.offlineFlag == 1)
                 {
                     reqVehicleLog.resend = "0";//补发的记录
                 }

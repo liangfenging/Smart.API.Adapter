@@ -150,5 +150,14 @@ namespace Smart.API.Adapter.Models
             set;
         }
 
+        /// <summary>
+        /// 0:非脱机
+        /// 1：脱机记录（未提供表示非脱机）
+        /// </summary>
+        public int offlineFlag
+        {
+            get;
+            set;
+        }
     }
 }
