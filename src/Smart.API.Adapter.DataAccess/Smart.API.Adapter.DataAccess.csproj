@@ -11,10 +11,14 @@
     <AssemblyName>Smart.API.Adapter.DataAccess</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -64,10 +68,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\JD\FixSyncPlateDAL.cs" />
     <Compile Include="Core\JD\JDBillArchivedDAL.cs" />
     <Compile Include="Core\JD\JDBillDAL.cs" />
     <Compile Include="Core\JD\ParkWhiteListDAL.cs" />
     <Compile Include="Core\JD\VehicleLogSqlDAL.cs" />
+    <Compile Include="Core\SyncIndexDAL.cs" />
     <Compile Include="Task\TaskQueueDAL.cs" />
     <Compile Include="Sys\ApiAccessDAL.cs" />
     <Compile Include="DataBase.cs" />

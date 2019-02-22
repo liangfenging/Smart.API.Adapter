@@ -70,6 +70,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FixSyncPlate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FixSyncPlate.Designer.cs">
+      <DependentUpon>FixSyncPlate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,6 +94,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Config\ParkVersion.xml" />
+    <EmbeddedResource Include="FixSyncPlate.resx">
+      <DependentUpon>FixSyncPlate.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

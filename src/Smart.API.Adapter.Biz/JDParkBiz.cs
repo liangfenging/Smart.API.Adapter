@@ -46,7 +46,7 @@ namespace Smart.API.Adapter.Biz
                 });
                 var result = client.PostAsync("external/heartbeatCheck", content).Result;
                 HeartVersion heartJd = result.Content.ReadAsStringAsync().Result.FromJson<HeartVersion>();
-                LogHelper.Info("PostResponse:heartbeatCheck" + result.Content.ReadAsStringAsync().Result);//记录日志
+                LogHelper.Debug("PostResponse:heartbeatCheck" + result.Content.ReadAsStringAsync().Result);//记录日志
                 return heartJd;
             }
         }
@@ -1384,7 +1384,6 @@ namespace Smart.API.Adapter.Biz
                     }
                 }
 
-
                 InterfaceHttpProxyApi httpApi = new InterfaceHttpProxyApi(JDCommonSettings.BaseAddressJd);
                 ApiResult<ResponseJDQueryPay> apiResult = new ApiResult<ResponseJDQueryPay>();
 
@@ -1522,6 +1521,7 @@ namespace Smart.API.Adapter.Biz
                                     }
                                     else
                                     {
+                                        //3秒才计算一次失败次数（实际京东要求的应是 每3秒进行一次查询重试，此处有出路。这样的好处是，如果缴费成功能立马反查到，进行开闸。减少3秒的等待时间）
                                         if (DateTime.Now.Subtract(dicPayCheckTime[sLogNo]).TotalSeconds > jdTimer.ExceptionTimeSpan)
                                         {
                                             dicPayCheckTime[sLogNo] = DateTime.Now;

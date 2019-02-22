@@ -29,6 +29,8 @@ namespace Smart.API.Adapter.Biz
 
         private static HeartService _heartService;
         private static readonly object objLock = new object();
+
+        private static bool isZeroHour = false;
         private HeartService()
         {
         }
@@ -77,9 +79,15 @@ namespace Smart.API.Adapter.Biz
         /// <param name="obj"></param>
         private void UpdateFailWhiteList(object obj)
         {
-            parkBiz.UpdateFailWhiteList();
-
-            timerUpdateFailWhiteList.Change(JDCommonSettings.UpdateFailWhiteInterval * 60 * 1000, Timeout.Infinite);
+            if (isZeroHour)
+            {
+                LogHelper.Info("============开始异常同步用户检测修复=================");
+                parkBiz.UpdateFailWhiteList();
+                LogHelper.Info("============异常同步用户检测修复完成=================");
+            }
+            //一分钟后每隔一分钟检测一次
+            timerCheckNowTime = new Timer(new TimerCallback(CheckTime), null, 1000 * 60, 1000 * 60);
+            //timerUpdateFailWhiteList.Change(JDCommonSettings.UpdateFailWhiteInterval * 60 * 1000, Timeout.Infinite);
         }
 
         /// <summary>
@@ -94,7 +102,7 @@ namespace Smart.API.Adapter.Biz
                 Console.WriteLine(message);
             }
 
-            LogHelper.Info(message);
+            LogHelper.Debug(message);
             bool result = parkBiz.HeartCheck();
             if (!result)
             {
@@ -126,21 +134,28 @@ namespace Smart.API.Adapter.Biz
 
         private void UpdateParkTotalByTime(object obj)
         {
-            UpdateParkTotalCount();
-            //设置系统时间
-            UpdateSysTime();
-            //一分钟后每隔一分钟检测一次
-            timerCheckNowTime = new Timer(new TimerCallback(CheckTime), null, 1000 * 60, 1000 * 60);
+            if (isZeroHour)
+            {
+                UpdateParkTotalCount();
+                //设置系统时间
+                UpdateSysTime();
+            }
+           
         }
 
         private void CheckTime(object obj)
         {
             //00:00执行
-            if (DateTime.Now.Hour == 0 && DateTime.Now.Minute == 0)
+            if (DateTime.Now.Hour == 0 && !isZeroHour)
             {
+                isZeroHour = true;
                 timerUpdateTotal.Change(0, Timeout.Infinite);
+                timerUpdateFailWhiteList.Change(0, Timeout.Infinite);
             }
-
+            if (DateTime.Now.Hour == 1)
+            {
+                isZeroHour = false;
+            }
         }
         //一下注释为00:00执行后，后面每24小时执行一次，上面为每分钟检测一次
         //private void UpdateParkTotalByTime(object obj)

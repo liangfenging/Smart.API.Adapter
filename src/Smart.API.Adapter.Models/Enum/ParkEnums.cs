@@ -48,4 +48,9 @@
 
     }
 
+    public enum SyncKeyEnums
+    {
+        PhoneNo = 1,
+    }
+
 }

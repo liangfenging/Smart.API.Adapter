@@ -95,6 +95,33 @@ namespace Smart.API.Adapter.Biz
         }
 
 
+        /// <summary>
+        /// 删除人事资料
+        /// </summary>
+        /// <param name="requestdata"></param>
+        /// <returns></returns>
+        public bool DeletePerson(PersonModel requestdata)
+        {
+            bool flag = false;
+            ApiResult<APIResultBase<PersonModel>> result = proxyApi.PostRaw<APIResultBase<PersonModel>>("base/deleteperson", requestdata);
+            if (result.successed)
+            {
+                if (result.data.code == "0")
+                {
+                    flag = true;
+                    return flag;
+                }
+                else
+                {
+                    LogHelper.Info("删除人事资料[" + requestdata.personName + "]失败," + result.data.msg);
+                }
+            }
+            else
+            {
+                LogHelper.Info("删除人事资料[" + requestdata.personName + "]失败," + result.message);
+            }
+            return flag;
+        }
 
         /// <summary>
         /// 绑定车辆信息

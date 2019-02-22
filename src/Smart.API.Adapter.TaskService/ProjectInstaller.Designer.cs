@@ -30,7 +30,6 @@
         {
             this.serviceProcessInstaller1 = new System.ServiceProcess.ServiceProcessInstaller();
             this.InterfaceTimerService1 = new System.ServiceProcess.ServiceInstaller();
-            this.InterfaceTaskService1 = new System.ServiceProcess.ServiceInstaller();
             // 
             // serviceProcessInstaller1
             // 
@@ -45,19 +44,11 @@
             this.InterfaceTimerService1.ServiceName = "InterfaceTimerService";
             this.InterfaceTimerService1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
             // 
-            // InterfaceTaskService1
-            // 
-            this.InterfaceTaskService1.Description = "实时推送数据到第三方";
-            this.InterfaceTaskService1.DisplayName = "JieLink InterfaceTaskService";
-            this.InterfaceTaskService1.ServiceName = "InterfaceTaskService";
-            this.InterfaceTaskService1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
-            // 
             // ProjectInstaller
             // 
             this.Installers.AddRange(new System.Configuration.Install.Installer[] {
             this.serviceProcessInstaller1,
-            this.InterfaceTimerService1,
-            this.InterfaceTaskService1});
+            this.InterfaceTimerService1});
 
         }
 
@@ -65,6 +56,5 @@
 
         private System.ServiceProcess.ServiceProcessInstaller serviceProcessInstaller1;
         private System.ServiceProcess.ServiceInstaller InterfaceTimerService1;
-        private System.ServiceProcess.ServiceInstaller InterfaceTaskService1;
     }
 }

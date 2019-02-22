@@ -47,14 +47,14 @@ namespace Smart.API.Adapter.TaskService
 
         static void RunUserInteractiveService()
         {
-            new InterfaceTaskService().Start(null);
+            //new InterfaceTaskService().Start(null);
             new InterfaceTimerService().Start(null);
         }
 
         static void RunBackgroundService()
         {
             ServiceBase.Run(new ServiceBase[]{
-                new InterfaceTaskService(),
+                //new InterfaceTaskService(),
                   new InterfaceTimerService()
             });
         }

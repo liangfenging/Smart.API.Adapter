@@ -32,11 +32,11 @@ namespace Smart.API.Adapter.Models
         /// <summary>
         /// 人事资料Id
         /// </summary>
-        public string PersonId
-        {
-            get;
-            set;
-        }
+        //public string PersonId
+        //{
+        //    get;
+        //    set;
+        //}
 
         /// <summary>
         /// 1:已绑定
@@ -47,5 +47,12 @@ namespace Smart.API.Adapter.Models
             get;
             set;
         }
+
+        public string PersonId
+        {
+            get;
+            set;
+        }
+    
     }
 }

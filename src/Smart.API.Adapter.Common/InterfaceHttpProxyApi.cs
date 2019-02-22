@@ -127,7 +127,11 @@ namespace Smart.API.Adapter.Common
         public ApiResult PostRaw(string relativeUri, object parameters, TimeSpan? timeout = null)
         {
             string sJson = parameters.ToJson();
-            LogHelper.Info("PostRaw:[" + relativeUri + "]" + sJson);//记录日志
+            if (relativeUri != "Park/heart")
+            {
+                LogHelper.Info("PostRaw:[" + relativeUri + "]" + sJson);//记录日志
+            }
+            
             using (var client = GetHttpClient(timeout))
             {
                 var response = client.PostAsync(relativeUri, new RestfulFormRawJsonContent(parameters)).Result;

@@ -18,10 +18,29 @@ namespace Smart.API.Adapter.BizCore.JD
             return dal.GetParkWhiteList();
         }
 
+        public ICollection<VehicleInfoDb> GetDBParkWhiteList()
+        {
+            return dal.GetDBParkWhiteList();
+        }
+
         public ICollection<VehicleInfoDb> GetParkUpdateFailWhiteList()
         {
             return dal.GetParkUpdateFailWhiteList();
         }
 
+        public ICollection<VehicleInfoDb> GetAll()
+        {
+            return dal.FindAll<VehicleInfoDb>();
+        }
+
+        public bool Update(VehicleInfoDb model)
+        {
+            return dal.Update<VehicleInfoDb>(model, model.vehicleNo);
+        }
+
+        public VehicleInfoDb GetByKey(string key)
+        {
+            return dal.FindByKey<VehicleInfoDb>(key);
+        }
     }
 }
