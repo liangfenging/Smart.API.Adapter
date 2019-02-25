@@ -42,5 +42,10 @@ namespace Smart.API.Adapter.BizCore.JD
         {
             return dal.FindByKey<VehicleInfoDb>(key);
         }
+
+        public void Insert(VehicleInfoDb model)
+        {
+            dal.Insert<VehicleInfoDb>(model);
+        }
     }
 }

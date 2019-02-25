@@ -31,6 +31,8 @@ namespace Smart.API.Adapter.Biz
         private static readonly object objLock = new object();
 
         private static bool isZeroHour = false;
+
+        private static bool isStartFix = true;
         private HeartService()
         {
         }
@@ -79,10 +81,11 @@ namespace Smart.API.Adapter.Biz
         /// <param name="obj"></param>
         private void UpdateFailWhiteList(object obj)
         {
-            if (isZeroHour)
+            if (isZeroHour || isStartFix)
             {
                 LogHelper.Info("============开始异常同步用户检测修复=================");
                 parkBiz.UpdateFailWhiteList();
+                isStartFix = false;
                 LogHelper.Info("============异常同步用户检测修复完成=================");
             }
             //一分钟后每隔一分钟检测一次
@@ -140,19 +143,20 @@ namespace Smart.API.Adapter.Biz
                 //设置系统时间
                 UpdateSysTime();
             }
-           
+
         }
 
         private void CheckTime(object obj)
         {
-            //00:00执行
-            if (DateTime.Now.Hour == 0 && !isZeroHour)
+            //02:00执行
+            int syncTime = JDCommonSettings.SyncHour;
+            if (DateTime.Now.Hour == syncTime && !isZeroHour)
             {
                 isZeroHour = true;
                 timerUpdateTotal.Change(0, Timeout.Infinite);
                 timerUpdateFailWhiteList.Change(0, Timeout.Infinite);
             }
-            if (DateTime.Now.Hour == 1)
+            if (DateTime.Now.Hour != syncTime)
             {
                 isZeroHour = false;
             }

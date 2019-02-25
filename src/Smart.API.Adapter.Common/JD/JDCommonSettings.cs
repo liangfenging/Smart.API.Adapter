@@ -288,5 +288,29 @@ namespace Smart.API.Adapter.Common.JD
                 return iOfflineTime;
             }
         }
+
+        /// <summary>
+        /// 定时任务时间点，（时间同步，车场总数同步，全量同步时间），默认 02:00
+        /// </summary>
+        public static int SyncHour
+        {
+            get
+            {
+                string strSyncHour = ConfigurationManager.AppSettings["SyncHour"];
+                if (string.IsNullOrWhiteSpace(strSyncHour))
+                {
+                    return 2;
+                }
+                int iSyncHour = 0;
+                int.TryParse(strSyncHour, out iSyncHour);
+                if (iSyncHour < 0 || iSyncHour > 23)
+                {
+                    iSyncHour = 2;
+                }
+                return iSyncHour;
+            }
+        }
+
+
     }
 }

@@ -30,7 +30,7 @@ namespace Smart.API.Adapter.DataAccess.Core.JD
 
         public ICollection<FixPersonModel> GetPersonbyName(string name)
         {
-            string sql = "select  PGUID,PersonName,IsIssueCard,IsParkService from control_person where personname = '" + name + "' and IsIssueCard = 1 and   status = 0";
+            string sql = "select  PGUID,PersonName,IsIssueCard,IsParkService from control_person where personname = '" + name + "' and status = 0";
             return GetEnityListBySqlString<FixPersonModel>(sql, null);
         }
     }

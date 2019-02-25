@@ -30,113 +30,7 @@ namespace WinTestJD
 
         private void button1_Click(object sender, EventArgs e)
         {
-            try
-            {
-                JielinkApi jielinkApi = new JielinkApi();
-                ParkWhiteListBLL parkWhiteBll = new ParkWhiteListBLL();
-                FixSyncPlateBLL fixSyncPlateBLL = new FixSyncPlateBLL();
-                ICollection<VehicleInfoDb> IVehicleInfoDb = parkWhiteBll.GetDBParkWhiteList();
-                if (IVehicleInfoDb != null && IVehicleInfoDb.Count > 0)
-                {
-                    LogHelper.Info("===============合法总数量为[" + IVehicleInfoDb.Count + "]====================");
-                    foreach (VehicleInfoDb item in IVehicleInfoDb)
-                    {
-                        if (!string.IsNullOrWhiteSpace(item.PersonId))
-                        {
-                            try
-                            {
-                                LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "],开始绑定车辆====================");
-                                //绑定车辆
-                                VehicleModel vehicleModel = new VehicleModel();
-                                vehicleModel.personId = item.PersonId;
-                                vehicleModel.plateNumber = item.vehicleNo;
-                                vehicleModel.vehicleStatus = 1;
-                                vehicleModel = jielinkApi.VehicleBind(vehicleModel);
-                                if (vehicleModel == null)
-                                {
-                                    ICollection<FixPersonModel> IPerson = fixSyncPlateBLL.GetPersonbyName(item.vehicleNo);
-                                    if (IPerson != null && IPerson.Count > 0)
-                                    {
-                                        bool flag = false;
-                                        foreach (FixPersonModel person in IPerson)
-                                        {
-                                            if (person.PGUID.ToString() == item.PersonId)
-                                            {
-                                                flag = true;
-                                                continue;
-                                            }
-                                            LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + person.PGUID.ToString() + "],开始注销人员====================");
-                                            //VehicleModel vehiclejiebangModel = new VehicleModel();
-                                            //vehiclejiebangModel.personId = person.PGUID.ToString();
-                                            //vehiclejiebangModel.plateNumber = item.vehicleNo;
-                                            //vehiclejiebangModel.vehicleStatus = 2;
-                                            //vehiclejiebangModel = jielinkApi.VehicleBind(vehiclejiebangModel);
-                                            PersonModel personmodel = new PersonModel();
-                                            personmodel.personId = person.PGUID.ToString();
-                                            if (jielinkApi.DeletePerson(personmodel))
 
-                                                LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + person.PGUID.ToString() + "],注销人员成功====================");
-                                        }
-                                        //if (!flag)
-                                        {
-                                            LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "],开始重新绑定车辆====================");
-                                            if (vehicleModel == null)
-                                            {
-                                                vehicleModel = new VehicleModel();
-                                            }
-                                            vehicleModel.personId = item.PersonId;
-                                            vehicleModel.plateNumber = item.vehicleNo;
-                                            vehicleModel.vehicleStatus = 1;
-                                            vehicleModel = jielinkApi.VehicleBind(vehicleModel);
-
-                                            LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "],绑定车辆成功====================");
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    item.BindCar = 1;
-                                    LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "],绑定车辆成功====================");
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogHelper.Error("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "],绑定车辆错误====================", ex);
-                            }
-
-                            try
-                            {
-                                LogHelper.Info("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "],开始开通车场服务====================");
-                                ParkServiceModel parkService = new ParkServiceModel();
-                                parkService.carNumber = 1;
-                                parkService.personId = item.PersonId;
-                                DateTime dtNow = DateTime.Now;
-                                parkService.startTime = dtNow.ToShortDateString();
-                                parkService.endTime = dtNow.AddYears(19).ToShortDateString();
-                                parkService.setmealNo = 50;
-                                parkService = jielinkApi.EnableParkService(parkService);
-                                if (parkService != null)
-                                {
-                                    item.ParkServiceId = parkService.parkServiceId;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogHelper.Error("===============车牌[" + item.vehicleNo + "],PersonId为[" + item.PersonId + "]开通车场服务错误", ex);
-                                //flag = false;
-                            }
-                            parkWhiteBll.Update(item);
-
-                        }
-
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Error("同步错误,", ex);
-            }
         }
 
         private void btn_SearchInfo_Click(object sender, EventArgs e)
@@ -229,9 +123,26 @@ namespace WinTestJD
                     LogHelper.Info("===============jielink总用户数：[" + IFixPersonModelAll.Count + "]====================");
                 if (IVehicleInfoDbAll != null)
                     LogHelper.Info("===============同步总用户数：[" + IVehicleInfoDbAll.Count + "]====================");
-                if (IFixPersonModelAll != null && IFixPersonModelAll.Count > 0)
+
+                List<FixPersonModel> LDeletePerson = new List<FixPersonModel>();
+
+                if (IFixPersonModelAll != null)
                 {
                     foreach (FixPersonModel item in IFixPersonModelAll)
+                    {
+                        VehicleInfoDb ve = IVehicleInfoDbAll.Where(p => p.PersonId == item.PGUID.ToString()).FirstOrDefault();
+                        if (ve == null)
+                        {
+                            LDeletePerson.Add(item);
+                        }
+                    }
+                }
+
+
+                if (LDeletePerson != null && LDeletePerson.Count > 0)
+                {
+                    LogHelper.Info("===============jielink需注销的用户数：[" + LDeletePerson.Count + "]====================");
+                    foreach (FixPersonModel item in LDeletePerson)
                     {
                         ideleteCount++;
                         try
@@ -263,10 +174,10 @@ namespace WinTestJD
                 int iSyncCount = 0;
                 if (IVehicleInfoDbAll != null && IVehicleInfoDbAll.Count > 0)
                 {
-                    iSyncCount++;
                     LogHelper.Info("===============同步总用户数：[" + IVehicleInfoDbAll.Count + "]====================");
                     foreach (VehicleInfoDb item in IVehicleInfoDbAll)
                     {
+                        iSyncCount++;
                         try
                         {
                             LogHelper.Info("===============序号[" + iSyncCount + "]开始执行,车牌[" + item.vehicleNo + "]=============");
@@ -276,7 +187,6 @@ namespace WinTestJD
                                 if (fixPerson == null)
                                 {
                                     //正常应该不会有这种情况.暂不处理
-
                                     LogHelper.Info("===============序号[" + iSyncCount + "]车牌[" + item.vehicleNo + "]PersonID[" + item.PersonId + "]在jielink中不存在=============");
                                 }
                                 else
@@ -419,62 +329,107 @@ namespace WinTestJD
 
         private void btn_DeleteJielink_Click(object sender, EventArgs e)
         {
-            JielinkApi jielinkApi = new JielinkApi();
-            ParkWhiteListBLL parkWhiteBll = new ParkWhiteListBLL();
-            FixSyncPlateBLL fixSyncPlateBLL = new FixSyncPlateBLL();
-            ICollection<VehicleInfoDb> IVehicleInfoDb = parkWhiteBll.GetDBParkWhiteList();
-            ICollection<VehicleInfoDb> IVehicleInfoDbAll = parkWhiteBll.GetAll();
-            ICollection<FixPersonModel> IFixPersonModelAll = fixSyncPlateBLL.GetPerson();
 
-            int ideleteCount = 0;
-            if (IFixPersonModelAll != null)
-                LogHelper.Info("===============jielink总用户数：[" + IFixPersonModelAll.Count + "]====================");
-            if (IVehicleInfoDbAll != null)
-                LogHelper.Info("===============同步总用户数：[" + IVehicleInfoDbAll.Count + "]====================");
-            if (IFixPersonModelAll != null && IFixPersonModelAll.Count > 0)
+
+        }
+
+        private void btn_Version_Click(object sender, EventArgs e)
+        {
+            try
             {
-                int threadCount = (IFixPersonModelAll.Count + 5000 - 1) / 5000;
+                JDParkBiz biz = new JDParkBiz();
+                VehicleLegality vehiclelegality = biz.QueryVehicleLegalityJd(txt_Version.Text);
+                int totalCount = 0;
+                LogHelper.Info("==================最新版本号：" + vehiclelegality.version);
+                if (vehiclelegality.data != null)
+                {
+                    totalCount = vehiclelegality.data.Count;
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，总数：" + totalCount);
+                    int lelegalityCount = 0;
+                    int inLegCount = 0;
+                    lelegalityCount = vehiclelegality.data.Where(p => p.yn == "0").Count();
+                    inLegCount = vehiclelegality.data.Where(p => p.yn == "1").Count();
 
-                if (threadCount <= 0)
-                {
-                    threadCount = 1;
-                }
-                LogHelper.Info("===============开辟线程数：[" + threadCount + "]====================");
-                for (int i = 0; i < threadCount; i++)
-                {
-                    ICollection<FixPersonModel> threadFixPerson = IFixPersonModelAll.Skip(i * 5000).Take(5000).ToList();
-                    LogHelper.Info("===============线程：[" + i + "]执行数量[" + threadFixPerson.Count + "]====================");
-                    Task.Factory.StartNew(() =>
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，合法总数：" + lelegalityCount);
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，非法总数：" + inLegCount);
+
+                    //LogHelper.Info(vehiclelegality.data.ToJson());
+                    int realTotalCount = 0;
+                    int realLegalitCount = 0;
+                    int realInLegCount = 0;
+                    List<string> LPlate = new List<string>();
+                    ParkWhiteListBLL parkWhiteBll = new ParkWhiteListBLL();
+                    ICollection<VehicleInfoDb> IVehicleInfoDbAll = parkWhiteBll.GetAll();
+
+                    foreach (VehicleInfo item in vehiclelegality.data)
                     {
-                        foreach (FixPersonModel item in threadFixPerson)
+                        if (LPlate.Contains(item.vehicleNo))
                         {
-                            ideleteCount++;
-                            try
-                            {
-                                LogHelper.Info("===============序号[" + ideleteCount + "]开始执行=============");
-                                VehicleInfoDb ve = IVehicleInfoDbAll.Where(p => p.PersonId == item.PGUID.ToString()).FirstOrDefault();
-                                if (ve == null)
-                                {
-                                    LogHelper.Info("===============序号[" + ideleteCount + "],车牌[" + item.PersonName + "],PersonId为[" + item.PGUID.ToString() + "],开始注销人员====================");
-                                    PersonModel personmodel = new PersonModel();
-                                    personmodel.personId = item.PGUID.ToString();
-                                    if (jielinkApi.DeletePerson(personmodel))
-                                    {
-                                        LogHelper.Info("===============序号[" + ideleteCount + "],车牌[" + item.PersonName + "],PersonId为[" + item.PGUID.ToString() + "],注销人员成功====================");
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogHelper.Error("==========异常注销错误：序号[" + ideleteCount + "],车牌[" + item.PersonName + "],PersonId为[" + item.PGUID.ToString() + "]：" + ex.ToString());
-                            }
-
-                            System.Threading.Thread.Sleep(300);
+                            continue;
+                        }
+                        LPlate.Add(item.vehicleNo);
+                        realTotalCount++;
+                        if (item.yn == "0")
+                        {
+                            realLegalitCount++;
+                        }
+                        else
+                        {
+                            realInLegCount++;
                         }
 
-                        LogHelper.Info("===============线程：[" + i + "]全部异常注销完成====================");
-                    });
+                        VehicleInfoDb vehiceleinfo = IVehicleInfoDbAll.Where(p => p.vehicleNo == item.vehicleNo).FirstOrDefault();
+                        if (vehiceleinfo == null)
+                        {
+                            LogHelper.Info("==================同步表未有数据" + item.vehicleNo + ",之前未同步==================");
+                            LogHelper.Info("==================同步表未有数据" + item.vehicleNo + "，开始插入同步表==================");
+                            VehicleInfoDb ve = new VehicleInfoDb(item);
+                            ve.CreateTime = DateTime.Now;
+                            ve.UpdateTime = DateTime.Now;
+                            ve.BindCar = 0;
+                            parkWhiteBll.Insert(ve);
+                            LogHelper.Info(ve.ToJson());
+                            LogHelper.Info("==================" + item.vehicleNo + "，插入同步表成功==================");
+                        }
+                        else
+                        {
+
+                            if (vehiceleinfo.yn != item.yn)
+                            {
+                                LogHelper.Info("==================同步表有数据" + item.vehicleNo + "，合法字段不符，开始更新同步表==================");
+                                vehiceleinfo.yn = item.yn;
+                                parkWhiteBll.Update(vehiceleinfo);
+                                LogHelper.Info("==================" + item.vehicleNo + "，更新同步表成功==================");
+                            }
+                        }
+                    }
+                    foreach (VehicleInfoDb item in IVehicleInfoDbAll)
+                    {
+                        VehicleInfo vehicel =  vehiclelegality.data.Where(p => p.vehicleNo == item.vehicleNo).FirstOrDefault();
+                        if (vehicel == null)
+                        {
+                            LogHelper.Info("==================同步表有数据" + item.vehicleNo + ",京东版本信息中未有数据==================");
+                        }
+                    }
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，去除重复，实际总数：" + realTotalCount);
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，去除重复，实际合法总数：" + realLegalitCount);
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，去除重复，实际非法总数：" + realInLegCount);
+
+                    int localTotalCount = 0;
+                    int localLegCOunt = 0;
+
+                    localTotalCount = IVehicleInfoDbAll.Count;
+                    localLegCOunt = IVehicleInfoDbAll.Where(p => p.yn == "0").Count();
+                    LogHelper.Info("本地同步表总数：" + localTotalCount + "合法总数：" + localLegCOunt);
+
+                    LogHelper.Info("==================查询完毕===================");
+                    MessageBox.Show("查询完毕");
                 }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error("", ex);
             }
         }
     }

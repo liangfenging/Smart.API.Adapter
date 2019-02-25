@@ -10,6 +10,7 @@ using System.Linq;
 using Smart.API.Adapter.BizCore.JD;
 using Smart.API.Adapter.Models.DTO.JD;
 using Smart.API.Adapter.BizCore;
+using Smart.API.Adapter.Models.Core.JD;
 
 namespace Smart.API.Adapter.Biz
 {
@@ -283,7 +284,7 @@ namespace Smart.API.Adapter.Biz
                             LogHelper.Info("=================开始同步处理：" + v.vehicleNo + "====================");
                             VehicleInfoDb ve = new VehicleInfoDb(v);
                             ve.UpdateTime = DateTime.Now;
-                           
+
                             //ParkWhiteListBLL parkWhiteBll = new ParkWhiteListBLL();
                             v.vehicleNo = v.vehicleNo.Trim();
                             VehicleInfoDb vehicleDb = dataBase.FindByKey<VehicleInfoDb>(v.vehicleNo);
@@ -298,6 +299,7 @@ namespace Smart.API.Adapter.Biz
                                 //更新jielink+的服务
                                 if (v.yn.Trim() != vehicleDb.yn.Trim())
                                 {
+                                    ve.yn = v.yn;
                                     ParkServiceModel parkService = new ParkServiceModel();
                                     parkService.carNumber = 1;
                                     parkService.personId = vehicleDb.PersonId;
@@ -473,7 +475,7 @@ namespace Smart.API.Adapter.Biz
                                         ve.BindCar = 0;
                                         LogHelper.Error("绑定车辆错误", ex);
                                     }
-                                  
+
                                 }
                                 catch (Exception ex)
                                 {
@@ -812,7 +814,7 @@ namespace Smart.API.Adapter.Biz
             try
             {
                 LogHelper.Info("===============================开始重试更新白名单记录==========================================");
-
+                SearchJDVersion();
                 JielinkApi jielinkApi = new JielinkApi();
                 //查询组织结构的根节点
                 //requestDeptModel requestDept = new requestDeptModel();
@@ -831,9 +833,12 @@ namespace Smart.API.Adapter.Biz
                 {
                     return;
                 }
+                FixSyncPlateBLL fixBll = new FixSyncPlateBLL();
+
 
                 foreach (VehicleInfoDb ve in IVehicleInfoDb)
                 {
+                    bool updateFlag = false;
                     try
                     {
                         LogHelper.Info("=================开始修复同步[" + ve.vehicleNo + "]============================");
@@ -843,43 +848,65 @@ namespace Smart.API.Adapter.Biz
                         parkService.personId = ve.PersonId;
                         if (string.IsNullOrWhiteSpace(ve.PersonId))
                         {
-                            LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始创建人事资料============================");
-                            try
-                            { //创建jielink+ 人事资料，绑定车辆信息，发放凭证
-                                PersonModel person = new PersonModel();
-                                person.deptId = deptId;
-                                person.personName = ve.vehicleNo;
-
-                                //int iCount = dataBase.GetCount();
-                                person.mobile = GetPhoneNo();
-                                person = jielinkApi.AddPerson(person);
-                                ve.PersonId = parkService.personId = person.personId;
-                                UpdatePhoneNo();
-                                LogHelper.Info("=================修复[" + ve.vehicleNo + "]创建人事资料完成============================");
-                            }
-                            catch (Exception ex)
+                            updateFlag = true;
+                            bool hasBindCar = false;
+                            ICollection<FixPersonModel> personJielink = fixBll.GetPersonbyName(ve.vehicleNo);
+                            if (personJielink != null && personJielink.Count > 0)
                             {
-                                LogHelper.Error("创建人事资料错误", ex);
-                                //flag = false;
-                            }
-                            try
-                            {
-                                LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始绑定车辆============================");
-                                //绑定车辆
-                                VehicleModel vehicleModel = new VehicleModel();
-                                vehicleModel.personId = parkService.personId;
-                                vehicleModel.plateNumber = ve.vehicleNo;
-                                vehicleModel.vehicleStatus = 1;
-                                vehicleModel = jielinkApi.VehicleBind(vehicleModel);
-                                if (vehicleModel != null)
+                                FixPersonModel personModel = personJielink.ToList()[0];
+                                ve.PersonId = parkService.personId = personModel.PGUID.ToString();
+                                if (personModel.IsIssueCard == 1)
                                 {
                                     ve.BindCar = 1;
+                                    hasBindCar = true;
                                 }
                                 else
                                 {
                                     ve.BindCar = 0;
                                 }
-                              
+                            }
+                            else
+                            {
+                                LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始创建人事资料============================");
+                                try
+                                { //创建jielink+ 人事资料，绑定车辆信息，发放凭证
+                                    PersonModel person = new PersonModel();
+                                    person.deptId = deptId;
+                                    person.personName = ve.vehicleNo;
+
+                                    //int iCount = dataBase.GetCount();
+                                    person.mobile = GetPhoneNo();
+                                    person = jielinkApi.AddPerson(person);
+                                    ve.PersonId = parkService.personId = person.personId;
+                                    UpdatePhoneNo();
+                                    LogHelper.Info("=================修复[" + ve.vehicleNo + "]创建人事资料完成============================");
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogHelper.Error("创建人事资料错误", ex);
+                                    //flag = false;
+                                }
+                            }
+                            try
+                            {
+                                if (!hasBindCar)
+                                {
+                                    LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始绑定车辆============================");
+                                    //绑定车辆
+                                    VehicleModel vehicleModel = new VehicleModel();
+                                    vehicleModel.personId = parkService.personId;
+                                    vehicleModel.plateNumber = ve.vehicleNo;
+                                    vehicleModel.vehicleStatus = 1;
+                                    vehicleModel = jielinkApi.VehicleBind(vehicleModel);
+                                    if (vehicleModel != null)
+                                    {
+                                        ve.BindCar = 1;
+                                    }
+                                    else
+                                    {
+                                        ve.BindCar = 0;
+                                    }
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -899,7 +926,7 @@ namespace Smart.API.Adapter.Biz
                                     parkService.setmealNo = 50;
                                     parkService = jielinkApi.EnableParkService(parkService);
                                     ve.ParkServiceId = parkService.parkServiceId;
-                                  
+
                                 }
                                 catch (Exception ex)
                                 {
@@ -913,6 +940,7 @@ namespace Smart.API.Adapter.Biz
                         {
                             try
                             {
+                                updateFlag = true;
                                 LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始绑定车辆============================");
                                 //绑定车辆
                                 VehicleModel vehicleModel = new VehicleModel();
@@ -942,6 +970,7 @@ namespace Smart.API.Adapter.Biz
                         {
                             if (!string.IsNullOrWhiteSpace(parkService.personId) && string.IsNullOrWhiteSpace(ve.ParkServiceId))
                             {
+                                updateFlag = true;
                                 LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始开通服务============================");
                                 try
                                 {
@@ -965,6 +994,7 @@ namespace Smart.API.Adapter.Biz
                             //注销服务
                             if (!string.IsNullOrWhiteSpace(ve.ParkServiceId))
                             {
+                                updateFlag = true;
                                 try
                                 {
                                     LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始注销服务============================");
@@ -986,9 +1016,11 @@ namespace Smart.API.Adapter.Biz
                         }
 
                         ve.UpdateTime = DateTime.Now;
-                        LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始更新数据库：" + ve.ToJson());
-                        dataBase.Update<VehicleInfoDb>(ve, ve.vehicleNo);
-
+                        if (updateFlag)
+                        {
+                            LogHelper.Info("=================修复[" + ve.vehicleNo + "]开始更新数据库：" + ve.ToJson());
+                            dataBase.Update<VehicleInfoDb>(ve, ve.vehicleNo);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1077,7 +1109,122 @@ namespace Smart.API.Adapter.Biz
         public string testSearch()
         {
             VehicleInfoDb vehicleDb = dataBase.FindByKey<VehicleInfoDb>("京ABL835");
-            return  vehicleDb.ToJson();
+            return vehicleDb.ToJson();
+        }
+
+        /// <summary>
+        /// 每天定时全量同步一次
+        /// </summary>
+        public void SearchJDVersion()
+        {
+            try
+            {
+                LogHelper.Info("========================开始全量信息同步修复===============================");
+                JDParkBiz biz = new JDParkBiz();
+                VehicleLegality vehiclelegality = biz.QueryVehicleLegalityJd("0");
+                int totalCount = 0;
+                LogHelper.Info("==================最新版本号：" + vehiclelegality.version);
+                if (vehiclelegality.data != null)
+                {
+                    totalCount = vehiclelegality.data.Count;
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，总数：" + totalCount);
+                    int lelegalityCount = 0;
+                    int inLegCount = 0;
+                    lelegalityCount = vehiclelegality.data.Where(p => p.yn == "0").Count();
+                    inLegCount = vehiclelegality.data.Where(p => p.yn == "1").Count();
+
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，合法总数：" + lelegalityCount);
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，非法总数：" + inLegCount);
+
+                    //LogHelper.Info(vehiclelegality.data.ToJson());
+                    int realTotalCount = 0;
+                    int realLegalitCount = 0;
+                    int realInLegCount = 0;
+                    List<string> LPlate = new List<string>();
+                    ParkWhiteListBLL parkWhiteBll = new ParkWhiteListBLL();
+                    ICollection<VehicleInfoDb> IVehicleInfoDbAll = parkWhiteBll.GetAll();
+                    if (IVehicleInfoDbAll == null)
+                    {
+                        IVehicleInfoDbAll = new List<VehicleInfoDb>();
+                    }
+
+                    List<VehicleInfoDb> HasSyncList = new List<VehicleInfoDb>();
+                    HasSyncList = IVehicleInfoDbAll.ToList();
+                    foreach (VehicleInfo item in vehiclelegality.data)
+                    {
+                        if (LPlate.Contains(item.vehicleNo))
+                        {
+                            continue;
+                        }
+                        LPlate.Add(item.vehicleNo);
+                        realTotalCount++;
+                        if (item.yn == "0")
+                        {
+                            realLegalitCount++;
+                        }
+                        else
+                        {
+                            realInLegCount++;
+                        }
+
+                        VehicleInfoDb vehiceleinfo = IVehicleInfoDbAll.Where(p => p.vehicleNo == item.vehicleNo).FirstOrDefault();
+                        if (vehiceleinfo == null)
+                        {
+                            LogHelper.Info("==================同步表未有数据" + item.vehicleNo + "，开始插入同步表==================");
+                            VehicleInfoDb ve = new VehicleInfoDb(item);
+                            ve.CreateTime = DateTime.Now;
+                            ve.UpdateTime = DateTime.Now;
+                            ve.BindCar = 0;
+                            parkWhiteBll.Insert(ve);
+                            LogHelper.Info(ve.ToJson());
+                            LogHelper.Info("==================" + item.vehicleNo + "，插入同步表成功==================");
+                        }
+                        else
+                        {
+                            HasSyncList.Remove(vehiceleinfo);
+                            if (vehiceleinfo.yn != item.yn)
+                            {
+                                LogHelper.Info("==================同步表有数据" + item.vehicleNo + "，合法字段不符，开始更新同步表==================");
+                                LogHelper.Info("同步表的数据：" + vehiceleinfo.ToJson());
+                                vehiceleinfo.yn = item.yn;
+                                parkWhiteBll.Update(vehiceleinfo);
+                                LogHelper.Info("==================" + item.vehicleNo + "，更新同步表成功==================");
+                            }
+                        }
+
+                    }
+
+                    foreach (VehicleInfoDb item in HasSyncList)
+                    {
+                        //VehicleInfo vehicel = vehiclelegality.data.Where(p => p.vehicleNo == item.vehicleNo).FirstOrDefault();
+                        //if (vehicel == null)
+                        //{
+                        LogHelper.Info("==================同步表有数据" + item.vehicleNo + ",京东版本信息中未有数据==================");
+                        //}
+                    }
+
+
+                    int localTotalCount = 0;
+                    int localLegCOunt = 0;
+
+                    localTotalCount = IVehicleInfoDbAll.Count;
+                    localLegCOunt = IVehicleInfoDbAll.Where(p => p.yn == "0").Count();
+
+
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，去除重复，实际总数：" + realTotalCount);
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，去除重复，实际合法总数：" + realLegalitCount);
+                    LogHelper.Info("==================最新版本号：" + vehiclelegality.version + "，去除重复，实际非法总数：" + realInLegCount);
+                    LogHelper.Info("本地同步表总数：" + localTotalCount + "合法总数：" + localLegCOunt);
+
+                    LogHelper.Info("==================查询完毕===================");
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error("查询京东版本信息错误：", ex);
+            }
         }
     }
 }

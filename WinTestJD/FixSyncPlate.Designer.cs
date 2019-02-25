@@ -36,6 +36,8 @@
             this.lbl_DeleteCount = new System.Windows.Forms.Label();
             this.lbl_NoSync = new System.Windows.Forms.Label();
             this.lbl_jielinkCount = new System.Windows.Forms.Label();
+            this.btn_Version = new System.Windows.Forms.Button();
+            this.txt_Version = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btn_FixSyncPlate
@@ -112,11 +114,30 @@
             this.lbl_jielinkCount.TabIndex = 2;
             this.lbl_jielinkCount.Text = "jielink总数:";
             // 
+            // btn_Version
+            // 
+            this.btn_Version.Location = new System.Drawing.Point(33, 13);
+            this.btn_Version.Name = "btn_Version";
+            this.btn_Version.Size = new System.Drawing.Size(75, 23);
+            this.btn_Version.TabIndex = 3;
+            this.btn_Version.Text = "JD版本查询";
+            this.btn_Version.UseVisualStyleBackColor = true;
+            this.btn_Version.Click += new System.EventHandler(this.btn_Version_Click);
+            // 
+            // txt_Version
+            // 
+            this.txt_Version.Location = new System.Drawing.Point(127, 13);
+            this.txt_Version.Name = "txt_Version";
+            this.txt_Version.Size = new System.Drawing.Size(100, 21);
+            this.txt_Version.TabIndex = 4;
+            // 
             // FixSyncPlate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(406, 335);
+            this.Controls.Add(this.txt_Version);
+            this.Controls.Add(this.btn_Version);
             this.Controls.Add(this.lbl_jielinkCount);
             this.Controls.Add(this.lbl_NoSync);
             this.Controls.Add(this.lbl_DeleteCount);
@@ -142,5 +163,7 @@
         private System.Windows.Forms.Label lbl_DeleteCount;
         private System.Windows.Forms.Label lbl_NoSync;
         private System.Windows.Forms.Label lbl_jielinkCount;
+        private System.Windows.Forms.Button btn_Version;
+        private System.Windows.Forms.TextBox txt_Version;
     }
 }
